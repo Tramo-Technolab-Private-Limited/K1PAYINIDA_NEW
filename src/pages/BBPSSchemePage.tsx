@@ -339,12 +339,17 @@ export default function BBPSSchemePage() {
       )}
 
       <CustomPagination
-        pageSize={pageSize}
-        onChange={(event: React.ChangeEvent<unknown>, value: number) => {
-          setCurrentPage(value);
+        page={currentPage - 1}
+        count={isFilter ? searchData.length : tableData.length}
+        onPageChange={(event: any, newPage: any) => {
+          setCurrentPage(newPage + 1);
         }}
-        page={currentPage}
-        Count={(isFilter ? searchData : tableData).length}
+        rowsPerPage={pageSize}
+        onRowsPerPageChange={(event: any) => {
+          const newPageSize = parseInt(event.target.value, 10);
+          setPageSize(newPageSize);
+          setCurrentPage(1);
+        }}
       />
     </>
   );
