@@ -78,14 +78,11 @@ export default function Header({ onOpenNav }: Props) {
                 fIndianCurrency(user?.main_wallet_amount) || 0
               }`}
             </Label>
-            {user?.role == "agent" && (
-              <Label variant="soft" color={"warning"} sx={walletStyle}>
-                {`AEPS wallet = ${
-                  fIndianCurrency(user?.AEPS_wallet_amount) || 0
-                }`}
-              </Label>
-            )}
-
+            <Label variant="soft" color={"warning"} sx={walletStyle}>
+              {`AEPS wallet = ${
+                fIndianCurrency(user?.AEPS_wallet_amount) || 0
+              }`}
+            </Label>
             {/* <NotificationsPopover /> */}
 
             <AccountPopover />
