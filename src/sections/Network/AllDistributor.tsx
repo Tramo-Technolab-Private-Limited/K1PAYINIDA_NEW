@@ -12,6 +12,7 @@ import {
   TableContainer,
   Modal,
   Pagination,
+  Button,
   MenuItem,
   TextField,
 } from "@mui/material";
@@ -39,6 +40,7 @@ import FormProvider, {
 import * as Yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+
 // ----------------------------------------------------------------------
 
 type RowProps = {
@@ -170,6 +172,7 @@ export default function AllDistributor() {
     { id: "maxComm", label: "Member Since" },
     { id: "schemeId", label: "Scheme Id" },
     { id: "status", label: "Status" },
+    { id: "fundtrans", label: "Fund Transfer" },
   ];
 
   const style = {
@@ -204,11 +207,6 @@ export default function AllDistributor() {
       body,
       token
     ).then((Response: any) => {
-      console.log(
-        "======ApprovedList==User==response=====>zzzzzzzzzzzzzzzzzzzzzzzzzz",
-        Response
-      );
-
       if (Response.status == 200) {
         if (Response.data.code == 200) {
           let arr: any = [];
@@ -404,7 +402,7 @@ function EcommerceBestSalesmanRow({
   openEditModal,
 }: EcommerceBestSalesmanRowProps) {
   return (
-    <TableRow onClick={() => openEditModal(row)}>
+    <TableRow>
       <TableCell>
         <Stack direction="row" alignItems="center">
           <CustomAvatar
@@ -425,7 +423,9 @@ function EcommerceBestSalesmanRow({
         </Stack>
       </TableCell>
 
-      <TableCell>{row.userCode != "" ? row.userCode : "NA"}</TableCell>
+      <TableCell onClick={() => openEditModal(row)}>
+        {row.userCode != "" ? row.userCode : "NA"}
+      </TableCell>
       <TableCell>
         {row.email}
         <br />
@@ -440,6 +440,9 @@ function EcommerceBestSalesmanRow({
       <TableCell>{fDateTime(row.createdAt)}</TableCell>
       <TableCell>{row.schemeId}</TableCell>
       <TableCell align="right">{row.verificationStatus}</TableCell>
+      <TableCell align="right">
+        <Button variant="contained">Transfer</Button>
+      </TableCell>
     </TableRow>
   );
 }
