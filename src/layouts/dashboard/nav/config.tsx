@@ -52,11 +52,6 @@ const NavConfig = [
             roles: ["agent"],
           },
           {
-            title: "DMT1",
-            path: PATH_DASHBOARD.service.dmt1,
-            roles: ["agent"],
-          },
-          {
             title: "DMT2",
             path: PATH_DASHBOARD.service.dmt2,
             roles: ["agent"],
@@ -72,7 +67,7 @@ const NavConfig = [
             roles: ["agent"],
           },
           {
-            title: "Aadhaary Pay",
+            title: "Aadhaar Pay",
             path: PATH_DASHBOARD.service.aadhaarpay,
             roles: ["agent"],
           },
@@ -121,6 +116,10 @@ const NavConfig = [
           {
             title: "BBPS Scheme",
             path: PATH_DASHBOARD.scheme.bbpsscheme,
+          },
+          {
+            title: "Loan Scheme",
+            path: PATH_DASHBOARD.scheme.loanscheme,
           },
         ],
       },
