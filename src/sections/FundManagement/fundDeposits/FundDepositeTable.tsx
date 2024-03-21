@@ -26,7 +26,7 @@ import Button from "src/theme/overrides/Button";
 import { LoadingButton } from "@mui/lab";
 import { useNavigate } from "react-router";
 import { PATH_DASHBOARD } from "src/routes/paths";
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 
 type props = {
   tableData: fundRequestProps[];
@@ -47,34 +47,40 @@ function FundDepositeTable({ tableData, getRaisedRequest }: props) {
   ];
 
   function goTomybankaccount() {
-    navigate( PATH_DASHBOARD.fundmanagement.myfundrequest);
+    navigate(PATH_DASHBOARD.fundmanagement.myfundrequest);
   }
 
   return (
     <>
-    <Stack direction={"row"} justifyContent={"space-between"} mb={2}>
-      <Typography variant="h5" >Last 5 Transactions &#9660;</Typography>
-      <LoadingButton variant="contained" sx={{width:"180px"}}  onClick={goTomybankaccount}>View All Transaction</LoadingButton>
+      <Stack direction={"row"} justifyContent={"space-between"} mb={2}>
+        <Typography variant="h5">Last 5 Transactions &#9660;</Typography>
+        <LoadingButton
+          variant="contained"
+          sx={{ width: "180px" }}
+          onClick={goTomybankaccount}
+        >
+          View All Transaction
+        </LoadingButton>
       </Stack>
-    <Card>
-      <TableContainer sx={{ overflow: "unset" }}>
-        <Scrollbar>
-          <Table sx={{ minWidth: 720 }}>
-            <TableHeadCustom headLabel={tableLabels} />
+      <Card>
+        <TableContainer sx={{ overflow: "unset" }}>
+          <Scrollbar>
+            <Table sx={{ minWidth: 720 }}>
+              <TableHeadCustom headLabel={tableLabels} />
 
-            <TableBody>
-              {tableData.map((row: any) => (
-                <FundRequestTable
-                  key={row._id}
-                  row={row}
-                  getRaisedRequest={getRaisedRequest}
-                />
-              ))}
-            </TableBody>
-          </Table>
-        </Scrollbar>
-      </TableContainer>
-    </Card>
+              <TableBody>
+                {tableData.map((row: any) => (
+                  <FundRequestTable
+                    key={row._id}
+                    row={row}
+                    getRaisedRequest={getRaisedRequest}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          </Scrollbar>
+        </TableContainer>
+      </Card>
     </>
   );
 }
