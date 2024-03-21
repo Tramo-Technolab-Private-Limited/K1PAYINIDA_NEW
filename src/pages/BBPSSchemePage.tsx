@@ -224,7 +224,7 @@ export default function BBPSSchemePage() {
     <>
       {user?.role === "m_distributor" && (
         <>
-          <FormControl sx={{ mt: 1, ml: 1, minWidth: 200 }}>
+          <FormControl sx={{ ml: 1, minWidth: 200 }}>
             <TextField
               id="outlined-select-currency-native"
               select
@@ -253,14 +253,9 @@ export default function BBPSSchemePage() {
       ) : (
         <>
           {tableData.length > 0 && (
-            <Stack mx={1} mt={2}>
+            <Stack>
               <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-                <Stack
-                  flexDirection={"row"}
-                  gap={1}
-                  mb={1}
-                  width={{ xs: "100%", sm: "50%" }}
-                >
+                <Stack flexDirection={"row"} gap={1} mb={1}>
                   <RHFSelect
                     name="subcategory"
                     label="Category"
@@ -301,39 +296,37 @@ export default function BBPSSchemePage() {
                 <Scrollbar
                   sx={
                     isMobile
-                      ? { maxHeight: window.innerHeight - 130 }
-                      : { maxHeight: window.innerHeight - 250 }
+                      ? { maxHeight: window.innerHeight - 200 }
+                      : { maxHeight: window.innerHeight - 160 }
                   }
                 >
-                  <Card>
-                    <Table
-                      sx={{ minWidth: 720 }}
-                      stickyHeader
-                      aria-label="customized table"
-                    >
-                      <TableHeadCustom
-                        headLabel={
-                          user?.role?.toLowerCase() == "m_distributor"
-                            ? tableLabels
-                            : user?.role?.toLowerCase() == "distributor"
-                            ? tableLabels1
-                            : tableLabels2
-                        }
-                      />
+                  <Table
+                    sx={{ minWidth: 720 }}
+                    stickyHeader
+                    aria-label="customized table"
+                  >
+                    <TableHeadCustom
+                      headLabel={
+                        user?.role?.toLowerCase() == "m_distributor"
+                          ? tableLabels
+                          : user?.role?.toLowerCase() == "distributor"
+                          ? tableLabels1
+                          : tableLabels2
+                      }
+                    />
 
-                      <TableBody sx={{ overflow: "auto" }}>
-                        {tempTableData.map((row: any) => {
-                          return (
-                            <SchemeRow
-                              key={row._id}
-                              row={row}
-                              rowDetail={user?.role}
-                            />
-                          );
-                        })}
-                      </TableBody>
-                    </Table>
-                  </Card>
+                    <TableBody sx={{ overflow: "auto" }}>
+                      {tempTableData.map((row: any) => {
+                        return (
+                          <SchemeRow
+                            key={row._id}
+                            row={row}
+                            rowDetail={user?.role}
+                          />
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
                 </Scrollbar>
               </TableContainer>
             </Stack>

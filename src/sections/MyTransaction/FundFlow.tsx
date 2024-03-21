@@ -216,82 +216,66 @@ export default function FundFlow() {
           onSubmit={handleSubmit(filterTransaction)}
         >
           <Stack flexDirection={"row"} justifyContent={"end"}>
-            <Stack
-              direction={{ xs: "column", sm: "row" }}
-              spacing={2}
-              style={{ padding: "0 25px", marginBottom: "10px" }}
+            <RHFSelect
+              name="status"
+              label="Status"
+              SelectProps={{
+                native: false,
+                sx: { textTransform: "capitalize" },
+              }}
             >
-              <RHFSelect
-                name="status"
-                label="Status"
-                SelectProps={{
-                  native: false,
-                  sx: { textTransform: "capitalize" },
-                }}
-              >
-                <MenuItem value="">None</MenuItem>
-                <MenuItem value="success">Success</MenuItem>
-                <MenuItem value="failed">Failed</MenuItem>
-                <MenuItem value="pending">Pending</MenuItem>
-                <MenuItem value="in_process">In process</MenuItem>
-                <MenuItem value="hold">Hold</MenuItem>
-                <MenuItem value="initiated">Initiated</MenuItem>
-              </RHFSelect>
-              <RHFTextField name="clientRefId" label="Client Ref Id" />
-              <Stack flexDirection={"row"} gap={1}>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    label="Start date"
-                    inputFormat="DD/MM/YYYY"
-                    value={watch("startDate")}
-                    maxDate={new Date()}
-                    onChange={(newValue: any) =>
-                      setValue("startDate", newValue)
-                    }
-                    renderInput={(params: any) => (
-                      <TextField
-                        {...params}
-                        size={"small"}
-                        sx={{ width: 150 }}
-                      />
-                    )}
-                  />
-                  <DatePicker
-                    label="End date"
-                    inputFormat="DD/MM/YYYY"
-                    value={watch("endDate")}
-                    minDate={watch("startDate")}
-                    maxDate={new Date()}
-                    onChange={(newValue: any) => setValue("endDate", newValue)}
-                    renderInput={(params: any) => (
-                      <TextField
-                        {...params}
-                        size={"small"}
-                        sx={{ width: 150 }}
-                      />
-                    )}
-                  />
-                </LocalizationProvider>
-              </Stack>
-              <LoadingButton
-                variant="contained"
-                type="submit"
-                loading={isSubmitting}
-              >
-                Search
-              </LoadingButton>
-              <LoadingButton
-                variant="contained"
-                onClick={() => {
-                  reset(defaultValues);
-                  onChangeEndDate(null);
-                  onChangeStartDate(null);
-                  getTransaction();
-                }}
-              >
-                Clear
-              </LoadingButton>
+              <MenuItem value="">None</MenuItem>
+              <MenuItem value="success">Success</MenuItem>
+              <MenuItem value="failed">Failed</MenuItem>
+              <MenuItem value="pending">Pending</MenuItem>
+              <MenuItem value="in_process">In process</MenuItem>
+              <MenuItem value="hold">Hold</MenuItem>
+              <MenuItem value="initiated">Initiated</MenuItem>
+            </RHFSelect>
+            <RHFTextField name="clientRefId" label="Client Ref Id" />
+            <Stack flexDirection={"row"} gap={1}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  label="Start date"
+                  inputFormat="DD/MM/YYYY"
+                  value={watch("startDate")}
+                  maxDate={new Date()}
+                  onChange={(newValue: any) => setValue("startDate", newValue)}
+                  renderInput={(params: any) => (
+                    <TextField {...params} size={"small"} sx={{ width: 150 }} />
+                  )}
+                />
+                <DatePicker
+                  label="End date"
+                  inputFormat="DD/MM/YYYY"
+                  value={watch("endDate")}
+                  minDate={watch("startDate")}
+                  maxDate={new Date()}
+                  onChange={(newValue: any) => setValue("endDate", newValue)}
+                  renderInput={(params: any) => (
+                    <TextField {...params} size={"small"} sx={{ width: 150 }} />
+                  )}
+                />
+              </LocalizationProvider>
             </Stack>
+            <LoadingButton
+              variant="contained"
+              type="submit"
+              loading={isSubmitting}
+            >
+              Search
+            </LoadingButton>
+            <LoadingButton
+              variant="contained"
+              onClick={() => {
+                reset(defaultValues);
+                onChangeEndDate(null);
+                onChangeStartDate(null);
+                getTransaction();
+              }}
+            >
+              Clear
+            </LoadingButton>
           </Stack>
         </FormProvider>
       </Stack>
@@ -303,8 +287,8 @@ export default function FundFlow() {
             <Scrollbar
               sx={
                 isMobile
-                  ? { maxHeight: window.innerHeight - 130 }
-                  : { maxHeight: window.innerHeight - 250 }
+                  ? { maxHeight: window.innerHeight - 204 }
+                  : { maxHeight: window.innerHeight - 170 }
               }
             >
               <Table

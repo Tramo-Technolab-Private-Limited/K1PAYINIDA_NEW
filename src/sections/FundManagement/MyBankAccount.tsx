@@ -38,6 +38,7 @@ import {
 } from "../../components/animate";
 import MotionModal from "src/components/animate/MotionModal";
 import { TableNoData } from "src/components/table";
+import Image from "src/components/image/Image";
 
 // ----------------------------------------------------------------------
 type FormValuesProps = {
@@ -499,9 +500,9 @@ export default function MyBankAccount() {
       {userBankList?.length == 0 && (
         <Stack flexDirection="row" justifyContent="center">
           <Stack>
-            <img src={NoBankAccount} />
-            <Typography variant="h6" ml={10}>
-              No Bank Account add
+            <Image src={NoBankAccount} alt="" width={"60%"} />
+            <Typography variant="h6" textAlign={"center"}>
+              No Bank Account added yet.
             </Typography>
           </Stack>
         </Stack>
@@ -510,7 +511,7 @@ export default function MyBankAccount() {
       <MotionModal
         open={open}
         onClose={handleClose}
-        width={{ xs: "100%", sm: 500 }}
+        width={{ xs: "95%", sm: 500 }}
       >
         <FormProvider methods={methods} onSubmit={handleSubmit(addBank)}>
           <Grid

@@ -66,7 +66,7 @@ const AutoLogout = ({ children }: any) => {
   return (
     <>
       {children}
-      <MotionModal open={open}>
+      <MotionModal open={open} width={{ xs: "95%", sm: 500 }}>
         <Grid
           rowGap={3}
           columnGap={2}

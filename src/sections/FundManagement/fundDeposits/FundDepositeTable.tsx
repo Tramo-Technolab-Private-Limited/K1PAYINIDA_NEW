@@ -13,7 +13,7 @@ import { sentenceCase } from "change-case";
 import React, { useEffect, useState } from "react";
 import EditIcon from "src/assets/icons/EditIcon";
 import Label from "src/components/label/Label";
-import { TableHeadCustom } from "src/components/table";
+import { TableHeadCustom, TableNoData } from "src/components/table";
 import { fIndianCurrency } from "src/utils/formatNumber";
 import { fDate } from "src/utils/formatTime";
 import { fundRequestProps } from "./types";
@@ -78,6 +78,9 @@ function FundDepositeTable({ tableData, getRaisedRequest }: props) {
                 ))}
               </TableBody>
             </Table>
+            <Stack flexDirection={"row"} justifyContent={"center"}>
+              <TableNoData isNotFound={!tableData.length} />
+            </Stack>
           </Scrollbar>
         </TableContainer>
       </Card>

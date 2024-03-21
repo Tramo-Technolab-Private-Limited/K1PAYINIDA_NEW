@@ -1,19 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 // @mui
-import {
-  TextField,
-  Stack,
-  Grid,
-  Tabs,
-  Tab,
-  MenuItem,
-  CircularProgress,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { TextField, Stack, Grid, Tabs, Tab, MenuItem } from "@mui/material";
 
-import { Box, CardProps } from "@mui/material";
+import { Box } from "@mui/material";
 import { Helmet } from "react-helmet-async";
 import { Api } from "src/webservices";
 import ViewAepsTable from "../sections/ViewScheme/ViewAepsTable";
@@ -22,7 +11,6 @@ import ViewRechargeTable from "../sections/ViewScheme/ViewRechargeTable";
 import ViewAadharPayTable from "../sections/ViewScheme/ViewAadharPayTable";
 import ViewDmt1Table from "../sections/ViewScheme/ViewDmt1Table";
 import ViewDmt2Table from "../sections/ViewScheme/ViewDmt2Table";
-import LoadingScreen from "src/components/loading-screen/LoadingScreen";
 import ViewMatmTable from "../sections/ViewScheme/ViewMatmTable";
 import { useSnackbar } from "notistack";
 import ApiDataLoading from "../components/customFunctions/ApiDataLoading";
@@ -190,7 +178,7 @@ export default function ViewAllScheme() {
           sx={
             isMobile
               ? { maxHeight: window.innerHeight - 130 }
-              : { maxHeight: window.innerHeight - 250 }
+              : { maxHeight: window.innerHeight - 120 }
           }
         >
           <Stack>

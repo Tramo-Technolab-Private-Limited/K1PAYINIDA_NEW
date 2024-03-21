@@ -479,7 +479,11 @@ export default function DMT2pay({ clearPayout, remitter, beneficiary }: any) {
           </Box>
         )}
       </MotionModal>
-      <MotionModal open={open1} onClose={handleClose1}>
+      <MotionModal
+        open={open1}
+        onClose={handleClose1}
+        width={{ xs: "95%", sm: 500 }}
+      >
         <Stack sx={{ border: "1.5px dashed #000000" }} p={3} borderRadius={2}>
           <Table
             stickyHeader
