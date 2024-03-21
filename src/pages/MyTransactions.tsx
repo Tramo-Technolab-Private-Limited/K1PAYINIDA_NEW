@@ -60,6 +60,7 @@ import Logo from "src/components/logo/Logo";
 import { fCurrency, fIndianCurrency } from "src/utils/formatNumber";
 import useCopyToClipboard from "src/hooks/useCopyToClipboard";
 import { Icon } from "@iconify/react";
+import dayjs, { Dayjs } from "dayjs";
 import useResponsive from "src/hooks/useResponsive";
 import { CustomAvatar } from "src/components/custom-avatar";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -596,7 +597,11 @@ export default function MyTransactions() {
                       inputFormat="DD/MM/YYYY"
                       value={watch("endDate")}
                       minDate={watch("startDate")}
-                      maxDate={new Date()}
+                      maxDate={
+                        startDate
+                          ? dayjs(startDate).add(31, "days").toDate()
+                          : null
+                      }
                       onChange={(newValue: any) =>
                         setValue("endDate", newValue)
                       }
