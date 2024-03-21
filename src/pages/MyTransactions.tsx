@@ -139,19 +139,6 @@ export default function MyTransactions() {
 
   useEffect(() => setCurrentPage(1), [currentTab]);
 
-  const {
-    startDate,
-    endDate,
-    onChangeStartDate,
-    onChangeEndDate,
-    open: openPicker,
-    onOpen: onOpenPicker,
-    onClose: onClosePicker,
-    isSelected: isSelectedValuePicker,
-    isError,
-    shortLabel,
-  } = useDateRangePicker(new Date(), new Date());
-
   const getProductlist = (val: string) => {
     Api(`product/get_ProductList/${val}`, "GET", "", token).then(
       (Response: any) => {
@@ -598,8 +585,8 @@ export default function MyTransactions() {
                       value={watch("endDate")}
                       minDate={watch("startDate")}
                       maxDate={
-                        startDate
-                          ? dayjs(startDate).add(31, "days").toDate()
+                        watch("startDate")
+                          ? dayjs(watch("startDate")).add(31, "days").toDate()
                           : null
                       }
                       onChange={(newValue: any) =>
