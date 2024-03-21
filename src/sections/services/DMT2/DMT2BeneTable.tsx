@@ -414,7 +414,7 @@ export default function DMT2BeneTable() {
       )}
 
       {/* modal for add beneficiary */}
-      <MotionModal open={open} width={{ xs: "95%", sm: 400 }}>
+      <MotionModal open={open} width={{ xs: "95%", sm: 500 }}>
         <FormProvider methods={methods} onSubmit={handleSubmit(addBeneficiary)}>
           <Box
             rowGap={2}
@@ -424,6 +424,7 @@ export default function DMT2BeneTable() {
               xs: "repeat(1, 1fr)",
               sm: "repeat(2, 1fr)",
             }}
+            sx={{ width: "100%" }}
             mt={1}
           >
             <RHFAutocomplete
@@ -435,7 +436,7 @@ export default function DMT2BeneTable() {
               renderOption={(props, option) => (
                 <Box
                   component="li"
-                  sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                  sx={{ "& > img": { flexShrink: 0 } }}
                   {...props}
                 >
                   {option.bankName}
@@ -756,12 +757,7 @@ function BeneList({ row, callback, remitterNumber, deleteBene }: any) {
           </Stack>
         </TableCell>
       </TableRow>
-      <MotionModal
-        open={open2}
-        onClose={handleClose2}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
+      <MotionModal open={open2} onClose={handleClose2}>
         <Stack>
           <TextField
             type="number"
