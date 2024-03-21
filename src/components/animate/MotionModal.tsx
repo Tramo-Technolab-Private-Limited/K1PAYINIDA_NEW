@@ -54,7 +54,7 @@ export default function MotionModal({
                   backgroundColor: "#fff",
                   borderRadius: 2,
                   boxShadow: 24,
-                  p: 4,
+                  p: { xs: 2, sm: 4 },
                 }}
               >
                 <Scrollbar

@@ -242,14 +242,14 @@ export default function DMT2() {
               <Box
                 rowGap={2}
                 columnGap={2}
-                ml={3}
+                ml={1}
                 display="grid"
                 sx={{ position: "relative" }}
                 gridTemplateColumns={{
                   xs: "repeat(1, 1fr)",
                 }}
               >
-                <Stack flexDirection="row" alignItems={"center"} gap={1}>
+                <Stack flexDirection="row" alignItems={"center"} gap={1} my={1}>
                   <ArrowBackIosNewOutlinedIcon
                     onClick={() => navigate(-1)}
                     sx={{
@@ -278,12 +278,12 @@ export default function DMT2() {
                     ),
                   }}
                 />
+                <Typography variant="body2">
+                  To comply with RBI guidelines, a valid sender mobile number is
+                  mandatory for DMT2. Please ensure you provide a valid sender
+                  mobile number to proceed with the transaction.
+                </Typography>
               </Box>
-              <Typography variant="body2" sx={{ marginLeft: 3 }}>
-                To comply with RBI guidelines, a valid sender mobile number is
-                mandatory for DMT2. Please ensure you provide a valid sender
-                mobile number to proceed with the transaction.
-              </Typography>
 
               {/* <Stack mt={5}>
               <Button

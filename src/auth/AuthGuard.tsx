@@ -40,9 +40,9 @@ export default function AuthGuard({ children }: AuthGuardProps) {
   }
 
   if (isAuthenticated) {
-    if (!location) {
-      return <LocationInstruction />;
-    }
+    // if (!location) {
+    //   return <LocationInstruction />;
+    // }
     if (!!pathname.match(/auth/i)) {
       if (
         user?.finalStatus !== "approved" ||

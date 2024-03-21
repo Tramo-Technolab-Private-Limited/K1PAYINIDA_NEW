@@ -252,7 +252,7 @@ export default function DMT() {
                   xs: "repeat(1, 1fr)",
                 }}
               >
-                <Stack flexDirection="row" alignItems={"center"} gap={1}>
+                <Stack flexDirection="row" alignItems={"center"} gap={1} my={1}>
                   <ArrowBackIosNewOutlinedIcon
                     onClick={() => navigate(-1)}
                     sx={{

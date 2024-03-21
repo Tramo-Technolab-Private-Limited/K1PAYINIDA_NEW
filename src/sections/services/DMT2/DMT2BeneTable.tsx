@@ -41,6 +41,7 @@ import ApiDataLoading from "../../../components/customFunctions/ApiDataLoading";
 import { useAuthContext } from "src/auth/useAuthContext";
 import Scrollbar from "src/components/scrollbar/Scrollbar";
 import useResponsive from "src/hooks/useResponsive";
+import MotionModal from "src/components/animate/MotionModal";
 // ----------------------------------------------------------------------
 
 type FormValuesProps = {
@@ -336,7 +337,7 @@ export default function DMT2BeneTable() {
   }
   return (
     <>
-      <Grid sx={{ maxHeight: window.innerHeight - 170 }}>
+      <Grid>
         {getBene.isLoading ? (
           <ApiDataLoading />
         ) : (
@@ -359,8 +360,8 @@ export default function DMT2BeneTable() {
               <Scrollbar
                 sx={
                   isMobile
-                    ? { maxHeight: window.innerHeight - 250 }
-                    : { maxHeight: window.innerHeight - 440 }
+                    ? { maxHeight: window.innerHeight - 110 }
+                    : { maxHeight: window.innerHeight - 470 }
                 }
               >
                 <Table
@@ -413,152 +414,122 @@ export default function DMT2BeneTable() {
       )}
 
       {/* modal for add beneficiary */}
-      <Modal
-        open={open}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Grid
-          item
-          xs={12}
-          md={8}
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-          }}
-        >
-          <Card sx={{ p: 3 }}>
-            <FormProvider
-              methods={methods}
-              onSubmit={handleSubmit(addBeneficiary)}
-            >
-              <Box
-                rowGap={3}
-                columnGap={2}
-                display="grid"
-                gridTemplateColumns={{
-                  xs: "repeat(1, 1fr)",
-                  sm: "repeat(2, 1fr)",
-                }}
-              >
-                <RHFAutocomplete
-                  name="bank"
-                  disabled={remitterVerify?.beneVerified}
-                  onChange={setBankDetail}
-                  options={getBank.data}
-                  getOptionLabel={(option: any) => option.bankName}
-                  renderOption={(props, option) => (
-                    <Box
-                      component="li"
-                      sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
-                      {...props}
-                    >
-                      {option.bankName}
-                    </Box>
-                  )}
-                  renderInput={(params) => (
-                    <RHFTextField
-                      name="bankName"
-                      label="Bank Name"
-                      {...params}
-                      variant={
-                        remitterVerify?.beneVerified ? "filled" : "outlined"
-                      }
-                    />
-                  )}
+      <MotionModal open={open} width={{ xs: "95%", sm: 400 }}>
+        <FormProvider methods={methods} onSubmit={handleSubmit(addBeneficiary)}>
+          <Box
+            rowGap={2}
+            columnGap={2}
+            display="grid"
+            gridTemplateColumns={{
+              xs: "repeat(1, 1fr)",
+              sm: "repeat(2, 1fr)",
+            }}
+            mt={1}
+          >
+            <RHFAutocomplete
+              name="bank"
+              disabled={remitterVerify?.beneVerified}
+              onChange={setBankDetail}
+              options={getBank.data}
+              getOptionLabel={(option: any) => option.bankName}
+              renderOption={(props, option) => (
+                <Box
+                  component="li"
+                  sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                  {...props}
+                >
+                  {option.bankName}
+                </Box>
+              )}
+              renderInput={(params) => (
+                <RHFTextField
+                  name="bankName"
+                  label="Bank Name"
+                  {...params}
+                  variant={remitterVerify?.beneVerified ? "filled" : "outlined"}
                 />
+              )}
+            />
 
-                <RHFTextField
-                  name="ifsc"
-                  label="IFSC code"
-                  placeholder="IFSC code"
-                  disabled={remitterVerify?.beneVerified}
-                  variant={remitterVerify?.beneVerified ? "filled" : "outlined"}
-                  InputLabelProps={{ shrink: true }}
-                />
-                <RHFTextField
-                  name="accountNumber"
-                  label="Account Number"
-                  placeholder="Account Number"
-                  disabled={remitterVerify?.beneVerified}
-                  variant={remitterVerify?.beneVerified ? "filled" : "outlined"}
-                  InputLabelProps={{ shrink: true }}
-                />
-                <Stack
-                  justifyContent={"center"}
-                  alignItems={"center"}
-                  flexDirection={"row"}
-                >
-                  <LoadingButton
-                    variant="contained"
-                    size="small"
-                    onClick={verifyBene}
-                    disabled={remitterVerify?.beneVerified}
-                    loading={remitterVerify?.isLoading}
-                  >
-                    verify Account Detail
-                  </LoadingButton>
-                </Stack>
-                <RHFTextField
-                  name="beneName"
-                  label="Beneficiary Name"
-                  placeholder="Beneficiary Name"
-                  disabled={remitterVerify?.beneVerified}
-                  variant={remitterVerify?.beneVerified ? "filled" : "outlined"}
-                />
-                <RHFSelect
-                  name="remitterRelation"
-                  label="Relation"
-                  placeholder="Relation"
-                  SelectProps={{
-                    native: false,
-                    sx: { textTransform: "capitalize" },
-                  }}
-                >
-                  <MenuItem value="Husband/Wife">Husband/Wife</MenuItem>
-                  <MenuItem value="Brother/Sister">Brother/Sister</MenuItem>
-                  <MenuItem value="Mother/Father">Mother/Father</MenuItem>
-                  <MenuItem value="Son/Daughter">Son/Daughter</MenuItem>
-                  <MenuItem value="Aunt/Uncle">Aunt/Uncle</MenuItem>
-                  <MenuItem value="Niece/Nephew">Niece/Nephew</MenuItem>
-                  <MenuItem value="Friends">Friends</MenuItem>
-                  <MenuItem value="Other">other</MenuItem>
-                </RHFSelect>
-                <Divider />
-                <Divider />
-                <RHFTextField
-                  name="mobileNumber"
-                  label="Mobile Number (Optional)"
-                  type="number"
-                />
-                <RHFTextField
-                  name="email"
-                  type="email"
-                  label="Email (Optional)"
-                />
-              </Box>
-              <Stack flexDirection={"row"} gap={2} mt={2}>
-                <LoadingButton
-                  type="submit"
-                  variant="contained"
-                  loading={addBene.isLoading}
-                >
-                  Add Beneficiary
-                </LoadingButton>
-                <Button
-                  variant="contained"
-                  color="warning"
-                  onClick={handleClose}
-                >
-                  Close
-                </Button>
-              </Stack>
-            </FormProvider>
-          </Card>
-        </Grid>
-      </Modal>
+            <RHFTextField
+              name="ifsc"
+              label="IFSC code"
+              placeholder="IFSC code"
+              disabled={remitterVerify?.beneVerified}
+              variant={remitterVerify?.beneVerified ? "filled" : "outlined"}
+              InputLabelProps={{ shrink: true }}
+            />
+            <RHFTextField
+              name="accountNumber"
+              label="Account Number"
+              placeholder="Account Number"
+              disabled={remitterVerify?.beneVerified}
+              variant={remitterVerify?.beneVerified ? "filled" : "outlined"}
+              InputLabelProps={{ shrink: true }}
+            />
+            <Stack
+              justifyContent={"center"}
+              alignItems={"center"}
+              flexDirection={"row"}
+            >
+              <LoadingButton
+                variant="contained"
+                size="small"
+                onClick={verifyBene}
+                disabled={remitterVerify?.beneVerified}
+                loading={remitterVerify?.isLoading}
+              >
+                verify Account Detail
+              </LoadingButton>
+            </Stack>
+            <RHFTextField
+              name="beneName"
+              label="Beneficiary Name"
+              placeholder="Beneficiary Name"
+              disabled={remitterVerify?.beneVerified}
+              variant={remitterVerify?.beneVerified ? "filled" : "outlined"}
+            />
+            <RHFSelect
+              name="remitterRelation"
+              label="Relation"
+              placeholder="Relation"
+              SelectProps={{
+                native: false,
+                sx: { textTransform: "capitalize" },
+              }}
+            >
+              <MenuItem value="Husband/Wife">Husband/Wife</MenuItem>
+              <MenuItem value="Brother/Sister">Brother/Sister</MenuItem>
+              <MenuItem value="Mother/Father">Mother/Father</MenuItem>
+              <MenuItem value="Son/Daughter">Son/Daughter</MenuItem>
+              <MenuItem value="Aunt/Uncle">Aunt/Uncle</MenuItem>
+              <MenuItem value="Niece/Nephew">Niece/Nephew</MenuItem>
+              <MenuItem value="Friends">Friends</MenuItem>
+              <MenuItem value="Other">other</MenuItem>
+            </RHFSelect>
+            <Divider />
+            {isMobile && <Divider />}
+            <RHFTextField
+              name="mobileNumber"
+              label="Mobile Number (Optional)"
+              type="number"
+            />
+            <RHFTextField name="email" type="email" label="Email (Optional)" />
+          </Box>
+          <Stack flexDirection={"row"} gap={2} mt={2}>
+            <LoadingButton
+              type="submit"
+              variant="contained"
+              loading={addBene.isLoading}
+            >
+              Add Beneficiary
+            </LoadingButton>
+            <Button variant="contained" color="warning" onClick={handleClose}>
+              Close
+            </Button>
+          </Stack>
+        </FormProvider>
+      </MotionModal>
     </>
   );
 }
@@ -785,73 +756,56 @@ function BeneList({ row, callback, remitterNumber, deleteBene }: any) {
           </Stack>
         </TableCell>
       </TableRow>
-      <Modal
+      <MotionModal
         open={open2}
         onClose={handleClose2}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Grid
-          item
-          xs={12}
-          md={8}
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-          }}
-        >
-          <Card sx={{ p: 3 }}>
-            <Stack>
-              <TextField
-                type="number"
-                name="deleteotp"
-                label="OTP"
-                value={deleteOtp}
-                onChange={(e) => setDeleteOtp(e.target.value)}
-              />
-            </Stack>
-            {count === 0 ? (
-              <Typography
-                variant="subtitle2"
-                onClick={ResendOtp}
-                sx={{
-                  width: "fit-content",
-                  mt: 2,
-                  cursor: "pointer",
-                  color: theme.palette.primary.main,
-                }}
-              >
-                Resend OTP
-              </Typography>
-            ) : (
-              <Typography
-                variant="subtitle2"
-                sx={{ width: "fit-content", mt: 2 }}
-              >
-                Wait {count} sec to resend OTP
-              </Typography>
-            )}
+        <Stack>
+          <TextField
+            type="number"
+            name="deleteotp"
+            label="OTP"
+            value={deleteOtp}
+            onChange={(e) => setDeleteOtp(e.target.value)}
+          />
+        </Stack>
+        {count === 0 ? (
+          <Typography
+            variant="subtitle2"
+            onClick={ResendOtp}
+            sx={{
+              width: "fit-content",
+              mt: 2,
+              cursor: "pointer",
+              color: theme.palette.primary.main,
+            }}
+          >
+            Resend OTP
+          </Typography>
+        ) : (
+          <Typography variant="subtitle2" sx={{ width: "fit-content", mt: 2 }}>
+            Wait {count} sec to resend OTP
+          </Typography>
+        )}
 
-            <LoadingButton
-              variant="contained"
-              sx={{ mt: 2 }}
-              onClick={confirmDeleteBene}
-              loading={isLoading}
-            >
-              Delete Beneficiary
-            </LoadingButton>
-            <Button
-              variant="contained"
-              onClick={handleClose2}
-              sx={{ mt: 2, ml: 1 }}
-            >
-              Close
-            </Button>
-          </Card>
-        </Grid>
-      </Modal>
+        <LoadingButton
+          variant="contained"
+          sx={{ mt: 2 }}
+          onClick={confirmDeleteBene}
+          loading={isLoading}
+        >
+          Delete Beneficiary
+        </LoadingButton>
+        <Button
+          variant="contained"
+          onClick={handleClose2}
+          sx={{ mt: 2, ml: 1 }}
+        >
+          Close
+        </Button>
+      </MotionModal>
     </>
   );
 }

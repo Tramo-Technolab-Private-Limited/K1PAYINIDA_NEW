@@ -37,6 +37,7 @@ import { Helmet } from "react-helmet-async";
 import { SubCategoryContext } from "./Recharges";
 import { CategoryContext } from "../../../pages/Services";
 import { useAuthContext } from "src/auth/useAuthContext";
+import MotionModal from "src/components/animate/MotionModal";
 
 // ----------------------------------------------------------------------
 
@@ -427,6 +428,7 @@ function MobilePrepaid() {
           <RHFTextField
             name="amount"
             label="Amount"
+            type="number"
             placeholder="Amount"
             InputProps={{
               endAdornment: (
@@ -454,114 +456,105 @@ function MobilePrepaid() {
         </LoadingButton>
       </FormProvider>
 
-      <Modal
+      <MotionModal
         open={open}
         onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
+        width={{ xs: "95%", sm: "70%" }}
+        sx={{
+          position: "relative",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          maxHeight: "85%",
+          outline: "none",
+          background: "white",
+          overflow: "auto",
+          border: "16px 0 0 16px",
+          scrollbarWidth: "none",
+          cursor: "pointer",
+          borderRadius: "20px",
+        }}
       >
-        <Grid
-          item
-          // xs={12}
-          // md={8}
-          style={{
-            position: "relative",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "70%",
-            height: "85%",
-            outline: "none",
-            background: "white",
-            overflow: "auto",
-            border: "16px 0 0 16px",
-            scrollbarWidth: "none",
-            cursor: "pointer",
-            borderRadius: "20px",
-          }}
-        >
-          <Scrollbar sx={{ scrollbarWidth: "thin" }}>
-            <TableContainer
-              sx={{ p: 3 }}
-              style={{ borderBottom: "1px solid #BBBFBF" }}
-            >
-              <Card>
+        <Scrollbar sx={{ scrollbarWidth: "thin" }}>
+          <TableContainer>
+            {planList.length ? (
+              <>
                 <Tabs
-                  sx={{ background: "#F4F6F8" }}
+                  // sx={{ background: "#F4F6F8" }}
                   value={planCurrentTab}
+                  variant="standard"
                   onChange={(event, newValue) => tabChange(newValue)}
                 >
                   {TABS.map((tab) => (
-                    <Tab
-                      key={tab.value}
-                      sx={{ mx: 3 }}
-                      label={tab.label}
-                      value={tab.value}
-                    />
+                    <Tab key={tab.value} label={tab.label} value={tab.value} />
                   ))}
                 </Tabs>
-              </Card>
-
-              <Grid>
-                {planList.map((item: any, index: any) => (
-                  <TableContainer
-                    sx={{ px: 1 }}
-                    style={{ borderBottom: "1px solid #BBBFBF" }}
-                    key={index}
-                  >
-                    <Stack
-                      flexDirection={"row"}
-                      justifyContent={"space-between"}
-                      onClick={() => {
-                        setValue("amount", item.rs);
-                        handleClose();
-                      }}
+                <Grid>
+                  {planList.map((item: any, index: any) => (
+                    <TableContainer
+                      style={{ borderBottom: "1px solid #BBBFBF" }}
+                      key={index}
                     >
-                      <TableCell
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
+                      <Stack
+                        flexDirection={"row"}
+                        justifyContent={"space-between"}
+                        onClick={() => {
+                          setValue("amount", item.rs);
+                          handleClose();
                         }}
-                        sx={{ px: 0 }}
-                        key={index}
                       >
-                        Validity: {item.validity}
-                      </TableCell>
-                      <TableCell
-                        style={{
-                          boxShadow: "0px 1px 10px #BBBFBF",
-                          borderRadius: "15px",
-                        }}
-                        sx={{ px: 2, py: 0, my: 2 }}
-                        key={index}
-                      >
-                        <Iconify
-                          width={15}
-                          icon="material-symbols:currency-rupee"
-                        />
-                        {item.rs}
-                      </TableCell>
-                    </Stack>
-                    <TableRow style={{ textAlign: "justify" }} key={index}>
-                      {item.desc}
-                    </TableRow>
-                  </TableContainer>
-                ))}
-              </Grid>
-            </TableContainer>
-          </Scrollbar>
-        </Grid>
-      </Modal>
-      <Modal
-        open={open1}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
+                        <TableCell
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                          sx={{ px: 0 }}
+                          key={index}
+                        >
+                          Validity: {item.validity}
+                        </TableCell>
+                        <TableCell
+                          style={{
+                            boxShadow: "0px 1px 10px #BBBFBF",
+                            borderRadius: "15px",
+                          }}
+                          sx={{ px: 2, py: 0, my: 2 }}
+                          key={index}
+                        >
+                          <Iconify
+                            width={15}
+                            icon="material-symbols:currency-rupee"
+                          />
+                          {item.rs}
+                        </TableCell>
+                      </Stack>
+                      <TableRow style={{ textAlign: "justify" }} key={index}>
+                        {item.desc}
+                      </TableRow>
+                    </TableContainer>
+                  ))}
+                </Grid>
+              </>
+            ) : (
+              <Typography variant="h4" textAlign={"center"}>
+                {" "}
+                No Plans Found{" "}
+              </Typography>
+            )}
+            <Stack flexDirection={"row"} justifyContent={"end"} my={2}>
+              <Button variant="contained" size="small" onClick={handleClose}>
+                Close
+              </Button>
+            </Stack>
+          </TableContainer>
+        </Scrollbar>
+      </MotionModal>
+      <MotionModal open={open1}>
         <FormProvider methods={method2} onSubmit={handleOtpSubmit(formSubmit)}>
           <Box
             sx={style}
             style={{ borderRadius: "20px" }}
-            width={{ xs: "100%", sm: 450 }}
+            width={{ xs: "95%", sm: 450 }}
             minWidth={350}
           >
             <Typography variant="h4" textAlign={"center"}>
@@ -646,7 +639,7 @@ function MobilePrepaid() {
             {/* )} */}
           </Box>
         </FormProvider>
-      </Modal>
+      </MotionModal>
     </>
   );
 }

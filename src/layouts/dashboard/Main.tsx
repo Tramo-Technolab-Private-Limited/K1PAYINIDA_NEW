@@ -28,11 +28,11 @@ export default function Main({ children, sx, ...other }: BoxProps) {
           height: `${window.innerHeight - HEADER.H_MOBILE + SPACING}px`,
           overflow: "hidden",
           pt: `${HEADER.H_MOBILE + SPACING}px`,
-          // pb: `${HEADER.H_MOBILE + SPACING}px`,
+          px: 1,
           ...(isDesktop && {
             height: `${window.innerHeight - HEADER.H_DASHBOARD_DESKTOP + 80}px`,
             overflow: "hidden",
-            px: 1,
+            px: 1.5,
             pt: `${HEADER.H_DASHBOARD_DESKTOP + 33}px`,
             // pb: `${HEADER.H_DASHBOARD_DESKTOP + SPACING}px`,
           }),
@@ -51,6 +51,7 @@ export default function Main({ children, sx, ...other }: BoxProps) {
         height: `${window.innerHeight - HEADER.H_MOBILE + SPACING}px`,
         overflow: "hidden",
         pt: `${HEADER.H_MOBILE + SPACING}px`,
+        px: 1.5,
         ...(isDesktop && {
           height: `${window.innerHeight - 10 + SPACING}px`,
           overflow: "hidden",
