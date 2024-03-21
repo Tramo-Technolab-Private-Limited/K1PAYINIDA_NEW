@@ -4,6 +4,7 @@ import { Api } from "src/webservices";
 import { PATH_DASHBOARD } from "src/routes/paths";
 import {
   Button,
+  Card,
   Divider,
   FormControl,
   InputLabel,
@@ -304,33 +305,35 @@ export default function BBPSSchemePage() {
                       : { maxHeight: window.innerHeight - 250 }
                   }
                 >
-                  <Table
-                    sx={{ minWidth: 720 }}
-                    stickyHeader
-                    aria-label="customized table"
-                  >
-                    <TableHeadCustom
-                      headLabel={
-                        user?.role?.toLowerCase() == "m_distributor"
-                          ? tableLabels
-                          : user?.role?.toLowerCase() == "distributor"
-                          ? tableLabels1
-                          : tableLabels2
-                      }
-                    />
+                  <Card>
+                    <Table
+                      sx={{ minWidth: 720 }}
+                      stickyHeader
+                      aria-label="customized table"
+                    >
+                      <TableHeadCustom
+                        headLabel={
+                          user?.role?.toLowerCase() == "m_distributor"
+                            ? tableLabels
+                            : user?.role?.toLowerCase() == "distributor"
+                            ? tableLabels1
+                            : tableLabels2
+                        }
+                      />
 
-                    <TableBody sx={{ overflow: "auto" }}>
-                      {tempTableData.map((row: any) => {
-                        return (
-                          <SchemeRow
-                            key={row._id}
-                            row={row}
-                            rowDetail={user?.role}
-                          />
-                        );
-                      })}
-                    </TableBody>
-                  </Table>
+                      <TableBody sx={{ overflow: "auto" }}>
+                        {tempTableData.map((row: any) => {
+                          return (
+                            <SchemeRow
+                              key={row._id}
+                              row={row}
+                              rowDetail={user?.role}
+                            />
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
+                  </Card>
                 </Scrollbar>
               </TableContainer>
             </Stack>

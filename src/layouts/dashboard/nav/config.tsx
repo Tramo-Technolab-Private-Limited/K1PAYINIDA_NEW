@@ -85,8 +85,14 @@ const NavConfig = [
         icon: ICONS.user,
         children: [
           {
+            roles: ["agent"],
             title: "My Transactions",
             path: PATH_DASHBOARD.transaction.mytransaction,
+          },
+          {
+            title: "Transactions",
+            path: PATH_DASHBOARD.transaction.mytransaction,
+            roles: ["distributor", "m_distributor"],
           },
           {
             title: "Fund Flow",

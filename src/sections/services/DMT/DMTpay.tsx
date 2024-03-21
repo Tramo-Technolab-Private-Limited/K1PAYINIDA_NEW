@@ -140,6 +140,7 @@ export default function DMTpay({
           if (Response.data.code == 200) {
             enqueueSnackbar(Response.data.message);
             setTransactionDetail(Response.data.data);
+
             TextToSpeak(Response.data.message);
             UpdateUserDetail({
               main_wallet_amount:

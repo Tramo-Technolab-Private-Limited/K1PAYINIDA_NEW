@@ -12,6 +12,8 @@ import {
   TableContainer,
   Modal,
   Pagination,
+  MenuItem,
+  TextField,
 } from "@mui/material";
 
 // components
@@ -24,7 +26,19 @@ import useResponsive from "src/hooks/useResponsive";
 import { CustomAvatar } from "src/components/custom-avatar";
 import { fIndianCurrency } from "src/utils/formatNumber";
 import CustomPagination from "src/components/customFunctions/CustomPagination";
-
+import { LoadingButton } from "@mui/lab";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import DateRangePicker, {
+  useDateRangePicker,
+} from "src/components/date-range-picker";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import FormProvider, {
+  RHFSelect,
+  RHFTextField,
+} from "../../components/hook-form";
+import * as Yup from "yup";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 // ----------------------------------------------------------------------
 
 type RowProps = {
@@ -68,15 +82,69 @@ export default function AllDistributor() {
   const [SelectAgent, setSelectAgent] = useState([]);
   console.log("========== SelectAgent==============", SelectAgent);
 
+  type FormValuesProps = {
+    status: string;
+    clientRefId: string;
+    startDate: Date | null;
+    endDate: Date | null;
+  };
+
+  const txnSchema = Yup.object().shape({
+    status: Yup.string(),
+    clientRefId: Yup.string(),
+  });
+  const defaultValues = {
+    category: "",
+    status: "",
+    clientRefId: "",
+    startDate: null,
+    endDate: null,
+  };
+
+  const methods = useForm<FormValuesProps>({
+    resolver: yupResolver(txnSchema),
+    defaultValues,
+  });
+
+  const {
+    reset,
+    getValues,
+    setValue,
+    watch,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = methods;
+
+  const {
+    startDate,
+    endDate,
+    onChangeStartDate,
+    onChangeEndDate,
+    open: openPicker,
+    onOpen: onOpenPicker,
+    onClose: onClosePicker,
+    isSelected: isSelectedValuePicker,
+    isError,
+    shortLabel,
+  } = useDateRangePicker(null, null);
+
   const openEditModal = (val: any) => {
     setSelectedRow(val);
     setModalEdit(true);
+    let body = {
+      filter: {
+        userName: "",
+        userCode: "",
+        email: "",
+        mobile: "",
+      },
+    };
 
     let token = localStorage.getItem("token");
     Api(
       `agent/get_Distributors_All_Agents?distId=${val._id}&page=${currentPageAgent}&limit=${pageSizeAgent}`,
-      "GET",
-      "",
+      "POST",
+      body,
       token
     ).then((Response: any) => {
       console.log("==============Agent Details=====>", Response.data.data);
@@ -120,14 +188,26 @@ export default function AllDistributor() {
   }, [pageSize, currentPage]);
 
   const allDistributor = () => {
+    let body = {
+      filter: {
+        userName: "",
+        userCode: "",
+        email: "",
+        mobile: "",
+      },
+    };
+
     let token = localStorage.getItem("token");
     Api(
       `agent/get_All_Distributor?page=${currentPage}&limit=${pageSize}`,
-      "GET",
-      "",
+      "POST",
+      body,
       token
     ).then((Response: any) => {
-      console.log("======ApprovedList==User==response=====>" + Response);
+      console.log(
+        "======ApprovedList==User==response=====>zzzzzzzzzzzzzzzzzzzzzzzzzz",
+        Response
+      );
 
       if (Response.status == 200) {
         if (Response.data.code == 200) {
@@ -161,6 +241,72 @@ export default function AllDistributor() {
 
   return (
     <>
+      <Stack>
+        <FormProvider methods={methods} onSubmit={handleSubmit(allDistributor)}>
+          <Stack flexDirection={"row"} justifyContent={"end"}>
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              spacing={2}
+              style={{ padding: "0 25px", marginBottom: "10px" }}
+            >
+              <RHFTextField name="clientRefId" label="Client Ref Id" />
+              <Stack flexDirection={"row"} gap={1}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    label="Start date"
+                    inputFormat="DD/MM/YYYY"
+                    value={watch("startDate")}
+                    maxDate={new Date()}
+                    onChange={(newValue: any) =>
+                      setValue("startDate", newValue)
+                    }
+                    renderInput={(params: any) => (
+                      <TextField
+                        {...params}
+                        size={"small"}
+                        sx={{ width: 150 }}
+                      />
+                    )}
+                  />
+                  <DatePicker
+                    label="End date"
+                    inputFormat="DD/MM/YYYY"
+                    value={watch("endDate")}
+                    minDate={watch("startDate")}
+                    maxDate={new Date()}
+                    onChange={(newValue: any) => setValue("endDate", newValue)}
+                    renderInput={(params: any) => (
+                      <TextField
+                        {...params}
+                        size={"small"}
+                        sx={{ width: 150 }}
+                      />
+                    )}
+                  />
+                </LocalizationProvider>
+              </Stack>
+              <LoadingButton
+                variant="contained"
+                type="submit"
+                loading={isSubmitting}
+              >
+                Search
+              </LoadingButton>
+              <LoadingButton
+                variant="contained"
+                onClick={() => {
+                  reset(defaultValues);
+                  onChangeEndDate(null);
+                  onChangeStartDate(null);
+                  allDistributor();
+                }}
+              >
+                Clear
+              </LoadingButton>
+            </Stack>
+          </Stack>
+        </FormProvider>
+      </Stack>
       <Card>
         <TableContainer>
           <Scrollbar

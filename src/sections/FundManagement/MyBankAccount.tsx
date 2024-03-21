@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { Helmet } from "react-helmet-async";
 // sections
-
+import NoBankAccount from "../../../src/assets/illustrations/NoBankAccount.svg";
 import { useSnackbar } from "src/components/snackbar";
 import * as Yup from "yup";
 // form
@@ -37,6 +37,7 @@ import {
   varSlide,
 } from "../../components/animate";
 import MotionModal from "src/components/animate/MotionModal";
+import { TableNoData } from "src/components/table";
 
 // ----------------------------------------------------------------------
 type FormValuesProps = {
@@ -494,6 +495,17 @@ export default function MyBankAccount() {
             )
         )}
       </Box>
+
+      {userBankList?.length == 0 && (
+        <Stack flexDirection="row" justifyContent="center">
+          <Stack>
+            <img src={NoBankAccount} />
+            <Typography variant="h6" ml={10}>
+              No Bank Account add
+            </Typography>
+          </Stack>
+        </Stack>
+      )}
 
       <MotionModal
         open={open}

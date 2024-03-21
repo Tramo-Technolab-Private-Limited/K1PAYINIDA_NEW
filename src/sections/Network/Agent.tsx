@@ -73,11 +73,21 @@ export default function Agent() {
   }, [currentPage, pageSize]);
 
   const ApprovedList = () => {
+    let body = {
+      filter: {
+        userName: "",
+        userCode: "",
+        email: "",
+        mobile: "",
+      },
+    };
+
     let token = localStorage.getItem("token");
+
     Api(
       `agent/get_All_Agents?limit=${pageSize}&page=${currentPage}`,
-      "GET",
-      "",
+      "POST",
+      body,
       token
     ).then((Response: any) => {
       console.log("======ApprovedList==User==response=====>" + Response);
