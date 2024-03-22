@@ -1,10 +1,11 @@
 // @mui
 import { styled } from "@mui/material/styles";
 import { Box, Typography } from "@mui/material";
-// utils
-import { bgBlur } from "../../utils/cssStyles";
 // auth
 import { useAuthContext } from "../../auth/useAuthContext";
+//utils
+import { bgBlur } from "../../utils/cssStyles";
+
 // components
 import Image from "../../components/image";
 import { CustomAvatar } from "../../components/custom-avatar";
@@ -32,9 +33,9 @@ export default function ProfileCover({ cover }: any) {
   const { user } = useAuthContext();
   const StyledRoot = styled("div")(({ theme }) => ({
     "&:before": {
-      backgroundImage: `url(${
-        user?.shopImage[0]?.length && AwsDocSign(user?.shopImage[0])
-      })`,
+      ...bgBlur({
+        color: theme.palette.primary.light,
+      }),
       top: 0,
       zIndex: 9,
       content: "''",
@@ -49,10 +50,8 @@ export default function ProfileCover({ cover }: any) {
     <StyledRoot>
       <StyledInfo>
         <CustomAvatar
-          // src={user?.photoURL}
           src={user?.selfie[0]}
           alt={user?.displayName}
-          // name={user?.displayName}
           name={`${user?.firstName} ${user?.lastName}`}
           sx={{
             mx: "auto",
@@ -72,9 +71,12 @@ export default function ProfileCover({ cover }: any) {
             textAlign: { xs: "center", md: "left" },
           }}
         >
-          <Typography variant="h4">{`${user?.firstName} ${user?.lastName}`}</Typography>
+          <Typography
+            variant="h4"
+            sx={{ color: (theme) => theme.palette.common.white }}
+          >{`${user?.firstName} ${user?.lastName}`}</Typography>
 
-          <Typography sx={{ opacity: 0.72 }}>
+          <Typography sx={{ color: (theme) => theme.palette.common.white }}>
             {user?.role == "agent"
               ? "Agent"
               : user?.role == "distributor"
@@ -86,7 +88,7 @@ export default function ProfileCover({ cover }: any) {
 
       <Image
         alt="cover"
-        src={cover}
+        src={user?.shopImage[0]}
         sx={{
           top: 0,
           left: 0,

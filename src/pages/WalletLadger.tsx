@@ -27,7 +27,7 @@ import {
   TableContainer,
 } from "@mui/material";
 import Label from "src/components/label/Label";
-import { TableHeadCustom } from "src/components/table";
+import { TableHeadCustom, TableNoData } from "src/components/table";
 import React from "react";
 import Iconify from "src/components/iconify/Iconify";
 import { Api } from "src/webservices";
@@ -287,6 +287,7 @@ export default function WalletLadger() {
                           <LadgerRow key={row._id} row={row} />
                         ))}
                     </TableBody>
+                    <TableNoData isNotFound={!ladgerData?.length} />
                   </Table>
                 </Scrollbar>
               </TableContainer>

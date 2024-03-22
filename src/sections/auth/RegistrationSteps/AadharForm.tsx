@@ -39,6 +39,7 @@ import PanImage from "src/assets/Onboarding/PanImage.png";
 import { LoadingButton } from "@mui/lab";
 import AWS from "aws-sdk";
 import { Watch } from "@mui/icons-material";
+import useResponsive from "src/hooks/useResponsive";
 
 // ----------------------------------------------------------------------
 
@@ -157,7 +158,11 @@ export default function AadharForm(props: any) {
               enqueueSnackbar(Response.data.message);
               setInitTxn(Response.data.init_txn_id);
             } else {
-              enqueueSnackbar(Response.data.err.message);
+              enqueueSnackbar(
+                Response.data.message
+                  ? Response.data.message
+                  : Response.data.err.message
+              );
             }
           }
         }
