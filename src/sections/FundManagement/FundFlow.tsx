@@ -71,7 +71,7 @@ function FundFlow() {
   const [isTxnOpen, setIsTxnOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [sdata, setSdata] = useState([]);
-  const [pageSize, setPageSize] = useState<any>(25);
+  const [pageSize, setPageSize] = useState<any>(10000);
   const [currentPage, setCurrentPage] = useState<any>(1);
   const [pageCount, setPageCount] = useState<any>(0);
   const [Loading, setLoading] = useState(false);
@@ -195,12 +195,20 @@ function FundFlow() {
 
   const searchUsers = () => {
     let token = localStorage.getItem("token");
+    let body = {
+      filter: {
+        userName: "",
+        userCode: "",
+        email: "",
+        mobile: "",
+      },
+    };
     Api(
       `agent/get_All_${
         user?.role == "m_distributor" ? "Distributor" : "Agents"
-      }`,
-      "GET",
-      "",
+      }?page=${currentPage}&limit=${pageSize}`,
+      "POST",
+      body,
       token
     ).then((Response: any) => {
       if (Response.status == 200) {
@@ -227,8 +235,6 @@ function FundFlow() {
           if (Response.data.code == 200) {
             setSdata(Response.data.data.data);
             setPageCount(Response.data.data.totalNumberOfRecords);
-
-            enqueueSnackbar(Response.data.message);
           } else {
             enqueueSnackbar(Response.data.message);
           }
@@ -303,177 +309,168 @@ function FundFlow() {
   };
   return (
     <>
-      <Card
-        sx={{
-          bgcolor: "#00000",
-          boxShadow: "5",
-          borderRadius: "10px",
-          p: 2,
-        }}
-      >
-        <RoleBasedGuard hasContent roles={["distributor", "m_distributor"]}>
-          <Grid display={"grid"} m={1}>
-            <Typography variant="h3" my={2}>
-              Fund Flow
-            </Typography>
-            <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-              <Grid
-                display={"grid"}
-                gridTemplateColumns={{
-                  md: "repeat(1, 1fr)",
-                  sm: "repeat(1, 0.5fr)",
-                  xs: "repeat(1, 1fr,)",
+      <RoleBasedGuard hasContent roles={["distributor", "m_distributor"]}>
+        <Grid display={"grid"} m={1}>
+          <Typography variant="h3" my={2}>
+            Fund Flow
+          </Typography>
+          <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+            <Grid
+              display={"grid"}
+              gridTemplateColumns={{
+                md: "repeat(1, 1fr)",
+                sm: "repeat(1, 0.5fr)",
+                xs: "repeat(1, 1fr,)",
+              }}
+              gap={1}
+            >
+              <RHFSelect
+                name="transactionType"
+                label="Transaction Type"
+                placeholder="transaction Type"
+                SelectProps={{
+                  native: false,
+                  sx: { textTransform: "capitalize" },
                 }}
-                gap={1}
               >
-                <RHFSelect
-                  name="transactionType"
-                  label="Transaction Type"
-                  placeholder="transaction Type"
-                  SelectProps={{
-                    native: false,
-                    sx: { textTransform: "capitalize" },
-                  }}
-                >
-                  <MenuItem value={"credit"}>Credit</MenuItem>
-                  <MenuItem value={"debit"}>Debit</MenuItem>
-                </RHFSelect>
+                <MenuItem value={"credit"}>Credit</MenuItem>
+                <MenuItem value={"debit"}>Debit</MenuItem>
+              </RHFSelect>
 
-                {getValues("transactionType") && (
-                  <Stack sx={{ position: "relative", minWidth: "200px" }}>
-                    <RHFTextField
-                      fullWidth
-                      name="User"
-                      placeholder={
-                        getValues("transactionType") == "credit" ? "To" : "From"
-                      }
-                    />
-                    {filteredUser.length > 0 && watch("User").length > 0 && (
-                      <Stack
-                        sx={{
-                          position: "absolute",
-                          top: 40,
-                          zIndex: 9,
-                          width: "100%",
-                          bgcolor: "white",
-                          border: "1px solid grey",
-                          borderRadius: 2,
-                        }}
-                      >
-                        <Scrollbar sx={{ maxHeight: 400 }}>
-                          {filteredUser.map((item: any) => {
-                            return (
-                              <Stack
-                                flexDirection={"row"}
-                                gap={1}
-                                sx={{
-                                  p: 1,
-                                  cursor: "pointer",
-                                  color: "grey",
-                                  "&:hover": { color: "black" },
-                                }}
-                                onClick={() => {
-                                  setValue(
-                                    getValues("transactionType") == "credit"
-                                      ? "to"
-                                      : "from",
-                                    item
-                                  );
-                                  setValue(
-                                    "User",
-                                    `${item.firstName} ${item.lastName}`
-                                  );
-                                  setFilteredUser([]);
-                                }}
-                              >
-                                <CustomAvatar
-                                  src={item?.selfie[0]}
-                                  alt={item?.firstName}
-                                  name={item?.firstName}
-                                />
-                                <Stack>
-                                  <Typography variant="body2">
-                                    {item.firstName} {item.lastName}{" "}
-                                  </Typography>{" "}
-                                  <Typography variant="body2">
-                                    {item.userCode}
-                                  </Typography>{" "}
-                                  <Typography variant="body2">
-                                    {item.email}
-                                  </Typography>{" "}
-                                </Stack>
+              {getValues("transactionType") && (
+                <Stack sx={{ position: "relative", minWidth: "200px" }}>
+                  <RHFTextField
+                    fullWidth
+                    name="User"
+                    placeholder={
+                      getValues("transactionType") == "credit" ? "To" : "From"
+                    }
+                  />
+                  {filteredUser.length > 0 && watch("User").length > 0 && (
+                    <Stack
+                      sx={{
+                        position: "absolute",
+                        top: 40,
+                        zIndex: 9,
+                        width: "100%",
+                        bgcolor: "white",
+                        border: "1px solid grey",
+                        borderRadius: 2,
+                      }}
+                    >
+                      <Scrollbar sx={{ maxHeight: 400 }}>
+                        {filteredUser.map((item: any) => {
+                          return (
+                            <Stack
+                              flexDirection={"row"}
+                              gap={1}
+                              sx={{
+                                p: 1,
+                                cursor: "pointer",
+                                color: "grey",
+                                "&:hover": { color: "black" },
+                              }}
+                              onClick={() => {
+                                setValue(
+                                  getValues("transactionType") == "credit"
+                                    ? "to"
+                                    : "from",
+                                  item
+                                );
+                                setValue(
+                                  "User",
+                                  `${item.firstName} ${item.lastName}`
+                                );
+                                setFilteredUser([]);
+                              }}
+                            >
+                              <CustomAvatar
+                                src={item?.selfie[0]}
+                                alt={item?.firstName}
+                                name={item?.firstName}
+                              />
+                              <Stack>
+                                <Typography variant="body2">
+                                  {item.firstName} {item.lastName}{" "}
+                                </Typography>{" "}
+                                <Typography variant="body2">
+                                  {item.userCode}
+                                </Typography>{" "}
+                                <Typography variant="body2">
+                                  {item.email}
+                                </Typography>{" "}
                               </Stack>
-                            );
-                          })}
-                        </Scrollbar>
-                      </Stack>
-                    )}
-                  </Stack>
-                )}
+                            </Stack>
+                          );
+                        })}
+                      </Scrollbar>
+                    </Stack>
+                  )}
+                </Stack>
+              )}
 
-                <RHFTextField
-                  name="reason"
-                  label="Reasons"
-                  placeholder="Reasons"
-                />
-                <RHFTextField
-                  name="remarks"
-                  label="Remarks"
-                  placeholder="Remarks"
-                />
-                <RHFTextField
-                  type="number"
-                  name="amount"
-                  label="Amount"
-                  placeholder="Amount"
-                />
-              </Grid>
-              <LoadingButton
-                variant="contained"
-                sx={{ my: 2 }}
-                type="submit"
-                disabled={!isValid}
-              >
-                Proceed
-              </LoadingButton>
-              <ConfirmDialog
-                open={openConfirm}
-                onClose={handleCloseDetails}
-                title="Fund Transfer Confirmation"
-                content={`Are you sure to Transfer Rs.${getValues("amount")} ${
-                  getValues("transactionType") == "debit"
-                    ? `from ${getValues("from.firstName")} ${getValues(
-                        "from.lastName"
-                      )} to ${user?.firstName} ${user?.lastName}`
-                    : `from ${user?.firstName} ${user?.lastName} to ${getValues(
-                        "to.firstName"
-                      )} ${getValues("to.lastName")}`
-                } `}
-                action={
-                  <LoadingButton
-                    variant="contained"
-                    color="error"
-                    loading={isLoading}
-                    onClick={confirmTransaction}
-                  >
-                    Sure
-                  </LoadingButton>
-                }
+              <RHFTextField
+                name="reason"
+                label="Reasons"
+                placeholder="Reasons"
               />
-            </FormProvider>
-          </Grid>
+              <RHFTextField
+                name="remarks"
+                label="Remarks"
+                placeholder="Remarks"
+              />
+              <RHFTextField
+                type="number"
+                name="amount"
+                label="Amount"
+                placeholder="Amount"
+              />
+            </Grid>
+            <LoadingButton
+              variant="contained"
+              sx={{ my: 2 }}
+              type="submit"
+              disabled={!isValid}
+            >
+              Proceed
+            </LoadingButton>
+            <ConfirmDialog
+              open={openConfirm}
+              onClose={handleCloseDetails}
+              title="Fund Transfer Confirmation"
+              content={`Are you sure to Transfer Rs.${getValues("amount")} ${
+                getValues("transactionType") == "debit"
+                  ? `from ${getValues("from.firstName")} ${getValues(
+                      "from.lastName"
+                    )} to ${user?.firstName} ${user?.lastName}`
+                  : `from ${user?.firstName} ${user?.lastName} to ${getValues(
+                      "to.firstName"
+                    )} ${getValues("to.lastName")}`
+              } `}
+              action={
+                <LoadingButton
+                  variant="contained"
+                  color="error"
+                  loading={isLoading}
+                  onClick={confirmTransaction}
+                >
+                  Sure
+                </LoadingButton>
+              }
+            />
+          </FormProvider>
+        </Grid>
 
-          <TransactionModal
-            isTxnOpen={isTxnOpen}
-            handleTxnModal={() => {
-              setIsTxnOpen(false);
-              setErrorMsg("");
-            }}
-            errorMsg={errorMsg}
-            transactionDetail={transactionDetail}
-          />
-        </RoleBasedGuard>
-      </Card>
+        <TransactionModal
+          isTxnOpen={isTxnOpen}
+          handleTxnModal={() => {
+            setIsTxnOpen(false);
+            setErrorMsg("");
+          }}
+          errorMsg={errorMsg}
+          transactionDetail={transactionDetail}
+        />
+      </RoleBasedGuard>
     </>
   );
 }

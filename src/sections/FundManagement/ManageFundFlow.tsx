@@ -127,7 +127,9 @@ export default function ManageFundFlow() {
         }}
       >
         <Stack>
-          <FundFlow />
+          <Card>
+            <FundFlow />
+          </Card>
         </Stack>
 
         <Stack

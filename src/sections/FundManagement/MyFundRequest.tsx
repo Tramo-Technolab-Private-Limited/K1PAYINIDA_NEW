@@ -267,7 +267,14 @@ export default function (props: any) {
       ) : (
         <Grid item xs={16} md={12} lg={12}>
           <FormProvider methods={methods} onSubmit={handleSubmit(SearchData)}>
-            <Stack direction="row" gap={2} mt={2} mb={2}>
+            <Stack
+              direction="row"
+              justifyContent="first"
+              gap={2}
+              mt={2}
+              mb={2}
+              width="70%"
+            >
               <Stack>
                 <Stack flexDirection={"row"} gap={1}>
                   <FileFilterButton

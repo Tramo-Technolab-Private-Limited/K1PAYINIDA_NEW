@@ -15,6 +15,7 @@ import {
   Button,
   MenuItem,
   TextField,
+  Grid,
 } from "@mui/material";
 
 // components
@@ -40,6 +41,8 @@ import FormProvider, {
 import * as Yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import MotionModal from "src/components/animate/MotionModal";
+import FundFlow from "../FundManagement/FundFlow";
 
 // ----------------------------------------------------------------------
 
@@ -80,15 +83,15 @@ export default function AllDistributor() {
   const [currentPageAgent, setCurrentPageAgent] = useState<any>(1);
   const [TotalCountAgnet, setTotalCountAgnet] = useState<any>(0);
   const [selectedRow, setSelectedRow] = useState<RowProps | null>(null);
-
+  const [openFundtrans, setFundTrans] = React.useState(false);
   const [SelectAgent, setSelectAgent] = useState([]);
   console.log("========== SelectAgent==============", SelectAgent);
 
   type FormValuesProps = {
     status: string;
-    clientRefId: string;
-    startDate: Date | null;
-    endDate: Date | null;
+    shopName: string;
+    mobile: string;
+    userCode: string;
   };
 
   const txnSchema = Yup.object().shape({
@@ -98,9 +101,9 @@ export default function AllDistributor() {
   const defaultValues = {
     category: "",
     status: "",
-    clientRefId: "",
-    startDate: null,
-    endDate: null,
+    userCode: "",
+    mobile: "",
+    shopName: "",
   };
 
   const methods = useForm<FormValuesProps>({
@@ -117,19 +120,6 @@ export default function AllDistributor() {
     formState: { isSubmitting },
   } = methods;
 
-  const {
-    startDate,
-    endDate,
-    onChangeStartDate,
-    onChangeEndDate,
-    open: openPicker,
-    onOpen: onOpenPicker,
-    onClose: onClosePicker,
-    isSelected: isSelectedValuePicker,
-    isError,
-    shortLabel,
-  } = useDateRangePicker(null, null);
-
   const openEditModal = (val: any) => {
     setSelectedRow(val);
     setModalEdit(true);
@@ -140,6 +130,10 @@ export default function AllDistributor() {
         email: "",
         mobile: "",
       },
+    };
+
+    const FundTransfer = (val: any) => {
+      setFundTrans(true);
     };
 
     let token = localStorage.getItem("token");
@@ -163,6 +157,7 @@ export default function AllDistributor() {
   };
 
   const handleClose = () => setModalEdit(false);
+  const handleClosefunTrans = () => setFundTrans(false);
 
   const tableLabels: any = [
     { id: "product", label: "Name" },
@@ -193,10 +188,9 @@ export default function AllDistributor() {
   const allDistributor = () => {
     let body = {
       filter: {
-        userName: "",
-        userCode: "",
-        email: "",
-        mobile: "",
+        shopName: getValues("shopName"),
+        userCode: getValues("userCode"),
+        mobile: getValues("mobile"),
       },
     };
 
@@ -211,6 +205,7 @@ export default function AllDistributor() {
         if (Response.data.code == 200) {
           let arr: any = [];
           setTotalCount(Response?.data?.count);
+
           arr = Response.data.data.filter((item: any) => {
             return (
               (item.role == "agent" && item.referralCode != "") ||
@@ -230,59 +225,23 @@ export default function AllDistributor() {
     });
   };
 
-  const handlePageChange = (
-    event: React.ChangeEvent<unknown>,
-    value: number
-  ) => {
-    setCurrentPage(value);
+  const FundTransfer = (val: any) => {
+    setFundTrans(true);
   };
-
   return (
     <>
       <Stack>
         <FormProvider methods={methods} onSubmit={handleSubmit(allDistributor)}>
-          <Stack flexDirection={"row"} justifyContent={"end"}>
+          <Stack flexDirection={"row"} justifyContent={"first"}>
             <Stack
               direction={{ xs: "column", sm: "row" }}
               spacing={2}
               style={{ padding: "0 25px", marginBottom: "10px" }}
             >
-              <RHFTextField name="clientRefId" label="Client Ref Id" />
-              <Stack flexDirection={"row"} gap={1}>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    label="Start date"
-                    inputFormat="DD/MM/YYYY"
-                    value={watch("startDate")}
-                    maxDate={new Date()}
-                    onChange={(newValue: any) =>
-                      setValue("startDate", newValue)
-                    }
-                    renderInput={(params: any) => (
-                      <TextField
-                        {...params}
-                        size={"small"}
-                        sx={{ width: 150 }}
-                      />
-                    )}
-                  />
-                  <DatePicker
-                    label="End date"
-                    inputFormat="DD/MM/YYYY"
-                    value={watch("endDate")}
-                    minDate={watch("startDate")}
-                    maxDate={new Date()}
-                    onChange={(newValue: any) => setValue("endDate", newValue)}
-                    renderInput={(params: any) => (
-                      <TextField
-                        {...params}
-                        size={"small"}
-                        sx={{ width: 150 }}
-                      />
-                    )}
-                  />
-                </LocalizationProvider>
-              </Stack>
+              <RHFTextField name="shopName" label="Shop Name" />
+              <RHFTextField name="mobile" label="Mobile" />
+              <RHFTextField name="userCode" label="User Code" />
+
               <LoadingButton
                 variant="contained"
                 type="submit"
@@ -294,8 +253,6 @@ export default function AllDistributor() {
                 variant="contained"
                 onClick={() => {
                   reset(defaultValues);
-                  onChangeEndDate(null);
-                  onChangeStartDate(null);
                   allDistributor();
                 }}
               >
@@ -319,6 +276,7 @@ export default function AllDistributor() {
                     key={row}
                     row={row}
                     openEditModal={openEditModal}
+                    FundTransfer={FundTransfer}
                   />
                 ))}
               </TableBody>
@@ -359,6 +317,7 @@ export default function AllDistributor() {
                           key={row}
                           row={row}
                           openEditModal={openEditModal}
+                          FundTransfer={FundTransfer}
                         />
                       ))}
                     </TableBody>
@@ -388,6 +347,14 @@ export default function AllDistributor() {
           )}
         </Box>
       </Modal>
+
+      <MotionModal
+        open={openFundtrans}
+        onClose={handleClosefunTrans}
+        width={{ xs: "95%", sm: 500 }}
+      >
+        <FundFlow />
+      </MotionModal>
     </>
   );
 }
@@ -395,54 +362,60 @@ export default function AllDistributor() {
 type EcommerceBestSalesmanRowProps = {
   row: RowProps;
   openEditModal: (row: RowProps) => void;
+  FundTransfer: (row: RowProps) => void;
 };
 
 function EcommerceBestSalesmanRow({
   row,
   openEditModal,
+  FundTransfer,
 }: EcommerceBestSalesmanRowProps) {
   return (
-    <TableRow>
-      <TableCell>
-        <Stack direction="row" alignItems="center">
-          <CustomAvatar
-            alt={row.firstName}
-            src={row.selfie[0]}
-            name={row.firstName}
-          />
+    <>
+      <TableRow>
+        <TableCell>
+          <Stack direction="row" alignItems="center">
+            <CustomAvatar
+              alt={row.firstName}
+              src={row.selfie[0]}
+              name={row.firstName}
+            />
 
-          <Box sx={{ ml: 2 }}>
-            <Typography variant="subtitle2"> {row.firstName} </Typography>
-            <Typography variant="body2" sx={{ color: "text.secondary" }}>
-              {row.email}
-            </Typography>
-            <Typography variant="body2" sx={{ color: "text.secondary" }}>
-              {new Date(row.createdAt).toLocaleString()}
-            </Typography>
-          </Box>
-        </Stack>
-      </TableCell>
+            <Box sx={{ ml: 2 }}>
+              <Typography variant="subtitle2"> {row.firstName} </Typography>
+              <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                {row.email}
+              </Typography>
+              <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                {new Date(row.createdAt).toLocaleString()}
+              </Typography>
+            </Box>
+          </Stack>
+        </TableCell>
 
-      <TableCell onClick={() => openEditModal(row)}>
-        {row.userCode != "" ? row.userCode : "NA"}
-      </TableCell>
-      <TableCell>
-        {row.email}
-        <br />
-        {row.contact_no}
-      </TableCell>
-      <TableCell sx={{ color: "#0D571C" }}>
-        <Typography>
-          {" "}
-          Rs.{fIndianCurrency(row?.main_wallet_amount || "0")}
-        </Typography>
-      </TableCell>
-      <TableCell>{fDateTime(row.createdAt)}</TableCell>
-      <TableCell>{row.schemeId}</TableCell>
-      <TableCell align="right">{row.verificationStatus}</TableCell>
-      <TableCell align="right">
-        <Button variant="contained">Transfer</Button>
-      </TableCell>
-    </TableRow>
+        <TableCell onClick={() => openEditModal(row)}>
+          {row.userCode != "" ? row.userCode : "NA"}
+        </TableCell>
+        <TableCell>
+          {row.email}
+          <br />
+          {row.contact_no}
+        </TableCell>
+        <TableCell sx={{ color: "#0D571C" }}>
+          <Typography>
+            {" "}
+            Rs.{fIndianCurrency(row?.main_wallet_amount || "0")}
+          </Typography>
+        </TableCell>
+        <TableCell>{fDateTime(row.createdAt)}</TableCell>
+        <TableCell>{row.schemeId}</TableCell>
+        <TableCell align="right">{row.verificationStatus}</TableCell>
+        <TableCell align="right">
+          <Button variant="contained" onClick={() => FundTransfer(row)}>
+            Fund Transfer
+          </Button>
+        </TableCell>
+      </TableRow>
+    </>
   );
 }

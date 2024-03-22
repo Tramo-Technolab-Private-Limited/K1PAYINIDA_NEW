@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { Helmet } from "react-helmet-async";
 // sections
-import NoBankAccount from "../../../src/assets/illustrations/NoBankAccount.svg";
+
 import { useSnackbar } from "src/components/snackbar";
 import * as Yup from "yup";
 // form
@@ -37,8 +37,6 @@ import {
   varSlide,
 } from "../../components/animate";
 import MotionModal from "src/components/animate/MotionModal";
-import { TableNoData } from "src/components/table";
-import Image from "src/components/image/Image";
 
 // ----------------------------------------------------------------------
 type FormValuesProps = {
@@ -150,7 +148,7 @@ export default function MyBankAccount() {
     watch,
     setValue,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isValid },
   } = methods;
 
   const category = [
@@ -398,6 +396,7 @@ export default function MyBankAccount() {
                                     )
                                   }
                                   loading={defaultLoading}
+                                  variant="contained"
                                 >
                                   Set default Bank
                                 </LoadingButton>
@@ -497,21 +496,10 @@ export default function MyBankAccount() {
         )}
       </Box>
 
-      {userBankList?.length == 0 && (
-        <Stack flexDirection="row" justifyContent="center">
-          <Stack>
-            <Image src={NoBankAccount} alt="" width={"60%"} />
-            <Typography variant="h6" textAlign={"center"}>
-              No Bank Account added yet.
-            </Typography>
-          </Stack>
-        </Stack>
-      )}
-
       <MotionModal
         open={open}
         onClose={handleClose}
-        width={{ xs: "95%", sm: 500 }}
+        width={{ xs: "100%", sm: 500 }}
       >
         <FormProvider methods={methods} onSubmit={handleSubmit(addBank)}>
           <Grid
@@ -557,29 +545,33 @@ export default function MyBankAccount() {
               name="accountNumber"
               label="Account Number"
               placeholder="Account Number"
+              autoComplete="off"
             />
             <RHFTextField
               type="password"
               name="confirmAccountNumber"
               label="Confirm Account Number"
+              onPaste={(e) => e.preventDefault()}
               placeholder="Confirm Account Number"
             />
           </Grid>
-          <Stack flexDirection={"row"} gap={1} justifyContent={"end"} mt={1}>
-            <LoadingButton
-              loading={addBankLoading}
-              size="medium"
-              onClick={handleClose}
-            >
-              Cancel
-            </LoadingButton>
+          <Stack flexDirection={"row"} gap={1} justifyContent={"end"} mt={2}>
             <LoadingButton
               size="medium"
               type="submit"
               variant="contained"
               loading={addBankLoading}
+              disabled={!isValid}
             >
               Submit
+            </LoadingButton>
+            <LoadingButton
+              loading={addBankLoading}
+              size="medium"
+              onClick={handleClose}
+              variant="contained"
+            >
+              Close
             </LoadingButton>
           </Stack>
         </FormProvider>
