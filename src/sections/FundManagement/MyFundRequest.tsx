@@ -15,6 +15,7 @@ import {
   Pagination,
   styled,
   MenuItem,
+  TextField,
 } from "@mui/material";
 import * as Yup from "yup";
 import { Helmet } from "react-helmet-async";
@@ -23,7 +24,7 @@ import { useSnackbar } from "notistack";
 import { useForm } from "react-hook-form";
 import { Api } from "src/webservices";
 
-import { fDate, fDateTime } from "src/utils/formatTime";
+import { fDate, fDateFormatForApi, fDateTime } from "src/utils/formatTime";
 
 import ApiDataLoading from "src/components/customFunctions/ApiDataLoading";
 import Label from "src/components/label/Label";
@@ -38,6 +39,9 @@ import DateRangePicker from "src/components/date-range-picker/DateRangePicker";
 import Iconify from "src/components/iconify/Iconify";
 import FileFilterButton from "../MyTransaction/FileFilterButton";
 import { fIndianCurrency } from "src/utils/formatNumber";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 // ----------------------------------------------------------------------
 
 export default function (props: any) {
@@ -69,6 +73,8 @@ export default function (props: any) {
     Paymentmode: string;
     request_type: string;
     fundRequestId: string;
+    startDate: Date | null;
+    endDate: Date | null;
   };
 
   const FilterSchema = Yup.object().shape({
@@ -77,14 +83,13 @@ export default function (props: any) {
 
   const defaultValues = {
     phoneNumber: "",
-
     amount: "",
     Paymentmode: "",
     status: "",
     request_type: "",
     fundRequestId: "",
-    startDate: "",
-    endDate: "",
+    startDate: null,
+    endDate: null,
   };
   const methods = useForm<FormValuesProps>({
     resolver: yupResolver(FilterSchema),
@@ -225,8 +230,8 @@ export default function (props: any) {
       modeName: data.Paymentmode,
       mobileNumber: data.phoneNumber,
       amount: data.amount,
-      startDate: formattedStart,
-      endDate: formattedEndDate,
+      startDate: fDateFormatForApi(getValues("startDate")),
+      endDate: fDateFormatForApi(getValues("endDate")),
       type: "",
     };
     Api(`agent/fundManagement/getRaisedRequests`, "POST", body, token).then(
@@ -267,31 +272,7 @@ export default function (props: any) {
       ) : (
         <Grid item xs={16} md={12} lg={12}>
           <FormProvider methods={methods} onSubmit={handleSubmit(SearchData)}>
-            <Stack direction="row" gap={2} mt={2} mb={2}>
-              <Stack>
-                <Stack flexDirection={"row"} gap={1}>
-                  <FileFilterButton
-                    isSelected={!!isSelectedValuePicker}
-                    startIcon={<Iconify icon="eva:calendar-fill" />}
-                    onClick={onOpenPicker}
-                  >
-                    {isSelectedValuePicker ? shortLabel : "Select Date"}
-                  </FileFilterButton>
-                  <DateRangePicker
-                    variant="input"
-                    title="Choose Maximum 31 Days"
-                    startDate={startDate}
-                    endDate={endDate}
-                    onChangeStartDate={onChangeStartDate}
-                    onChangeEndDate={onChangeEndDate}
-                    open={openPicker}
-                    onClose={onClosePicker}
-                    isSelected={isSelectedValuePicker}
-                    isError={isError}
-                    // additionalFunction={ExportData}
-                  />
-                </Stack>
-              </Stack>
+            <Stack direction="row" gap={1} mt={2} mb={2}>
               <RHFSelect
                 name="Paymentmode"
                 label="Mode Of Payment"
@@ -339,7 +320,45 @@ export default function (props: any) {
                 placeholder="amount"
                 size="small"
               />
-
+              <Stack flexDirection={"row"} gap={1}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    label="Start date"
+                    inputFormat="DD/MM/YYYY"
+                    value={watch("startDate")}
+                    maxDate={new Date()}
+                    onChange={(newValue: any) =>
+                      setValue("startDate", newValue)
+                    }
+                    renderInput={(params: any) => (
+                      <TextField
+                        {...params}
+                        size={"small"}
+                        sx={{ maxWidth: 250 }}
+                      />
+                    )}
+                  />
+                  <DatePicker
+                    label="End date"
+                    inputFormat="DD/MM/YYYY"
+                    value={watch("endDate")}
+                    minDate={watch("startDate")}
+                    maxDate={
+                      watch("startDate")
+                        ? dayjs(watch("startDate")).add(31, "days").toDate()
+                        : null
+                    }
+                    onChange={(newValue: any) => setValue("endDate", newValue)}
+                    renderInput={(params: any) => (
+                      <TextField
+                        {...params}
+                        size={"small"}
+                        sx={{ maxWidth: 250 }}
+                      />
+                    )}
+                  />
+                </LocalizationProvider>
+              </Stack>
               <Button variant="contained" type="submit">
                 Search
               </Button>
