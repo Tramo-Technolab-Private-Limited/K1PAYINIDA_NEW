@@ -51,7 +51,7 @@ const CustomAvatar = forwardRef<HTMLDivElement, CustomAvatarProps>(
             fontWeight: theme.typography.fontWeightMedium,
             ...sx,
           }}
-          src={secureLink}
+          src={src}
           {...other}
         >
           {name && charAtName}

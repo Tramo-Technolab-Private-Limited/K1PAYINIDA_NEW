@@ -7,23 +7,15 @@ import { yupResolver } from "@hookform/resolvers/yup";
 // @mui
 import {
   Stack,
-  IconButton,
   RadioGroup,
   Radio,
   Checkbox,
-  Modal,
   TextField,
   Button,
-  Grid,
   Tabs,
   Box,
-  Card,
-  Alert,
-  InputAdornment,
   FormHelperText,
   Typography,
-  Link,
-  CircularProgress,
   useTheme,
 } from "@mui/material";
 
@@ -476,7 +468,6 @@ export default function AuthRegisterForm(props: any) {
   // useEffect(() => requestPermission(), []);
 
   const createUser = () => {
-
     const body = {
       contactNo: formValues.mobileNumber,
       email: formValues.email?.toLowerCase(),
@@ -694,7 +685,7 @@ export default function AuthRegisterForm(props: any) {
           <Stack
             sx={{
               display: "flex",
-              flexDirection: { xs: "column", md: "row" },
+              flexDirection: "row",
               gap: 1,
             }}
           >
@@ -745,7 +736,7 @@ export default function AuthRegisterForm(props: any) {
                   </Stack>
                 ))}
             </Stack>
-            <Stack ml={10}>
+            <Stack ml={5}>
               {refName && (
                 <Stack flexDirection="row" gap={1}>
                   <Typography sx={{ color: "green" }} mt={1}>
@@ -925,7 +916,7 @@ export default function AuthRegisterForm(props: any) {
             <Stack
               sx={{
                 display: "flex",
-                flexDirection: { xs: "column", md: "row" },
+                flexDirection: "row",
 
                 gap: 1,
               }}
