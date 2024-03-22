@@ -34,7 +34,7 @@ import { useSnackbar } from "notistack";
 import React from "react";
 import { Api } from "src/webservices";
 import Scrollbar from "src/components/scrollbar";
-import { TableHeadCustom } from "src/components/table";
+import { TableHeadCustom, TableNoData } from "src/components/table";
 import Iconify from "src/components/iconify/Iconify";
 import ReactToPrint from "react-to-print";
 import * as XLSX from "xlsx";
@@ -622,6 +622,7 @@ export default function MyTransactions() {
                         <TransactionRow key={row._id} row={row} />
                       ))}
                     </TableBody>
+                    <TableNoData isNotFound={!filterdValue.length} />
                   </Table>
                 </Scrollbar>
               </Card>
@@ -865,8 +866,15 @@ function TransactionRow({ row }: childProps) {
 
         {/* Operator Txn Id */}
         <StyledTableCell>
-          <Typography variant="body2" textAlign={"center"}>
-            {newRow?.vendorUtrNumber || "-"}
+          <Typography>
+          {newRow?.vendorUtrNumber || "-"}
+            {newRow?.vendorUtrNumber && (
+              <Tooltip title="Copy" placement="top">
+                <IconButton onClick={() => onCopy(newRow?.vendorUtrNumber)}>
+                  <Iconify icon="eva:copy-fill" width={20} />
+                </IconButton>
+              </Tooltip>
+            )}
           </Typography>
         </StyledTableCell>
 
