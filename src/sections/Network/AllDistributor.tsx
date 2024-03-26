@@ -70,6 +70,7 @@ type RowProps = {
   createdAt: string;
   selfie: any;
   AEPS_wallet_amount: any;
+  company_name: string;
 };
 
 export default function AllDistributor() {
@@ -385,6 +386,9 @@ function EcommerceBestSalesmanRow({
               <Typography variant="subtitle2"> {row.firstName} </Typography>
               <Typography variant="body2" sx={{ color: "text.secondary" }}>
                 {row.email}
+              </Typography>
+              <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                {row.company_name}
               </Typography>
               <Typography variant="body2" sx={{ color: "text.secondary" }}>
                 {new Date(row.createdAt).toLocaleString()}

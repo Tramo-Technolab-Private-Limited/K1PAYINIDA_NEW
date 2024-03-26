@@ -461,10 +461,6 @@ function MobilePrepaid() {
         onClose={handleClose}
         width={{ xs: "95%", sm: "70%" }}
         sx={{
-          position: "relative",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
           maxHeight: "85%",
           outline: "none",
           background: "white",
@@ -549,95 +545,68 @@ function MobilePrepaid() {
           </TableContainer>
         </Scrollbar>
       </MotionModal>
-      <MotionModal open={open1}>
+      <MotionModal open={open1} width={{ xs: "95%", sm: "70%" }}>
         <FormProvider methods={method2} onSubmit={handleOtpSubmit(formSubmit)}>
-          <Box
-            sx={style}
-            style={{ borderRadius: "20px" }}
-            width={{ xs: "95%", sm: 450 }}
-            minWidth={350}
+          <Typography variant="h4" textAlign={"center"}>
+            Confirm Details
+          </Typography>
+          <Stack flexDirection={"row"} justifyContent={"space-between"} mt={2}>
+            <Typography variant="subtitle1">Amount</Typography>
+            <Typography variant="body1">{getValues("amount")}</Typography>
+          </Stack>
+          <Stack flexDirection={"row"} justifyContent={"space-between"} mt={2}>
+            <Typography variant="subtitle1">Operator</Typography>
+            <Typography variant="body1">{getValues("operatorName")}</Typography>
+          </Stack>
+          <Stack flexDirection={"row"} justifyContent={"space-between"} mt={2}>
+            <Typography variant="subtitle1">circle</Typography>
+            <Typography variant="body1">{getValues("circle")}</Typography>
+          </Stack>
+          <Stack flexDirection={"row"} justifyContent={"space-between"} mt={2}>
+            <Typography variant="subtitle1">Mobile Number</Typography>
+            <Typography variant="body1">{getValues("mobileNumber")}</Typography>
+          </Stack>
+          <Stack
+            alignItems={"center"}
+            justifyContent={"space-between"}
+            mt={2}
+            gap={2}
           >
-            <Typography variant="h4" textAlign={"center"}>
-              Confirm Details
-            </Typography>
-            <Stack
-              flexDirection={"row"}
-              justifyContent={"space-between"}
-              mt={2}
-            >
-              <Typography variant="subtitle1">Amount</Typography>
-              <Typography variant="body1">{getValues("amount")}</Typography>
-            </Stack>
-            <Stack
-              flexDirection={"row"}
-              justifyContent={"space-between"}
-              mt={2}
-            >
-              <Typography variant="subtitle1">Operator</Typography>
-              <Typography variant="body1">
-                {getValues("operatorName")}
-              </Typography>
-            </Stack>
-            <Stack
-              flexDirection={"row"}
-              justifyContent={"space-between"}
-              mt={2}
-            >
-              <Typography variant="subtitle1">circle</Typography>
-              <Typography variant="body1">{getValues("circle")}</Typography>
-            </Stack>
-            <Stack
-              flexDirection={"row"}
-              justifyContent={"space-between"}
-              mt={2}
-            >
-              <Typography variant="subtitle1">Mobile Number</Typography>
-              <Typography variant="body1">
-                {getValues("mobileNumber")}
-              </Typography>
-            </Stack>
-            <Stack
-              alignItems={"center"}
-              justifyContent={"space-between"}
-              mt={2}
-              gap={2}
-            >
-              <Typography variant="h4">Confirm NPIN</Typography>
-              <RHFCodes
-                keyName="otp"
-                inputs={["otp1", "otp2", "otp3", "otp4", "otp5", "otp6"]}
-                type="password"
-              />
+            <Typography variant="h4">Confirm NPIN</Typography>
+            <RHFCodes
+              keyName="otp"
+              inputs={["otp1", "otp2", "otp3", "otp4", "otp5", "otp6"]}
+              type="password"
+            />
 
-              {(!!error2.otp1 ||
-                !!error2.otp2 ||
-                !!error2.otp3 ||
-                !!error2.otp4 ||
-                !!error2.otp5 ||
-                !!error2.otp6) && (
-                <FormHelperText error sx={{ px: 2 }}>
-                  Code is required
-                </FormHelperText>
-              )}
-            </Stack>
-            <Stack flexDirection={"row"} gap={1} mt={2}>
-              <LoadingButton
-                type="submit"
-                variant="contained"
-                loading={rechargeState.isLoading}
-              >
-                Confirm
-              </LoadingButton>
-              <LoadingButton
-                variant="contained"
-                color="warning"
-                onClick={handleClose1}
-              >
-                Close
-              </LoadingButton>
-            </Stack>
-            {/* )} */}
-          </Box>
+            {(!!error2.otp1 ||
+              !!error2.otp2 ||
+              !!error2.otp3 ||
+              !!error2.otp4 ||
+              !!error2.otp5 ||
+              !!error2.otp6) && (
+              <FormHelperText error sx={{ px: 2 }}>
+                Code is required
+              </FormHelperText>
+            )}
+          </Stack>
+          <Stack flexDirection={"row"} gap={1} mt={2}>
+            <LoadingButton
+              type="submit"
+              variant="contained"
+              loading={rechargeState.isLoading}
+            >
+              Confirm
+            </LoadingButton>
+            <LoadingButton
+              variant="contained"
+              color="warning"
+              onClick={handleClose1}
+            >
+              Close
+            </LoadingButton>
+          </Stack>
+          {/* )} */}
         </FormProvider>
       </MotionModal>
     </>
