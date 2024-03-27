@@ -1114,7 +1114,7 @@ function TransactionRow({ row }: childProps) {
             {/* <IconButton>
               <OrderIcon />
             </IconButton> */}
-            {newRow?.categoryName == "DMT2" && newRow.status !== "hold" && (
+            {newRow?.categoryName == "DMT2" && newRow.status == "hold" && (
               <Button variant="contained" onClick={handleOpen}>
                 Re-Claim
               </Button>
