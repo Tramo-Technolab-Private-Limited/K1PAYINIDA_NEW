@@ -130,7 +130,7 @@ export default function CreateNpin() {
             if (Response.data.code == 200) {
               enqueueSnackbar(Response.data.message);
               UpdateUserDetail({ isNPIN: true });
-              navigate(PATH_DASHBOARD.root);
+              navigate(PATH_DASHBOARD.mystats);
             } else {
               enqueueSnackbar(Response.data.message);
             }
