@@ -37,6 +37,7 @@ import { Helmet } from "react-helmet-async";
 import { SubCategoryContext } from "./Recharges";
 import { CategoryContext } from "../../../pages/Services";
 import { useAuthContext } from "src/auth/useAuthContext";
+import MotionModal from "src/components/animate/MotionModal";
 
 // ----------------------------------------------------------------------
 
@@ -427,6 +428,7 @@ function MobilePrepaid() {
           <RHFTextField
             name="amount"
             label="Amount"
+            type="number"
             placeholder="Amount"
             InputProps={{
               endAdornment: (
@@ -454,199 +456,159 @@ function MobilePrepaid() {
         </LoadingButton>
       </FormProvider>
 
-      <Modal
+      <MotionModal
         open={open}
         onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
+        width={{ xs: "95%", sm: "70%" }}
+        sx={{
+          maxHeight: "85%",
+          outline: "none",
+          background: "white",
+          overflow: "auto",
+          border: "16px 0 0 16px",
+          scrollbarWidth: "none",
+          cursor: "pointer",
+          borderRadius: "20px",
+        }}
       >
-        <Grid
-          item
-          // xs={12}
-          // md={8}
-          style={{
-            position: "relative",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "70%",
-            height: "85%",
-            outline: "none",
-            background: "white",
-            overflow: "auto",
-            border: "16px 0 0 16px",
-            scrollbarWidth: "none",
-            cursor: "pointer",
-            borderRadius: "20px",
-          }}
-        >
-          <Scrollbar sx={{ scrollbarWidth: "thin" }}>
-            <TableContainer
-              sx={{ p: 3 }}
-              style={{ borderBottom: "1px solid #BBBFBF" }}
-            >
-              <Card>
+        <Scrollbar sx={{ scrollbarWidth: "thin" }}>
+          <TableContainer>
+            {planList.length ? (
+              <>
                 <Tabs
-                  sx={{ background: "#F4F6F8" }}
+                  // sx={{ background: "#F4F6F8" }}
                   value={planCurrentTab}
+                  variant="standard"
                   onChange={(event, newValue) => tabChange(newValue)}
                 >
                   {TABS.map((tab) => (
-                    <Tab
-                      key={tab.value}
-                      sx={{ mx: 3 }}
-                      label={tab.label}
-                      value={tab.value}
-                    />
+                    <Tab key={tab.value} label={tab.label} value={tab.value} />
                   ))}
                 </Tabs>
-              </Card>
-
-              <Grid>
-                {planList.map((item: any, index: any) => (
-                  <TableContainer
-                    sx={{ px: 1 }}
-                    style={{ borderBottom: "1px solid #BBBFBF" }}
-                    key={index}
-                  >
-                    <Stack
-                      flexDirection={"row"}
-                      justifyContent={"space-between"}
-                      onClick={() => {
-                        setValue("amount", item.rs);
-                        handleClose();
-                      }}
+                <Grid>
+                  {planList.map((item: any, index: any) => (
+                    <TableContainer
+                      style={{ borderBottom: "1px solid #BBBFBF" }}
+                      key={index}
                     >
-                      <TableCell
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
+                      <Stack
+                        flexDirection={"row"}
+                        justifyContent={"space-between"}
+                        onClick={() => {
+                          setValue("amount", item.rs);
+                          handleClose();
                         }}
-                        sx={{ px: 0 }}
-                        key={index}
                       >
-                        Validity: {item.validity}
-                      </TableCell>
-                      <TableCell
-                        style={{
-                          boxShadow: "0px 1px 10px #BBBFBF",
-                          borderRadius: "15px",
-                        }}
-                        sx={{ px: 2, py: 0, my: 2 }}
-                        key={index}
-                      >
-                        <Iconify
-                          width={15}
-                          icon="material-symbols:currency-rupee"
-                        />
-                        {item.rs}
-                      </TableCell>
-                    </Stack>
-                    <TableRow style={{ textAlign: "justify" }} key={index}>
-                      {item.desc}
-                    </TableRow>
-                  </TableContainer>
-                ))}
-              </Grid>
-            </TableContainer>
-          </Scrollbar>
-        </Grid>
-      </Modal>
-      <Modal
-        open={open1}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <FormProvider methods={method2} onSubmit={handleOtpSubmit(formSubmit)}>
-          <Box
-            sx={style}
-            style={{ borderRadius: "20px" }}
-            width={{ xs: "100%", sm: 450 }}
-            minWidth={350}
-          >
-            <Typography variant="h4" textAlign={"center"}>
-              Confirm Details
-            </Typography>
-            <Stack
-              flexDirection={"row"}
-              justifyContent={"space-between"}
-              mt={2}
-            >
-              <Typography variant="subtitle1">Amount</Typography>
-              <Typography variant="body1">{getValues("amount")}</Typography>
-            </Stack>
-            <Stack
-              flexDirection={"row"}
-              justifyContent={"space-between"}
-              mt={2}
-            >
-              <Typography variant="subtitle1">Operator</Typography>
-              <Typography variant="body1">
-                {getValues("operatorName")}
+                        <TableCell
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                          sx={{ px: 0 }}
+                          key={index}
+                        >
+                          Validity: {item.validity}
+                        </TableCell>
+                        <TableCell
+                          style={{
+                            boxShadow: "0px 1px 10px #BBBFBF",
+                            borderRadius: "15px",
+                          }}
+                          sx={{ px: 2, py: 0, my: 2 }}
+                          key={index}
+                        >
+                          <Iconify
+                            width={15}
+                            icon="material-symbols:currency-rupee"
+                          />
+                          {item.rs}
+                        </TableCell>
+                      </Stack>
+                      <TableRow style={{ textAlign: "justify" }} key={index}>
+                        {item.desc}
+                      </TableRow>
+                    </TableContainer>
+                  ))}
+                </Grid>
+              </>
+            ) : (
+              <Typography variant="h4" textAlign={"center"}>
+                {" "}
+                No Plans Found{" "}
               </Typography>
-            </Stack>
-            <Stack
-              flexDirection={"row"}
-              justifyContent={"space-between"}
-              mt={2}
-            >
-              <Typography variant="subtitle1">circle</Typography>
-              <Typography variant="body1">{getValues("circle")}</Typography>
-            </Stack>
-            <Stack
-              flexDirection={"row"}
-              justifyContent={"space-between"}
-              mt={2}
-            >
-              <Typography variant="subtitle1">Mobile Number</Typography>
-              <Typography variant="body1">
-                {getValues("mobileNumber")}
-              </Typography>
-            </Stack>
-            <Stack
-              alignItems={"center"}
-              justifyContent={"space-between"}
-              mt={2}
-              gap={2}
-            >
-              <Typography variant="h4">Confirm NPIN</Typography>
-              <RHFCodes
-                keyName="otp"
-                inputs={["otp1", "otp2", "otp3", "otp4", "otp5", "otp6"]}
-                type="password"
-              />
-
-              {(!!error2.otp1 ||
-                !!error2.otp2 ||
-                !!error2.otp3 ||
-                !!error2.otp4 ||
-                !!error2.otp5 ||
-                !!error2.otp6) && (
-                <FormHelperText error sx={{ px: 2 }}>
-                  Code is required
-                </FormHelperText>
-              )}
-            </Stack>
-            <Stack flexDirection={"row"} gap={1} mt={2}>
-              <LoadingButton
-                type="submit"
-                variant="contained"
-                loading={rechargeState.isLoading}
-              >
-                Confirm
-              </LoadingButton>
-              <LoadingButton
-                variant="contained"
-                color="warning"
-                onClick={handleClose1}
-              >
+            )}
+            <Stack flexDirection={"row"} justifyContent={"end"} my={2}>
+              <Button variant="contained" size="small" onClick={handleClose}>
                 Close
-              </LoadingButton>
+              </Button>
             </Stack>
-            {/* )} */}
-          </Box>
+          </TableContainer>
+        </Scrollbar>
+      </MotionModal>
+      <MotionModal open={open1} width={{ xs: "95%", sm: "70%" }}>
+        <FormProvider methods={method2} onSubmit={handleOtpSubmit(formSubmit)}>
+          <Typography variant="h4" textAlign={"center"}>
+            Confirm Details
+          </Typography>
+          <Stack flexDirection={"row"} justifyContent={"space-between"} mt={2}>
+            <Typography variant="subtitle1">Amount</Typography>
+            <Typography variant="body1">{getValues("amount")}</Typography>
+          </Stack>
+          <Stack flexDirection={"row"} justifyContent={"space-between"} mt={2}>
+            <Typography variant="subtitle1">Operator</Typography>
+            <Typography variant="body1">{getValues("operatorName")}</Typography>
+          </Stack>
+          <Stack flexDirection={"row"} justifyContent={"space-between"} mt={2}>
+            <Typography variant="subtitle1">circle</Typography>
+            <Typography variant="body1">{getValues("circle")}</Typography>
+          </Stack>
+          <Stack flexDirection={"row"} justifyContent={"space-between"} mt={2}>
+            <Typography variant="subtitle1">Mobile Number</Typography>
+            <Typography variant="body1">{getValues("mobileNumber")}</Typography>
+          </Stack>
+          <Stack
+            alignItems={"center"}
+            justifyContent={"space-between"}
+            mt={2}
+            gap={2}
+          >
+            <Typography variant="h4">Confirm NPIN</Typography>
+            <RHFCodes
+              keyName="otp"
+              inputs={["otp1", "otp2", "otp3", "otp4", "otp5", "otp6"]}
+              type="password"
+            />
+
+            {(!!error2.otp1 ||
+              !!error2.otp2 ||
+              !!error2.otp3 ||
+              !!error2.otp4 ||
+              !!error2.otp5 ||
+              !!error2.otp6) && (
+              <FormHelperText error sx={{ px: 2 }}>
+                Code is required
+              </FormHelperText>
+            )}
+          </Stack>
+          <Stack flexDirection={"row"} gap={1} mt={2}>
+            <LoadingButton
+              type="submit"
+              variant="contained"
+              loading={rechargeState.isLoading}
+            >
+              Confirm
+            </LoadingButton>
+            <LoadingButton
+              variant="contained"
+              color="warning"
+              onClick={handleClose1}
+            >
+              Close
+            </LoadingButton>
+          </Stack>
+          {/* )} */}
         </FormProvider>
-      </Modal>
+      </MotionModal>
     </>
   );
 }

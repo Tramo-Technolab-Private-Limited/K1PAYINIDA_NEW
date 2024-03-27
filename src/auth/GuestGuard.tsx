@@ -15,9 +15,9 @@ type GuestGuardProps = {
 export default function GuestGuard({ children }: GuestGuardProps) {
   const { isAuthenticated, isInitialized, user, location } = useAuthContext();
 
-  if (!location) {
-    return <LocationInstruction />;
-  }
+  // if (!location) {
+  //   return <LocationInstruction />;
+  // }
 
   if (isAuthenticated) {
     return user?.finalStatus !== "approved" && !user?.isNPIN ? (

@@ -4,6 +4,7 @@ import { Api } from "src/webservices";
 import { PATH_DASHBOARD } from "src/routes/paths";
 import {
   Button,
+  Card,
   Divider,
   FormControl,
   InputLabel,
@@ -223,7 +224,7 @@ export default function BBPSSchemePage() {
     <>
       {user?.role === "m_distributor" && (
         <>
-          <FormControl sx={{ mt: 1, ml: 1, minWidth: 200 }}>
+          <FormControl sx={{ ml: 1, minWidth: 200 }}>
             <TextField
               id="outlined-select-currency-native"
               select
@@ -252,14 +253,9 @@ export default function BBPSSchemePage() {
       ) : (
         <>
           {tableData.length > 0 && (
-            <Stack mx={1} mt={2}>
+            <Stack>
               <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-                <Stack
-                  flexDirection={"row"}
-                  gap={1}
-                  mb={1}
-                  width={{ xs: "100%", sm: "50%" }}
-                >
+                <Stack flexDirection={"row"} gap={1} mb={1}>
                   <RHFSelect
                     name="subcategory"
                     label="Category"
@@ -300,8 +296,8 @@ export default function BBPSSchemePage() {
                 <Scrollbar
                   sx={
                     isMobile
-                      ? { maxHeight: window.innerHeight - 130 }
-                      : { maxHeight: window.innerHeight - 250 }
+                      ? { maxHeight: window.innerHeight - 200 }
+                      : { maxHeight: window.innerHeight - 160 }
                   }
                 >
                   <Table
@@ -339,12 +335,17 @@ export default function BBPSSchemePage() {
       )}
 
       <CustomPagination
-        pageSize={pageSize}
-        onChange={(event: React.ChangeEvent<unknown>, value: number) => {
-          setCurrentPage(value);
+        page={currentPage - 1}
+        count={isFilter ? searchData.length : tableData.length}
+        onPageChange={(event: any, newPage: any) => {
+          setCurrentPage(newPage + 1);
         }}
-        page={currentPage}
-        Count={(isFilter ? searchData : tableData).length}
+        rowsPerPage={pageSize}
+        onRowsPerPageChange={(event: any) => {
+          const newPageSize = parseInt(event.target.value, 10);
+          setPageSize(newPageSize);
+          setCurrentPage(1);
+        }}
       />
     </>
   );

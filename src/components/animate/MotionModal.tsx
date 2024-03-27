@@ -54,13 +54,13 @@ export default function MotionModal({
                   backgroundColor: "#fff",
                   borderRadius: 2,
                   boxShadow: 24,
-                  p: 4,
+                  p: { xs: 2, sm: 4 },
                 }}
               >
                 <Scrollbar
                   sx={{
-                    maxHeight: `${window.innerHeight - 100}px`,
-                    maxWidth: `${window.innerWidth - 100}px`,
+                    maxHeight: `${window.innerHeight}px`,
+                    maxWidth: `${window.innerWidth}px`,
                     pr: 1,
                   }}
                 >

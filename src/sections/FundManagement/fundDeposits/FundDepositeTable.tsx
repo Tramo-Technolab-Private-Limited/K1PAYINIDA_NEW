@@ -1,5 +1,6 @@
 import {
   Card,
+  Grid,
   Stack,
   Table,
   TableBody,
@@ -12,7 +13,7 @@ import { sentenceCase } from "change-case";
 import React, { useEffect, useState } from "react";
 import EditIcon from "src/assets/icons/EditIcon";
 import Label from "src/components/label/Label";
-import { TableHeadCustom } from "src/components/table";
+import { TableHeadCustom, TableNoData } from "src/components/table";
 import { fIndianCurrency } from "src/utils/formatNumber";
 import { fDate } from "src/utils/formatTime";
 import { fundRequestProps } from "./types";
@@ -21,6 +22,11 @@ import MotionModal from "src/components/animate/MotionModal";
 import UpdateFundRequest from "./UpdateFundRequest";
 import dayjs from "dayjs";
 import Scrollbar from "src/components/scrollbar/Scrollbar";
+import Button from "src/theme/overrides/Button";
+import { LoadingButton } from "@mui/lab";
+import { useNavigate } from "react-router";
+import { PATH_DASHBOARD } from "src/routes/paths";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 
 type props = {
   tableData: fundRequestProps[];
@@ -28,6 +34,7 @@ type props = {
 };
 
 function FundDepositeTable({ tableData, getRaisedRequest }: props) {
+  const navigate = useNavigate();
   const tableLabels = [
     { id: "frid", label: "FRID" },
     { id: "depositor", label: "Deposited To" },
@@ -39,26 +46,45 @@ function FundDepositeTable({ tableData, getRaisedRequest }: props) {
     { id: "amount", label: "Edit", align: "center" },
   ];
 
-  return (
-    <Card>
-      <TableContainer sx={{ overflow: "unset" }}>
-        <Scrollbar>
-          <Table sx={{ minWidth: 720 }}>
-            <TableHeadCustom headLabel={tableLabels} />
+  function goTomybankaccount() {
+    navigate(PATH_DASHBOARD.fundmanagement.myfundrequest);
+  }
 
-            <TableBody>
-              {tableData.map((row: any) => (
-                <FundRequestTable
-                  key={row._id}
-                  row={row}
-                  getRaisedRequest={getRaisedRequest}
-                />
-              ))}
-            </TableBody>
-          </Table>
-        </Scrollbar>
-      </TableContainer>
-    </Card>
+  return (
+    <>
+      <Stack direction={"row"} justifyContent={"space-between"} mb={2}>
+        <Typography variant="h5">Last 5 Transactions &#9660;</Typography>
+        <LoadingButton
+          variant="contained"
+          sx={{ width: "180px" }}
+          onClick={goTomybankaccount}
+        >
+          View All Transaction
+        </LoadingButton>
+      </Stack>
+      <Card>
+        <TableContainer sx={{ overflow: "unset" }}>
+          <Scrollbar>
+            <Table sx={{ minWidth: 720 }}>
+              <TableHeadCustom headLabel={tableLabels} />
+
+              <TableBody>
+                {tableData.map((row: any) => (
+                  <FundRequestTable
+                    key={row._id}
+                    row={row}
+                    getRaisedRequest={getRaisedRequest}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+            <Stack flexDirection={"row"} justifyContent={"center"}>
+              <TableNoData isNotFound={!tableData.length} />
+            </Stack>
+          </Scrollbar>
+        </TableContainer>
+      </Card>
+    </>
   );
 }
 

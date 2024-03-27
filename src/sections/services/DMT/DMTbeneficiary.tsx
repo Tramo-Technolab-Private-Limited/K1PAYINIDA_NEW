@@ -280,7 +280,7 @@ export default function DMTbeneficiary() {
       relationship: data.remitterRelation,
       bankName: data.bankName,
       isBeneVerified: data.isBeneVerified,
-      // bankId: data.bankId,
+      bankId: data.bankId,
     };
     Api("moneyTransfer/beneficiary", "POST", body, token).then(
       (Response: any) => {
@@ -324,7 +324,7 @@ export default function DMTbeneficiary() {
   }
   return (
     <>
-      <Grid sx={{ maxHeight: window.innerHeight - 170 }}>
+      <Grid>
         {getBene.isLoading ? (
           <ApiDataLoading />
         ) : (
@@ -342,7 +342,7 @@ export default function DMTbeneficiary() {
                 sx={
                   isMobile
                     ? { maxHeight: window.innerHeight - 110 }
-                    : { maxHeight: window.innerHeight - 240 }
+                    : { maxHeight: window.innerHeight - 470 }
                 }
               >
                 <Table

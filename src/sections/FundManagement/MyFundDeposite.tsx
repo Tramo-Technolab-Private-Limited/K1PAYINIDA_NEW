@@ -72,8 +72,8 @@ export default function MyFundDeposite() {
         <Scrollbar
           sx={
             isMobile
-              ? { maxHeight: window.innerHeight - 70 }
-              : { maxHeight: window.innerHeight - 250 }
+              ? { maxHeight: window.innerHeight - 140 }
+              : { maxHeight: window.innerHeight - 70 }
           }
         >
           <Grid container spacing={2} p={1}>

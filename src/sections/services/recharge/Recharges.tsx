@@ -57,7 +57,7 @@ export default function Recharges() {
   return (
     <>
       <RoleBasedGuard hasContent roles={["agent"]}>
-        <Stack flexDirection="row" alignItems={"center"} gap={1}>
+        <Stack flexDirection="row" alignItems={"center"} gap={1} my={3}>
           <ArrowBackIosNewOutlinedIcon
             onClick={() => navigate(-1)}
             sx={{

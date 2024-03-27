@@ -27,7 +27,7 @@ import {
   TableContainer,
 } from "@mui/material";
 import Label from "src/components/label/Label";
-import { TableHeadCustom } from "src/components/table";
+import { TableHeadCustom, TableNoData } from "src/components/table";
 import React from "react";
 import Iconify from "src/components/iconify/Iconify";
 import { Api } from "src/webservices";
@@ -155,7 +155,7 @@ export default function WalletLadger() {
 
   useEffect(() => {
     getTransactional();
-  }, [currentPage]);
+  }, [currentPage, pageSize]);
 
   const getTransactional = () => {
     let token = localStorage.getItem("token");
@@ -192,17 +192,13 @@ export default function WalletLadger() {
         <title>Wallet Ladger | {process.env.REACT_APP_COMPANY_NAME}</title>
       </Helmet>
 
-      <Stack sx={{ maxHeight: window.innerHeight - 220 }}>
+      <Stack>
         <FormProvider
           methods={methods}
           onSubmit={handleSubmit(getTransactional)}
         >
-          <Stack flexDirection={"row"} m={1} gap={1}>
-            <RHFTextField
-              name="clientRefId"
-              placeholder={"Client Ref Id"}
-              sx={{ width: 300 }}
-            />
+          <Stack flexDirection={"row"} m={1} gap={1} justifyContent={"start"}>
+            <RHFTextField name="clientRefId" placeholder={"Client Ref Id"} />
             <Stack flexDirection={"row"} gap={1}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
@@ -212,7 +208,11 @@ export default function WalletLadger() {
                   maxDate={new Date()}
                   onChange={(newValue: any) => setValue("startDate", newValue)}
                   renderInput={(params: any) => (
-                    <TextField {...params} size={"small"} sx={{ width: 150 }} />
+                    <TextField
+                      {...params}
+                      size={"small"}
+                      sx={{ minWidth: 100 }}
+                    />
                   )}
                 />
                 <DatePicker
@@ -223,7 +223,11 @@ export default function WalletLadger() {
                   maxDate={new Date()}
                   onChange={(newValue: any) => setValue("endDate", newValue)}
                   renderInput={(params: any) => (
-                    <TextField {...params} size={"small"} sx={{ width: 150 }} />
+                    <TextField
+                      {...params}
+                      size={"small"}
+                      sx={{ minWidth: 100 }}
+                    />
                   )}
                 />
               </LocalizationProvider>
@@ -258,12 +262,11 @@ export default function WalletLadger() {
                 <Scrollbar
                   sx={
                     isMobile
-                      ? { maxHeight: window.innerHeight - 130 }
-                      : { maxHeight: window.innerHeight - 250 }
+                      ? { maxHeight: window.innerHeight - 204 }
+                      : { maxHeight: window.innerHeight - 170 }
                   }
                 >
                   <Table
-                    sx={{ minWidth: 720 }}
                     aria-label="customized table"
                     stickyHeader
                     size="small"
@@ -284,6 +287,7 @@ export default function WalletLadger() {
                           <LadgerRow key={row._id} row={row} />
                         ))}
                     </TableBody>
+                    <TableNoData isNotFound={!ladgerData?.length} />
                   </Table>
                 </Scrollbar>
               </TableContainer>
@@ -426,7 +430,9 @@ const LadgerRow = ({ row }: any) => {
           )}
 
           <Stack direction="row" gap={0.5}>
-            <Typography variant="subtitle2">Transaction Type : </Typography>
+            <Typography variant="subtitle2" noWrap>
+              Transaction Type :{" "}
+            </Typography>
             <Typography variant="body2">
               {row?.transaction?.transactionType}
             </Typography>

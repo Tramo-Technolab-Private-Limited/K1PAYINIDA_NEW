@@ -174,7 +174,7 @@ export default function DMT() {
 
   const SendOTP = (val: any) => {
     let token = localStorage.getItem("token");
-    Api("moneyTransfer/remitter/sendOtp/" + val, "GET", "", token).then(
+    Api("moneyTransfer/remitter/resendOtp/" + val, "GET", "", token).then(
       (Response: any) => {
         if (Response.data.code == 200) {
           enqueueSnackbar(Response.data.message);
@@ -255,7 +255,7 @@ export default function DMT() {
                   xs: "repeat(1, 1fr)",
                 }}
               >
-                <Stack flexDirection="row" alignItems={"center"} gap={1}>
+                <Stack flexDirection="row" alignItems={"center"} gap={1} my={1}>
                   <ArrowBackIosNewOutlinedIcon
                     onClick={() => navigate(-1)}
                     sx={{
@@ -370,8 +370,7 @@ const OtpSubmissionForRegistrantion = ({
     let token = localStorage.getItem("token");
     let body = {
       remitterMobile: mobilenumber,
-      otp:
-        data.otp1 + data.otp2 + data.otp3 + data.otp4 + data.otp5 + data.otp6,
+      otp: data.otp1 + data.otp2 + data.otp3,
     };
     Api("moneyTransfer/remitter/verifyOTP", "POST", body, token).then(
       (Response: any) => {

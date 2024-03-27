@@ -6,9 +6,9 @@ export default function CustomPagination({ ...other }: any) {
       sx={{
         position: "fixed",
         bottom: 0,
-        left: "50%",
-        transform: "translate(-50%)",
+        left: 0,
         bgcolor: "white",
+        width: "100%",
       }}
     >
       <TablePagination component="div" {...other} />
