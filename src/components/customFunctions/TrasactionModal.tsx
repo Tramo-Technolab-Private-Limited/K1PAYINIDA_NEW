@@ -32,6 +32,7 @@ const style = {
 export default function TransactionModal({
   transactionDetail,
   errorMsg,
+  successMsg,
   isTxnOpen,
   handleTxnModal,
 }: any) {
@@ -74,24 +75,44 @@ export default function TransactionModal({
       <Box sx={style}>
         <Stack flexDirection={"row"} justifyContent={"center"}>
           {transactionDetail?.status == "success" ? (
-            <Success />
+            <>
+              <Typography variant="h4" textAlign={"center"}>
+                <Success />
+                Transaction Successful
+              </Typography>
+            </>
           ) : transactionDetail?.status == "pending" ? (
-            <Pending />
+            <>
+              <Typography variant="h4" textAlign={"center"}>
+                <Pending />
+                Transaction Pending
+              </Typography>
+            </>
           ) : transactionDetail?.status == "hold" ? (
-            <Hold />
+            <>
+              <Typography variant="h4" textAlign={"center"}>
+                <Hold />
+                Transaction Hold
+              </Typography>
+            </>
           ) : transactionDetail?.status == "in_process" ? (
-            <Inprocess />
+            <>
+              <Typography variant="h4" textAlign={"center"}>
+                <Inprocess />
+                Transaction Inprocess
+              </Typography>
+            </>
           ) : (
             <Initiated />
           )}
         </Stack>
         <Typography
-          id="transition-modal-title"
           variant="h4"
-          sx={{ marginBottom: 2, textAlign: "center" }}
+          textAlign={"center"}
+          color={"#9e9e9ef0"}
+          my={1}
         >
-          {transactionDetail?.status &&
-            `Trasaction ${sentenceCase(transactionDetail?.status)}`}
+          {successMsg}
         </Typography>
         <Button onClick={handleTxnModal} variant="contained">
           Close
