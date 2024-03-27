@@ -818,7 +818,7 @@ function TransactionRow({ row }: childProps) {
     );
   };
 
-  const onSubmit = async (data: FormValuesProps) => {
+  const onSubmit = async (val: string) => {
     try {
       let body = {
         otp:
@@ -828,7 +828,7 @@ function TransactionRow({ row }: childProps) {
           getValues("code4") +
           getValues("code5") +
           getValues("code6"),
-        transactionId: "",
+        transactionId: val,
       };
       let token = localStorage.getItem("token");
       await Api("dmt2/transaction/refund", "POST", body, token).then(
@@ -1108,7 +1108,10 @@ function TransactionRow({ row }: childProps) {
           onClose={handleClose}
           width={{ xs: "95%", md: 500 }}
         >
-          <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+          <FormProvider
+            methods={methods}
+            onSubmit={handleSubmit(() => onSubmit(newRow._id))}
+          >
             <Typography variant="h3" paragraph textAlign={"center"}>
               Verify OTP
             </Typography>
