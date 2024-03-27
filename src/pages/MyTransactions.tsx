@@ -86,6 +86,10 @@ type FormValuesProps = {
   code4: string;
   code5: string;
   code6: string;
+  code7: string;
+  code8: string;
+  code9: string;
+  code10: string;
 };
 
 export default function MyTransactions() {
@@ -701,6 +705,10 @@ function TransactionRow({ row }: childProps) {
     code4: Yup.string().required(),
     code5: Yup.string().required(),
     code6: Yup.string().required(),
+    code7: Yup.string().required(),
+    code8: Yup.string().required(),
+    code9: Yup.string().required(),
+    code10: Yup.string().required(),
   });
   const defaultValues = {
     code1: "",
@@ -709,6 +717,10 @@ function TransactionRow({ row }: childProps) {
     code4: "",
     code5: "",
     code6: "",
+    code7: "",
+    code8: "",
+    code9: "",
+    code10: "",
   };
   const methods = useForm<FormValuesProps>({
     resolver: yupResolver(DMTSchema),
@@ -716,7 +728,9 @@ function TransactionRow({ row }: childProps) {
   });
   const {
     reset,
+    resetField,
     setError,
+    trigger,
     getValues,
     handleSubmit,
     formState: { errors, isSubmitting },
@@ -812,6 +826,9 @@ function TransactionRow({ row }: childProps) {
           if (Response.data.code == 200) {
             setTimer(60);
             setResendOtp(true);
+            enqueueSnackbar(Response.data.message);
+          } else {
+            enqueueSnackbar(Response.data.message, { variant: "error" });
           }
         }
       }
@@ -827,19 +844,40 @@ function TransactionRow({ row }: childProps) {
           getValues("code3") +
           getValues("code4") +
           getValues("code5") +
-          getValues("code6"),
+          getValues("code6") +
+          getValues("code7") +
+          getValues("code8") +
+          getValues("code9") +
+          getValues("code10"),
         transactionId: val,
       };
       let token = localStorage.getItem("token");
-      await Api("dmt2/transaction/refund", "POST", body, token).then(
-        (Response: any) => {
-          if (Response.status == 200) {
-            if (Response.data.code == 200) {
-              setNewRow({ ...newRow, ...Response.data.data });
+      (await trigger([
+        "code1",
+        "code2",
+        "code3",
+        "code4",
+        "code5",
+        "code6",
+        "code7",
+        "code8",
+        "code9",
+        "code10",
+      ])) &&
+        (await Api("dmt2/transaction/refund", "POST", body, token).then(
+          (Response: any) => {
+            if (Response.status == 200) {
+              if (Response.data.code == 200) {
+                setNewRow({ ...newRow, ...Response.data.data });
+                enqueueSnackbar(Response.data.message);
+              } else {
+                enqueueSnackbar(Response.data.message, { variant: "error" });
+              }
             }
+            handleClose();
+            reset(defaultValues);
           }
-        }
-      );
+        ));
     } catch (err) {
       console.log(err);
     }
@@ -1076,7 +1114,7 @@ function TransactionRow({ row }: childProps) {
             {/* <IconButton>
               <OrderIcon />
             </IconButton> */}
-            {newRow?.categoryName == "DMT2" && newRow.status == "hold" && (
+            {newRow?.categoryName == "DMT2" && newRow.status !== "hold" && (
               <Button variant="contained" onClick={handleOpen}>
                 Re-Claim
               </Button>
@@ -1103,68 +1141,87 @@ function TransactionRow({ row }: childProps) {
               )}
           </Stack>
         </StyledTableCell>
-        <MotionModal
-          open={open}
-          onClose={handleClose}
-          width={{ xs: "95%", md: 500 }}
-        >
-          <FormProvider
-            methods={methods}
-            onSubmit={handleSubmit(() => onSubmit(newRow._id))}
-          >
-            <Typography variant="h3" paragraph textAlign={"center"}>
-              Verify OTP
-            </Typography>
-
-            <Stack spacing={3}>
-              <Typography
-                variant="subtitle2"
-                sx={{ my: 3 }}
-                style={{ textAlign: "left", marginBottom: "0" }}
-              >
-                Mobile Verification Code &nbsp;
+        <Modal open={open} onClose={handleClose}>
+          <Grid sx={style} p={4}>
+            <FormProvider methods={methods}>
+              <Typography variant="h3" paragraph textAlign={"center"}>
+                Verify OTP
               </Typography>
-              <RHFCodes
-                keyName="code"
-                inputs={["code1", "code2", "code3", "code4", "code5", "code6"]}
-              />
 
-              {(!!errors.code1 ||
-                !!errors.code2 ||
-                !!errors.code3 ||
-                !!errors.code4 ||
-                !!errors.code5 ||
-                !!errors.code6) && (
-                <FormHelperText error sx={{ px: 2 }}>
-                  Code is required
-                </FormHelperText>
-              )}
+              <Scrollbar>
+                <Stack spacing={3}>
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ my: 3 }}
+                    style={{ textAlign: "left", marginBottom: "0" }}
+                  >
+                    Mobile Verification Code &nbsp;
+                  </Typography>
+                  <RHFCodes
+                    keyName="code"
+                    inputs={[
+                      "code1",
+                      "code2",
+                      "code3",
+                      "code4",
+                      "code5",
+                      "code6",
+                      "code7",
+                      "code8",
+                      "code9",
+                      "code10",
+                    ]}
+                  />
 
-              <Button
-                onClick={() => getotp(newRow._id)}
-                size="small"
-                disabled={resendotpMobile}
-                sx={{ alignSelf: "end" }}
-              >
-                <Typography sx={{ whiteSpace: "nowrap" }} variant="caption">
-                  {" "}
-                  Resend code {timer !== 0 && `(${timer})`}{" "}
-                </Typography>
-              </Button>
+                  {(!!errors.code1 ||
+                    !!errors.code2 ||
+                    !!errors.code3 ||
+                    !!errors.code4 ||
+                    !!errors.code5 ||
+                    !!errors.code6 ||
+                    !!errors.code7 ||
+                    !!errors.code8 ||
+                    !!errors.code9 ||
+                    !!errors.code10) && (
+                    <FormHelperText error sx={{ px: 2 }}>
+                      Code is required
+                    </FormHelperText>
+                  )}
 
-              <LoadingButton
-                fullWidth
-                size="large"
-                type="submit"
-                variant="contained"
-                loading={isSubmitting}
-                sx={{ mt: 3 }}
-              >
-                Verify
-              </LoadingButton>
-            </Stack>
-          </FormProvider>
-        </MotionModal>
+                  <Button
+                    onClick={() => getotp(newRow._id)}
+                    size="small"
+                    disabled={resendotpMobile}
+                    sx={{ alignSelf: "end" }}
+                  >
+                    <Typography sx={{ whiteSpace: "nowrap" }} variant="caption">
+                      {" "}
+                      Resend code {timer !== 0 && `(${timer})`}{" "}
+                    </Typography>
+                  </Button>
+                  <Stack flexDirection="row" justifyContent={"center"} gap={2}>
+                    <LoadingButton
+                      variant="contained"
+                      loading={isSubmitting}
+                      sx={{ mt: 3 }}
+                      onClick={() => onSubmit(newRow._id)}
+                    >
+                      Verify
+                    </LoadingButton>
+
+                    <LoadingButton
+                      variant="contained"
+                      sx={{ mt: 3 }}
+                      onClick={handleClose}
+                    >
+                      Close
+                    </LoadingButton>
+                  </Stack>
+                </Stack>
+              </Scrollbar>
+            </FormProvider>
+          </Grid>
+        </Modal>
       </StyledTableRow>
       <Modal open={modalOpen} onClose={closeModal}>
         <Grid sx={style}>
