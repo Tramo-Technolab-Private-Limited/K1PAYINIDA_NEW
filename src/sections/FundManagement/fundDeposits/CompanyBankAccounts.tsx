@@ -59,9 +59,9 @@ function CompanyBankAccounts() {
         >
           {bankListContext.map((item: bankAccountProps) => (
             <Tab
-              key={item.bank_details.bank_name}
+              key={item.bank_details.account_number}
               label={item.bank_details.bank_name}
-              value={item.bank_details.bank_name}
+              value={item.bank_details.account_number}
             />
           ))}
         </Tabs>
