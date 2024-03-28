@@ -49,17 +49,17 @@ function CompanyBankAccounts() {
 
       <Stack m={1} flexDirection={"row"} alignItems={"center"} gap={2}>
         <Tabs
-          value={activeBank.bank_name}
+          value={activeBank.account_number}
           onChange={(event, newValue) => {
             const selectedBank = bankListContext.find(
-              (item:any) => item.bank_details.bank_name === newValue
+              (item:any) => item.bank_details.account_number === newValue
             );
             if (selectedBank) setActiveBank(selectedBank.bank_details);
           }}
         >
           {bankListContext.map((item: bankAccountProps) => (
             <Tab
-              key={item.bank_details.account_number}
+              key={item.bank_details.bank_name}
               label={item.bank_details.bank_name}
               value={item.bank_details.account_number}
             />
