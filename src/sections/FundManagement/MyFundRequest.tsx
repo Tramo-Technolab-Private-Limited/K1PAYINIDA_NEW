@@ -386,7 +386,10 @@ export default function (props: any) {
                   >
                     <StyledTableCell>
                       <Typography variant="body1">
-                        {fDateTime(row?.createdAt)}
+                      createdAt{fDateTime(row?.createdAt)}
+                      </Typography>
+                      <Typography variant="body1">
+                      updatedAt{fDateTime(row?.actionDate)}
                       </Typography>
                     </StyledTableCell>
 
@@ -441,7 +444,7 @@ export default function (props: any) {
                       <Label
                         variant="soft"
                         color={
-                          (row.status.toLowerCase() === "failed" && "error") ||
+                          (row.status.toLowerCase() === "rejected" && "error") ||
                           ((row.status.toLowerCase() === "pending" ||
                             row.status.toLowerCase() === "in_process") &&
                             "warning") ||
