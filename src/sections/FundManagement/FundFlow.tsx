@@ -70,6 +70,7 @@ function FundFlow() {
   const [users, setUsers] = useState([]);
   const [isTxnOpen, setIsTxnOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
   const [sdata, setSdata] = useState([]);
   const [pageSize, setPageSize] = useState<any>(10000);
   const [currentPage, setCurrentPage] = useState<any>(1);
@@ -288,6 +289,9 @@ function FundFlow() {
                 : UpdateUserDetail({
                     main_wallet_amount: user?.main_wallet_amount - +body.amount,
                   });
+
+              setSuccessMsg(Response.data.message);
+
               setTransactionDetail(Response.data.data);
             } else {
               enqueueSnackbar(Response.data.message, { variant: "error" });
@@ -466,8 +470,10 @@ function FundFlow() {
           handleTxnModal={() => {
             setIsTxnOpen(false);
             setErrorMsg("");
+            setSuccessMsg("");
           }}
           errorMsg={errorMsg}
+          successMsg={successMsg}
           transactionDetail={transactionDetail}
         />
       </RoleBasedGuard>

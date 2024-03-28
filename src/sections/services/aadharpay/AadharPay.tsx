@@ -482,7 +482,8 @@ export default function AadharPay() {
       <Typography variant="h4"></Typography>
       {!user?.fingPayAPESRegistrationStatus || !user?.fingPayAEPSKycStatus ? (
         <RegistrationAeps />
-      ) : user?.presenceAtForAP + 150000 < Date.now() ? (
+      ) : !user?.presenceAtForAP ||
+        user?.presenceAtForAP + 150000 < Date.now() ? (
         <AttendenceAeps attendance={"AP"} />
       ) : (
         <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>

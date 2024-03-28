@@ -24,6 +24,8 @@ import {
   Divider,
   MenuItem,
   Chip,
+  FormHelperText,
+  Link,
 } from "@mui/material";
 import { Helmet } from "react-helmet-async";
 import * as Yup from "yup";
@@ -44,7 +46,11 @@ import Label from "src/components/label/Label";
 import { sentenceCase } from "change-case";
 import { useAuthContext } from "src/auth/useAuthContext";
 import CustomPagination from "src/components/customFunctions/CustomPagination";
-import FormProvider, { RHFSelect, RHFTextField } from "../components/hook-form";
+import FormProvider, {
+  RHFCodes,
+  RHFSelect,
+  RHFTextField,
+} from "../components/hook-form";
 import { LoadingButton } from "@mui/lab";
 import Logo from "src/components/logo/Logo";
 import { fCurrency, fIndianCurrency } from "src/utils/formatNumber";
@@ -74,12 +80,23 @@ type FormValuesProps = {
   endDate: Date | null;
   sDate: Date | null;
   eDate: Date | null;
+  code1: string;
+  code2: string;
+  code3: string;
+  code4: string;
+  code5: string;
+  code6: string;
+  code7: string;
+  code8: string;
+  code9: string;
+  code10: string;
 };
 
 export default function MyTransactions() {
   let token = localStorage.getItem("token");
   const isMobile = useResponsive("up", "sm");
   const isDesktop = useResponsive("up", "sm");
+  const [handleReclaim, setHanfleReClaim] = useState(false);
   const { user } = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
   const [Loading, setLoading] = useState(false);
@@ -674,6 +691,61 @@ function TransactionRow({ row }: childProps) {
   const handleTextFieldChange = (event: any) => {
     setTextFieldValue(event.target.value);
   };
+  const [resendotpMobile, setResendOtp] = useState(false);
+  const [timer, setTimer] = useState(0);
+
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const DMTSchema = Yup.object().shape({
+    code1: Yup.string().required(),
+    code2: Yup.string().required(),
+    code3: Yup.string().required(),
+    code4: Yup.string().required(),
+    code5: Yup.string().required(),
+    code6: Yup.string().required(),
+    code7: Yup.string().required(),
+    code8: Yup.string().required(),
+    code9: Yup.string().required(),
+    code10: Yup.string().required(),
+  });
+  const defaultValues = {
+    code1: "",
+    code2: "",
+    code3: "",
+    code4: "",
+    code5: "",
+    code6: "",
+    code7: "",
+    code8: "",
+    code9: "",
+    code10: "",
+  };
+  const methods = useForm<FormValuesProps>({
+    resolver: yupResolver(DMTSchema),
+    defaultValues,
+  });
+  const {
+    reset,
+    resetField,
+    setError,
+    trigger,
+    getValues,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = methods;
+
+  useEffect(() => {
+    let time = setTimeout(() => {
+      setTimer(timer - 1);
+    }, 1000);
+    if (timer == 0) {
+      clearTimeout(time);
+      // setOtpSend(false);
+      setResendOtp(false);
+    }
+  }, [timer]);
 
   const CheckTransactionStatus = (row: TransactionProps) => {
     setLoading(true);
@@ -745,6 +817,71 @@ function TransactionRow({ row }: childProps) {
       border: 0,
     },
   }));
+
+  const getotp = (val: string) => {
+    let token = localStorage.getItem("token");
+    Api("dmt2/transaction/refund/otp/" + val, "GET", "", token).then(
+      (Response: any) => {
+        if (Response.status == 200) {
+          if (Response.data.code == 200) {
+            setTimer(60);
+            setResendOtp(true);
+            enqueueSnackbar(Response.data.message);
+          } else {
+            enqueueSnackbar(Response.data.message, { variant: "error" });
+          }
+        }
+      }
+    );
+  };
+
+  const onSubmit = async (val: string) => {
+    try {
+      let body = {
+        otp:
+          getValues("code1") +
+          getValues("code2") +
+          getValues("code3") +
+          getValues("code4") +
+          getValues("code5") +
+          getValues("code6") +
+          getValues("code7") +
+          getValues("code8") +
+          getValues("code9") +
+          getValues("code10"),
+        transactionId: val,
+      };
+      let token = localStorage.getItem("token");
+      (await trigger([
+        "code1",
+        "code2",
+        "code3",
+        "code4",
+        "code5",
+        "code6",
+        "code7",
+        "code8",
+        "code9",
+        "code10",
+      ])) &&
+        (await Api("dmt2/transaction/refund", "POST", body, token).then(
+          (Response: any) => {
+            if (Response.status == 200) {
+              if (Response.data.code == 200) {
+                setNewRow({ ...newRow, ...Response.data.data });
+                enqueueSnackbar(Response.data.message);
+              } else {
+                enqueueSnackbar(Response.data.message, { variant: "error" });
+              }
+            }
+            handleClose();
+            reset(defaultValues);
+          }
+        ));
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <>
@@ -867,7 +1004,7 @@ function TransactionRow({ row }: childProps) {
         {/* Operator Txn Id */}
         <StyledTableCell>
           <Typography>
-          {newRow?.vendorUtrNumber || "-"}
+            {newRow?.vendorUtrNumber || "-"}
             {newRow?.vendorUtrNumber && (
               <Tooltip title="Copy" placement="top">
                 <IconButton onClick={() => onCopy(newRow?.vendorUtrNumber)}>
@@ -974,9 +1111,14 @@ function TransactionRow({ row }: childProps) {
 
         <StyledTableCell>
           <Stack flexDirection={"row"} flexWrap={"nowrap"}>
-            <IconButton>
+            {/* <IconButton>
               <OrderIcon />
-            </IconButton>
+            </IconButton> */}
+            {newRow?.categoryName == "DMT2" && newRow.status == "hold" && (
+              <Button variant="contained" onClick={handleOpen}>
+                Re-Claim
+              </Button>
+            )}
             {newRow.status !== "success" && newRow.status !== "failed" && (
               <Tooltip title="Check Status" placement="top">
                 <IconButton
@@ -999,6 +1141,87 @@ function TransactionRow({ row }: childProps) {
               )}
           </Stack>
         </StyledTableCell>
+        <Modal open={open} onClose={handleClose}>
+          <Grid sx={style} p={4}>
+            <FormProvider methods={methods}>
+              <Typography variant="h3" paragraph textAlign={"center"}>
+                Verify OTP
+              </Typography>
+
+              <Scrollbar>
+                <Stack spacing={3}>
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ my: 3 }}
+                    style={{ textAlign: "left", marginBottom: "0" }}
+                  >
+                    Mobile Verification Code &nbsp;
+                  </Typography>
+                  <RHFCodes
+                    keyName="code"
+                    inputs={[
+                      "code1",
+                      "code2",
+                      "code3",
+                      "code4",
+                      "code5",
+                      "code6",
+                      "code7",
+                      "code8",
+                      "code9",
+                      "code10",
+                    ]}
+                  />
+
+                  {(!!errors.code1 ||
+                    !!errors.code2 ||
+                    !!errors.code3 ||
+                    !!errors.code4 ||
+                    !!errors.code5 ||
+                    !!errors.code6 ||
+                    !!errors.code7 ||
+                    !!errors.code8 ||
+                    !!errors.code9 ||
+                    !!errors.code10) && (
+                    <FormHelperText error sx={{ px: 2 }}>
+                      Code is required
+                    </FormHelperText>
+                  )}
+
+                  <Button
+                    onClick={() => getotp(newRow._id)}
+                    size="small"
+                    disabled={resendotpMobile}
+                    sx={{ alignSelf: "end" }}
+                  >
+                    <Typography sx={{ whiteSpace: "nowrap" }} variant="caption">
+                      {" "}
+                      Resend code {timer !== 0 && `(${timer})`}{" "}
+                    </Typography>
+                  </Button>
+                  <Stack flexDirection="row" justifyContent={"center"} gap={2}>
+                    <LoadingButton
+                      variant="contained"
+                      loading={isSubmitting}
+                      sx={{ mt: 3 }}
+                      onClick={() => onSubmit(newRow._id)}
+                    >
+                      Verify
+                    </LoadingButton>
+
+                    <LoadingButton
+                      variant="contained"
+                      sx={{ mt: 3 }}
+                      onClick={handleClose}
+                    >
+                      Close
+                    </LoadingButton>
+                  </Stack>
+                </Stack>
+              </Scrollbar>
+            </FormProvider>
+          </Grid>
+        </Modal>
       </StyledTableRow>
       <Modal open={modalOpen} onClose={closeModal}>
         <Grid sx={style}>

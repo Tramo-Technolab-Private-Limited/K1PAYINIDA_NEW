@@ -168,7 +168,7 @@ export default function AllDistributor() {
     { id: "maxComm", label: "Member Since" },
     { id: "schemeId", label: "Scheme Id" },
     { id: "status", label: "Status" },
-    { id: "fundtrans", label: "Fund Transfer" },
+    { id: "fundtrans", label: "Fund Transfer", align:"center"},
   ];
 
   const style = {
@@ -414,7 +414,7 @@ function EcommerceBestSalesmanRow({
         <TableCell>{fDateTime(row.createdAt)}</TableCell>
         <TableCell>{row.schemeId}</TableCell>
         <TableCell align="right">{row.verificationStatus}</TableCell>
-        <TableCell align="right">
+        <TableCell align="left">
           <Button variant="contained" onClick={() => FundTransfer(row)}>
             Fund Transfer
           </Button>

@@ -50,7 +50,7 @@ export default function RHFCodes({
       event.target.value = value[0];
     }
 
-    if (value.length >= maxLength && fieldIntIndex < 7 && nextfield !== null) {
+    if (value.length >= maxLength && fieldIntIndex < 10 && nextfield !== null) {
       (nextfield as HTMLElement).focus();
     }
 
