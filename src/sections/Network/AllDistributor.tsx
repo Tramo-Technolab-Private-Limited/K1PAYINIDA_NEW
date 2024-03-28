@@ -168,7 +168,7 @@ export default function AllDistributor() {
     { id: "maxComm", label: "Member Since" },
     { id: "schemeId", label: "Scheme Id" },
     { id: "status", label: "Status" },
-    { id: "fundtrans", label: "Fund Transfer", align:"center"},
+    { id: "fundtrans", label: "Fund Transfer", align: "center" },
   ];
 
   const style = {
@@ -384,6 +384,9 @@ function EcommerceBestSalesmanRow({
 
             <Box sx={{ ml: 2 }}>
               <Typography variant="subtitle2"> {row.firstName} </Typography>
+              <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                {row.email}
+              </Typography>
               <Typography variant="body2" sx={{ color: "text.secondary" }}>
                 {row.email}
               </Typography>
