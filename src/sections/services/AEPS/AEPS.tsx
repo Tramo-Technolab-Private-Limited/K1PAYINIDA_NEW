@@ -274,7 +274,7 @@ export default function AEPS(props: any) {
         if (Response.data.code == 200) {
           setBankList(Response.data.data.data);
         } else {
-          enqueueSnackbar(Response?.data?.message);
+          enqueueSnackbar(Response?.data?.message, { variant: "error" });
         }
       }
     });
@@ -290,7 +290,7 @@ export default function AEPS(props: any) {
           setCurrentTab(Response.data.data[0].productName);
           setProductId(Response.data.data[0]._id);
         } else {
-          enqueueSnackbar(Response?.data?.message);
+          enqueueSnackbar(Response?.data?.message, { variant: "error" });
         }
       }
     });

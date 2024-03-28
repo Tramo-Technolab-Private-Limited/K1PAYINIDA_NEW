@@ -162,7 +162,7 @@ export default function BBPSSchemePage() {
           setTableData(Response.data.data.commissionSetting);
           setCurrentPage(1);
         } else {
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "error" });
         }
         let arr: any = [];
         Response.data?.data?.commissionSetting?.map((item: any) => {
@@ -173,7 +173,7 @@ export default function BBPSSchemePage() {
         setValue("subcategoryList", arr);
         setTimeout(() => setIsLoading(false), 1000);
       } else {
-        enqueueSnackbar("Failed to Load");
+        enqueueSnackbar("Failed to Load", { variant: "error" });
         setIsLoading(false);
       }
     });

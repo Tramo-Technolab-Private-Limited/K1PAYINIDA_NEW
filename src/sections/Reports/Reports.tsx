@@ -279,7 +279,7 @@ function HistoricalDataExport() {
           console.log("=========error ====>", Response.data.data);
           setVerifyLoading(false);
           handleClose();
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "error" });
         }
       }
     );
@@ -321,7 +321,7 @@ function HistoricalDataExport() {
 
           enqueueSnackbar(Response.data.message);
         } else {
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "error" });
         }
       } else {
         enqueueSnackbar("Failed", { variant: "error" });

@@ -142,7 +142,7 @@ export default function (props: any) {
             setSdata(Response.data.data);
           } else {
             console.log("======getRaisedRequests=======>" + Response);
-            enqueueSnackbar(Response.data.message);
+            enqueueSnackbar(Response.data.message, { variant: "error" });
           }
           setIsLoading(false);
         } else {
@@ -244,7 +244,7 @@ export default function (props: any) {
             setSdata(Response.data.data);
           } else {
             console.log("======getRaisedRequests=======>" + Response);
-            enqueueSnackbar(Response.data.message);
+            enqueueSnackbar(Response.data.message, { variant: "error" });
           }
           setIsLoading(false);
         } else {
