@@ -58,6 +58,7 @@ type RowProps = {
   role: string;
   createdAt: string;
   selfie: any;
+  company_name: any;
 };
 
 export default function Agent() {
@@ -289,6 +290,9 @@ function EcommerceBestSalesmanRow({
             <Typography variant="subtitle2"> {row.firstName} </Typography>
             <Typography variant="body2" sx={{ color: "text.secondary" }}>
               {row.email}
+            </Typography>
+            <Typography variant="body2" sx={{ color: "text.secondary" }}>
+              {row?.company_name ? row?.company_name : " No Shop Name "}
             </Typography>
           </Box>
         </Stack>
