@@ -320,7 +320,7 @@ export default function (props: any) {
                 placeholder="amount"
                 size="small"
               />
-              <Stack flexDirection={"row"} gap={1}>
+              <Stack direction={"row"} gap={1}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
                     label="Start date"
@@ -334,7 +334,7 @@ export default function (props: any) {
                       <TextField
                         {...params}
                         size={"small"}
-                        sx={{ maxWidth: 250 }}
+                        sx={{ width: 150 }}
                       />
                     )}
                   />
@@ -353,7 +353,7 @@ export default function (props: any) {
                       <TextField
                         {...params}
                         size={"small"}
-                        sx={{ maxWidth: 250 }}
+                        sx={{ width: 150 }}
                       />
                     )}
                   />
