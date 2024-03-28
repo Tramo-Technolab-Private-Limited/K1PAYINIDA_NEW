@@ -102,7 +102,7 @@ export default function NpinOtp(props: any) {
         if (Response.data.code == 200) {
           enqueueSnackbar(Response.data.message);
         } else {
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "error" });
         }
       }
     });
@@ -129,7 +129,7 @@ export default function NpinOtp(props: any) {
               enqueueSnackbar(Response.data.message);
               navigate(STEP_DASHBOARD.createnpin);
             } else {
-              enqueueSnackbar(Response.data.message);
+              enqueueSnackbar(Response.data.message, { variant: "error" });
             }
           }
         }

@@ -200,7 +200,7 @@ export default function MyTransactions() {
             setTotalCount(Response.data.data.totalNumberOfRecords);
             setCurrentTab("");
           } else {
-            enqueueSnackbar(Response.data.message);
+            enqueueSnackbar(Response.data.message, { variant: "error" });
           }
           setLoading(false);
         } else {

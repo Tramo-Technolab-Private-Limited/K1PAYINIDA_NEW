@@ -381,7 +381,7 @@ export default function Prepaid1(props: any) {
           handleClose1();
           console.log("==============>>> post mobile data message", Response);
         } else {
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "error" });
           console.log(
             "==============>>> post mobile number",
             Response.data.message
