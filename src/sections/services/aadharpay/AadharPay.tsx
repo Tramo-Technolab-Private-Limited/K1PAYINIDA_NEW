@@ -218,7 +218,7 @@ export default function AadharPay() {
           setCheckNPIN(false);
         } else if (Response.data.code == 400) {
           setCheckNPIN(false);
-          enqueueSnackbar(Response.data.message), { variant: "error" };
+          enqueueSnackbar(Response.data.message, { variant: "error" });
           setFailedMessage(Response.data.message);
         } else {
           setCheckNPIN(false);
