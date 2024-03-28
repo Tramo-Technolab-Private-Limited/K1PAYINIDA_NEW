@@ -107,6 +107,10 @@ const NavConfig = [
             title: "Wallet Ladger",
             path: PATH_DASHBOARD.transaction.walletladger,
           },
+          {
+            title: "Reports",
+            path: PATH_DASHBOARD.transaction.historicalreports,
+          },
         ],
       },
       {
