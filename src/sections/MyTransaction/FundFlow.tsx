@@ -432,6 +432,11 @@ const TransactionRow = React.memo(({ row }: childProps) => {
                 <Typography variant="body2">
                   {newRow?.distributorDetails?.id?.userCode}
                 </Typography>
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                  {newRow?.company_name
+                    ? newRow?.company_name
+                    : " No Shop Name "}
+                </Typography>
               </Stack>
             </Stack>
           ) : newRow?.walletLedgerData?.from?.id ==
@@ -453,6 +458,11 @@ const TransactionRow = React.memo(({ row }: childProps) => {
                 <Typography variant="body2">
                   {newRow?.masterDistributorDetails?.id?.userCode}
                 </Typography>
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                  {newRow?.company_name
+                    ? newRow?.company_name
+                    : " No Shop Name "}
+                </Typography>
               </Stack>
             </Stack>
           ) : (
@@ -472,6 +482,11 @@ const TransactionRow = React.memo(({ row }: childProps) => {
                 </Typography>
                 <Typography variant="body2">
                   {newRow?.agentDetails?.id?.userCode}
+                </Typography>
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                  {newRow?.company_name
+                    ? newRow?.company_name
+                    : " No Shop Name "}
                 </Typography>
               </Stack>
             </Stack>
