@@ -29,6 +29,7 @@ import Iconify from "../../../components/iconify";
 import { Api } from "src/webservices";
 import FormProvider, {
   RHFCodes,
+  RHFSecureCodes,
   RHFSelect,
   RHFTextField,
 } from "../../../components/hook-form";
@@ -573,10 +574,9 @@ function MobilePrepaid() {
             gap={2}
           >
             <Typography variant="h4">Confirm NPIN</Typography>
-            <RHFCodes
+            <RHFSecureCodes
               keyName="otp"
               inputs={["otp1", "otp2", "otp3", "otp4", "otp5", "otp6"]}
-              type="password"
             />
 
             {(!!error2.otp1 ||
