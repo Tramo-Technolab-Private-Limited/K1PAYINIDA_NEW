@@ -388,7 +388,7 @@ function EcommerceBestSalesmanRow({
                 {row.email}
               </Typography>
               <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                {row.company_name}
+                {row?.company_name ? row?.company_name : " No Shop Name "}
               </Typography>
               <Typography variant="body2" sx={{ color: "text.secondary" }}>
                 {new Date(row.createdAt).toLocaleString()}

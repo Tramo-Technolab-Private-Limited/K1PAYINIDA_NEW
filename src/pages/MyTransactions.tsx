@@ -867,7 +867,7 @@ function TransactionRow({ row }: childProps) {
         {/* Operator Txn Id */}
         <StyledTableCell>
           <Typography>
-          {newRow?.vendorUtrNumber || "-"}
+            {newRow?.vendorUtrNumber || "-"}
             {newRow?.vendorUtrNumber && (
               <Tooltip title="Copy" placement="top">
                 <IconButton onClick={() => onCopy(newRow?.vendorUtrNumber)}>
