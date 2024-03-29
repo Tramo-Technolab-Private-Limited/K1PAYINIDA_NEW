@@ -16,6 +16,7 @@ import FormProvider, {
   RHFTextField,
   RHFCodes,
   RHFSelect,
+  RHFSecureCodes,
 } from "src/components/hook-form";
 import * as Yup from "yup";
 import { useForm } from "react-hook-form";
@@ -355,7 +356,7 @@ const SettlementToBank = ({ userBankList }: childProps) => {
                         </Typography>
                         {/* <Button onClick={() => setResetNpin(true)}>Reset nPin?</Button> */}
                       </Stack>
-                      <RHFCodes
+                      <RHFSecureCodes
                         keyName="otp"
                         inputs={[
                           "otp1",
@@ -365,7 +366,6 @@ const SettlementToBank = ({ userBankList }: childProps) => {
                           "otp5",
                           "otp6",
                         ]}
-                        type="password"
                       />
                       {(!!errors.otp1 ||
                         !!errors.otp2 ||
@@ -595,10 +595,9 @@ const SettlementToMainWallet = ({ userBankList }: childProps) => {
                       {/* Add your reset NPIN button here if needed */}
                     </Stack>
 
-                    <RHFCodes
+                    <RHFSecureCodes
                       keyName="otp"
                       inputs={["otp1", "otp2", "otp3", "otp4", "otp5", "otp6"]}
-                      type="password"
                     />
 
                     {(!!errors.otp1 ||
