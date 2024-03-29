@@ -58,7 +58,7 @@ AWS.config.update({
 
 function HistoricalDataExport() {
   const { copy } = useCopyToClipboard();
-  const [sdata, setSdata] = React.useState("fundRequest");
+  const [sdata, setSdata] = React.useState("transactionRecords");
   const [verifyLoding, setVerifyLoading] = React.useState(false);
   const [currentPage, setCurrentPage] = React.useState<any>(1);
   const [Loading, setLoading] = React.useState(false);
