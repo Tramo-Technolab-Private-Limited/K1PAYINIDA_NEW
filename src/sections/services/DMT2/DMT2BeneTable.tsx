@@ -360,7 +360,7 @@ export default function DMT2BeneTable() {
               <Scrollbar
                 sx={
                   isMobile
-                    ? { maxHeight: window.innerHeight - 110 }
+                    ? { maxHeight: window.innerHeight - 170 }
                     : { maxHeight: window.innerHeight - 470 }
                 }
               >

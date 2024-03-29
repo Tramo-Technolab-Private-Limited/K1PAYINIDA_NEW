@@ -341,7 +341,7 @@ export default function DMTbeneficiary() {
               <Scrollbar
                 sx={
                   isMobile
-                    ? { maxHeight: window.innerHeight - 110 }
+                    ? { maxHeight: window.innerHeight - 170 }
                     : { maxHeight: window.innerHeight - 470 }
                 }
               >

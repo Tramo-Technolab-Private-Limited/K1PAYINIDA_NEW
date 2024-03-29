@@ -239,11 +239,7 @@ export default function DMT() {
           <title>Money Transfer |{process.env.REACT_APP_COMPANY_NAME}</title>
         </Helmet>
         <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-          <Grid
-            container
-            spacing={2}
-            sx={{ maxHeight: window.innerHeight - 250 }}
-          >
+          <Grid container spacing={2}>
             <Grid item sm={3}>
               <Box
                 rowGap={2}
