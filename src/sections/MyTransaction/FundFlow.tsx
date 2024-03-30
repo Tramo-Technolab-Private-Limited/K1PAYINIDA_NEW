@@ -47,7 +47,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import useResponsive from "src/hooks/useResponsive";
 // ----------------------------------------------------------------------
 type FormValuesProps = {
-  transactionType:string;
+  transactionType: string;
   status: string;
   clientRefId: string;
   startDate: Date | null;
@@ -70,7 +70,7 @@ export default function FundFlow() {
   });
 
   const defaultValues = {
-    transactionType:"",
+    transactionType: "",
     category: "",
     status: "",
     clientRefId: "",
@@ -173,7 +173,7 @@ export default function FundFlow() {
       },
       clientRefId: data.clientRefId,
       status: data.status,
-      transactionType:data.transactionType,
+      transactionType: data.transactionType,
       startDate: fDateFormatForApi(getValues("startDate")),
       endDate: fDateFormatForApi(getValues("endDate")),
     };
@@ -218,18 +218,18 @@ export default function FundFlow() {
           onSubmit={handleSubmit(filterTransaction)}
         >
           <Stack flexDirection={"row"} justifyContent={"end"}>
-          <RHFSelect
-                name="transactionType"
-                label="Transaction Type"
-                placeholder="transaction Type"
-                SelectProps={{
-                  native: false,
-                  sx: { textTransform: "capitalize" },
-                }}
-              >
-                <MenuItem value={"credit"}>Credit</MenuItem>
-                <MenuItem value={"debit"}>Debit</MenuItem>
-              </RHFSelect>
+            <RHFSelect
+              name="transactionType"
+              label="Transaction Type"
+              placeholder="transaction Type"
+              SelectProps={{
+                native: false,
+                sx: { textTransform: "capitalize" },
+              }}
+            >
+              <MenuItem value={"credit"}>Credit</MenuItem>
+              <MenuItem value={"debit"}>Debit</MenuItem>
+            </RHFSelect>
             <RHFSelect
               name="status"
               label="Status"
@@ -498,8 +498,8 @@ const TransactionRow = React.memo(({ row }: childProps) => {
                   {newRow?.agentDetails?.id?.userCode}
                 </Typography>
                 <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                  {newRow?.company_name
-                    ? newRow?.company_name
+                  {newRow?.agentDetails?.id?.company_name
+                    ? newRow?.agentDetails?.id?.company_name
                     : " No Shop Name "}
                 </Typography>
               </Stack>
@@ -545,6 +545,11 @@ const TransactionRow = React.memo(({ row }: childProps) => {
                 </Typography>
                 <Typography variant="body2">
                   {newRow?.agentDetails?.id?.userCode}
+                </Typography>
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                  {newRow?.agentDetails?.id?.company_name
+                    ? newRow?.agentDetails?.id?.company_name
+                    : " No Shop Name "}
                 </Typography>
               </Stack>
             </Stack>

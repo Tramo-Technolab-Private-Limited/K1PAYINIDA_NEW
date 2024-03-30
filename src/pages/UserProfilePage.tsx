@@ -162,12 +162,12 @@ export default function UserProfilePage() {
       icon: <Iconify icon="ic:round-account-box" />,
       component: <Profile info={_userAbout} posts={_userFeeds} />,
     },
-    {
-      value: "My Network",
-      label: "My Network",
-      icon: <Iconify icon="eva:heart-fill" />,
-      component: <ProfileFollowers followers={_userFollowers} />,
-    },
+    // {
+    //   value: "My Network",
+    //   label: "My Network",
+    //   icon: <Iconify icon="eva:heart-fill" />,
+    //   component: <ProfileFollowers followers={_userFollowers} />,
+    // },
     // {
     //   value: 'friends',
     //   label: 'Friends',
@@ -256,7 +256,7 @@ export default function UserProfilePage() {
       >
         <Grid
           sx={{
-            width: "95%",
+            width: { xs: "95%", md: 600 },
             margin: "auto",
             backgroundColor: "#fff",
             borderRadius: 2,

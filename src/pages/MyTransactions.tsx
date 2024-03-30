@@ -1132,6 +1132,9 @@ function TransactionRow({ row }: childProps) {
                     {newRow?.agentDetails?.id?.lastName}
                   </Typography>
                   <Typography variant="body2">
+                    {newRow?.agentDetails?.id?.company_name}
+                  </Typography>
+                  <Typography variant="body2">
                     {newRow?.agentDetails?.id?.userCode}
                   </Typography>
                 </Stack>
