@@ -218,11 +218,11 @@ export default function AadharPay() {
           setCheckNPIN(false);
         } else if (Response.data.code == 400) {
           setCheckNPIN(false);
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "error" });
           setFailedMessage(Response.data.message);
         } else {
           setCheckNPIN(false);
-          enqueueSnackbar(Response.data.err.message);
+          enqueueSnackbar(Response.data.err.message, { variant: "error" });
           setFailedMessage(Response.data.err.message);
           console.log(
             "==============>>> fatch beneficiary message",
@@ -482,7 +482,8 @@ export default function AadharPay() {
       <Typography variant="h4"></Typography>
       {!user?.fingPayAPESRegistrationStatus || !user?.fingPayAEPSKycStatus ? (
         <RegistrationAeps />
-      ) : user?.presenceAtForAP + 150000 < Date.now() ? (
+      ) : !user?.presenceAtForAP ||
+        user?.presenceAtForAP + 150000 < Date.now() ? (
         <AttendenceAeps attendance={"AP"} />
       ) : (
         <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>

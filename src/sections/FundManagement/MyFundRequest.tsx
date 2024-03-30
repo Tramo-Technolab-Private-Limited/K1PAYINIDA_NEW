@@ -142,7 +142,7 @@ export default function (props: any) {
             setSdata(Response.data.data);
           } else {
             console.log("======getRaisedRequests=======>" + Response);
-            enqueueSnackbar(Response.data.message);
+            enqueueSnackbar(Response.data.message, { variant: "error" });
           }
           setIsLoading(false);
         } else {
@@ -244,7 +244,7 @@ export default function (props: any) {
             setSdata(Response.data.data);
           } else {
             console.log("======getRaisedRequests=======>" + Response);
-            enqueueSnackbar(Response.data.message);
+            enqueueSnackbar(Response.data.message, { variant: "error" });
           }
           setIsLoading(false);
         } else {
@@ -320,7 +320,7 @@ export default function (props: any) {
                 placeholder="amount"
                 size="small"
               />
-              <Stack flexDirection={"row"} gap={1}>
+              <Stack direction={"row"} gap={1}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
                     label="Start date"
@@ -334,7 +334,7 @@ export default function (props: any) {
                       <TextField
                         {...params}
                         size={"small"}
-                        sx={{ maxWidth: 250 }}
+                        sx={{ width: 150 }}
                       />
                     )}
                   />
@@ -353,7 +353,7 @@ export default function (props: any) {
                       <TextField
                         {...params}
                         size={"small"}
-                        sx={{ maxWidth: 250 }}
+                        sx={{ width: 150 }}
                       />
                     )}
                   />
@@ -386,7 +386,10 @@ export default function (props: any) {
                   >
                     <StyledTableCell>
                       <Typography variant="body1">
-                        {fDateTime(row?.createdAt)}
+                      createdAt{fDateTime(row?.createdAt)}
+                      </Typography>
+                      <Typography variant="body1">
+                      updatedAt{fDateTime(row?.actionDate)}
                       </Typography>
                     </StyledTableCell>
 
@@ -441,7 +444,7 @@ export default function (props: any) {
                       <Label
                         variant="soft"
                         color={
-                          (row.status.toLowerCase() === "failed" && "error") ||
+                          (row.status.toLowerCase() === "rejected" && "error") ||
                           ((row.status.toLowerCase() === "pending" ||
                             row.status.toLowerCase() === "in_process") &&
                             "warning") ||

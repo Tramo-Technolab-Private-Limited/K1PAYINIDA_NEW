@@ -154,9 +154,9 @@ export default function DMT1() {
                 SendOTP(data.mobileNumber);
                 openEditModal2();
               }
-              enqueueSnackbar(Response.data.message);
+              enqueueSnackbar(Response.data.message, { variant: "warning" });
             } else {
-              enqueueSnackbar(Response.data.message);
+              enqueueSnackbar(Response.data.message, { variant: "error" });
             }
           } else {
             remitterDispatch({ type: "REMITTER_NOT_FOUND" });
@@ -177,7 +177,7 @@ export default function DMT1() {
           enqueueSnackbar(Response.data.message);
           console.log("==============>>> sendOtp data 200", Response.data.data);
         } else {
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "error" });
           console.log(
             "==============>>> sendOtp message",
             Response.data.message
@@ -207,9 +207,9 @@ export default function DMT1() {
             SendOTP(val);
             openEditModal2();
           }
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "warning" });
         } else {
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "error" });
         }
       } else {
         remitterDispatch({ type: "SERVER_ERROR" });
@@ -234,11 +234,7 @@ export default function DMT1() {
           <title>DMT1 |{process.env.REACT_APP_COMPANY_NAME}</title>
         </Helmet>
         <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-          <Grid
-            container
-            spacing={2}
-            sx={{ maxHeight: window.innerHeight - 250 }}
-          >
+          <Grid container spacing={2}>
             <Grid item sm={3}>
               <Box
                 rowGap={2}
@@ -337,9 +333,9 @@ const OtpSubmissionForRegistrantion = ({
     otp1: Yup.string().required(),
     otp2: Yup.string().required(),
     otp3: Yup.string().required(),
-    // otp4: Yup.string().required(),
-    // otp5: Yup.string().required(),
-    // otp6: Yup.string().required(),
+    otp4: Yup.string().required(),
+    otp5: Yup.string().required(),
+    otp6: Yup.string().required(),
   });
   const defaultValues = {
     otp1: "",
@@ -381,7 +377,7 @@ const OtpSubmissionForRegistrantion = ({
               Response.data.data.message
             );
           } else {
-            enqueueSnackbar(Response.data.message);
+            enqueueSnackbar(Response.data.message, { variant: "error" });
             setIsLoading(false);
             console.log(
               "==============>>> register remmiter message",
@@ -410,7 +406,12 @@ const OtpSubmissionForRegistrantion = ({
           />
         </Stack>
 
-        {(!!errors.otp1 || !!errors.otp2 || !!errors.otp3) && (
+        {(!!errors.otp1 ||
+          !!errors.otp2 ||
+          !!errors.otp3 ||
+          !!errors.otp4 ||
+          !!errors.otp5 ||
+          !!errors.otp6) && (
           <FormHelperText error sx={{ px: 2 }}>
             Code is required
           </FormHelperText>
@@ -482,7 +483,7 @@ const NewRegistration = ({ mobilenumber, handleNewRegistaion }: any) => {
           setIsLoading(false);
           handleNewRegistaion("SUCCESS");
         } else {
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "error" });
           setIsLoading(false);
           handleNewRegistaion("FAIL");
         }

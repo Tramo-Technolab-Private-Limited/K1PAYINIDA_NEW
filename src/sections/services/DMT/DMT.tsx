@@ -129,6 +129,7 @@ export default function DMT() {
     bgcolor: "#ffffff",
     boxShadow: 24,
     borderRadius: 2,
+    width: { xs: "95%", md: 500 },
     p: 4,
   };
 
@@ -158,9 +159,9 @@ export default function DMT() {
               SendOTP(data.mobileNumber);
               openEditModal2();
             }
-            enqueueSnackbar(Response.data.message);
+            enqueueSnackbar(Response.data.message, { variant: "warning" });
           } else {
-            enqueueSnackbar(Response.data.message);
+            enqueueSnackbar(Response.data.message, { variant: "error" });
           }
         } else {
           remitterDispatch({ type: "REMITTER_NOT_FOUND" });
@@ -174,13 +175,13 @@ export default function DMT() {
 
   const SendOTP = (val: any) => {
     let token = localStorage.getItem("token");
-    Api("moneyTransfer/remitter/resendOtp/" + val, "GET", "", token).then(
+    Api("moneyTransfer/remitter/sendOtp/" + val, "GET", "", token).then(
       (Response: any) => {
         if (Response.data.code == 200) {
           enqueueSnackbar(Response.data.message);
           console.log("==============>>> sendOtp data 200", Response.data.data);
         } else {
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "error" });
           console.log(
             "==============>>> sendOtp message",
             Response.data.message
@@ -211,9 +212,9 @@ export default function DMT() {
               SendOTP(val);
               openEditModal2();
             }
-            enqueueSnackbar(Response.data.message);
+            enqueueSnackbar(Response.data.message, { variant: "warning" });
           } else {
-            enqueueSnackbar(Response.data.message);
+            enqueueSnackbar(Response.data.message, { variant: "error" });
           }
         } else {
           remitterDispatch({ type: "SERVER_ERROR" });
@@ -239,11 +240,7 @@ export default function DMT() {
           <title>Money Transfer |{process.env.REACT_APP_COMPANY_NAME}</title>
         </Helmet>
         <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-          <Grid
-            container
-            spacing={2}
-            sx={{ maxHeight: window.innerHeight - 250 }}
-          >
+          <Grid container spacing={2}>
             <Grid item sm={3}>
               <Box
                 rowGap={2}
@@ -370,7 +367,8 @@ const OtpSubmissionForRegistrantion = ({
     let token = localStorage.getItem("token");
     let body = {
       remitterMobile: mobilenumber,
-      otp: data.otp1 + data.otp2 + data.otp3,
+      otp:
+        data.otp1 + data.otp2 + data.otp3 + data.otp4 + data.otp5 + data.otp6,
     };
     Api("moneyTransfer/remitter/verifyOTP", "POST", body, token).then(
       (Response: any) => {
@@ -385,7 +383,7 @@ const OtpSubmissionForRegistrantion = ({
               Response.data.data.message
             );
           } else {
-            enqueueSnackbar(Response.data.message);
+            enqueueSnackbar(Response.data.message, { variant: "error" });
             setIsLoading(false);
             console.log(
               "==============>>> register remmiter message",
@@ -491,7 +489,7 @@ const NewRegistration = ({ mobilenumber, handleNewRegistaion }: any) => {
           setIsLoading(false);
           handleNewRegistaion("SUCCESS");
         } else {
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "error" });
           setIsLoading(false);
           handleNewRegistaion("FAIL");
         }

@@ -168,7 +168,7 @@ export default function AllDistributor() {
     { id: "maxComm", label: "Member Since" },
     { id: "schemeId", label: "Scheme Id" },
     { id: "status", label: "Status" },
-    { id: "fundtrans", label: "Fund Transfer", align:"center"},
+    { id: "fundtrans", label: "Fund Transfer", align: "center" },
   ];
 
   const style = {
@@ -388,7 +388,7 @@ function EcommerceBestSalesmanRow({
                 {row.email}
               </Typography>
               <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                {row.company_name}
+                {row?.company_name ? row?.company_name : " No Shop Name "}
               </Typography>
               <Typography variant="body2" sx={{ color: "text.secondary" }}>
                 {new Date(row.createdAt).toLocaleString()}
@@ -408,7 +408,7 @@ function EcommerceBestSalesmanRow({
         <TableCell sx={{ color: "#0D571C" }}>
           <Typography>
             {" "}
-            Rs.{fIndianCurrency(row?.main_wallet_amount || "0")}
+            {fIndianCurrency(row?.main_wallet_amount || "0")}
           </Typography>
         </TableCell>
         <TableCell>{fDateTime(row.createdAt)}</TableCell>

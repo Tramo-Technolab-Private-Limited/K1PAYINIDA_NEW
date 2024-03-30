@@ -204,7 +204,7 @@ function Loan() {
               setTimer(60);
               enqueueSnackbar(Response.data.message);
             } else {
-              enqueueSnackbar(Response.data.message);
+              enqueueSnackbar(Response.data.message, { variant: "error" });
             }
           }
         }
@@ -226,7 +226,7 @@ function Loan() {
             setTimer(60);
             enqueueSnackbar(Response.data.message);
           } else {
-            enqueueSnackbar(Response.data.message);
+            enqueueSnackbar(Response.data.message, { variant: "error" });
           }
         }
       }
@@ -636,6 +636,10 @@ const UploadPan = React.memo(({ data, setStep }: any) => {
   } = methods;
 
   const handleFile = async (e: any) => {
+    if (e.target.files[0]?.size > Math.pow(1024, 5))
+      return enqueueSnackbar("File size should be less than 5MB", {
+        variant: "error",
+      });
     setErrorMsg("");
     setIsSubmitLoading(true);
     let token = localStorage.getItem("token");
@@ -717,7 +721,7 @@ const UploadPan = React.memo(({ data, setStep }: any) => {
             setStep(3);
             enqueueSnackbar(Response.data.message);
           }
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "error" });
           Response.data.error.errorCode == "userDetailsAlreadyVerified" &&
             setStep(3);
           setErrorMsg(Response.data.error.errorDescription);
@@ -950,7 +954,7 @@ const DynamicForm = ({ data, setStep }: any) => {
 
             enqueueSnackbar(Response.data.message);
           } else {
-            enqueueSnackbar(Response.data.message);
+            enqueueSnackbar(Response.data.message, { variant: "error" });
           }
         }
       }
@@ -972,7 +976,7 @@ const DynamicForm = ({ data, setStep }: any) => {
               enqueueSnackbar(Response.data.message);
               setStep(1);
             } else {
-              enqueueSnackbar(Response.data.message);
+              enqueueSnackbar(Response.data.message, { variant: "error" });
             }
           }
         }

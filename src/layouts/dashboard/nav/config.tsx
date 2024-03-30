@@ -107,6 +107,10 @@ const NavConfig = [
             title: "Wallet Ladger",
             path: PATH_DASHBOARD.transaction.walletladger,
           },
+          {
+            title: "Reports",
+            path: PATH_DASHBOARD.transaction.historicalreports,
+          },
         ],
       },
       {
@@ -122,10 +126,10 @@ const NavConfig = [
             title: "BBPS Scheme",
             path: PATH_DASHBOARD.scheme.bbpsscheme,
           },
-          {
-            title: "Loan Scheme",
-            path: PATH_DASHBOARD.scheme.loanscheme,
-          },
+          // {
+          //   title: "Loan Scheme",
+          //   path: PATH_DASHBOARD.scheme.loanscheme,
+          // },
         ],
       },
       {

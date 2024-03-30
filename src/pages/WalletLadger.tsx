@@ -179,7 +179,7 @@ export default function WalletLadger() {
           enqueueSnackbar(Response.data.message);
           setSendLoading(false);
         } else {
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "error" });
           setSendLoading(false);
         }
       }
@@ -197,8 +197,12 @@ export default function WalletLadger() {
           methods={methods}
           onSubmit={handleSubmit(getTransactional)}
         >
-          <Stack flexDirection={"row"} m={1} gap={1} justifyContent={"start"}>
-            <RHFTextField name="clientRefId" placeholder={"Client Ref Id"} />
+          <Stack flexDirection={"row"} m={1} gap={1}>
+            <RHFTextField
+              name="clientRefId"
+              placeholder={"Client Ref Id"}
+              sx={{ width: 300 }}
+            />
             <Stack flexDirection={"row"} gap={1}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
@@ -208,11 +212,7 @@ export default function WalletLadger() {
                   maxDate={new Date()}
                   onChange={(newValue: any) => setValue("startDate", newValue)}
                   renderInput={(params: any) => (
-                    <TextField
-                      {...params}
-                      size={"small"}
-                      sx={{ minWidth: 100 }}
-                    />
+                    <TextField {...params} size={"small"} sx={{ width: 250 }} />
                   )}
                 />
                 <DatePicker
@@ -223,11 +223,7 @@ export default function WalletLadger() {
                   maxDate={new Date()}
                   onChange={(newValue: any) => setValue("endDate", newValue)}
                   renderInput={(params: any) => (
-                    <TextField
-                      {...params}
-                      size={"small"}
-                      sx={{ minWidth: 100 }}
-                    />
+                    <TextField {...params} size={"small"} sx={{ width: 250 }} />
                   )}
                 />
               </LocalizationProvider>

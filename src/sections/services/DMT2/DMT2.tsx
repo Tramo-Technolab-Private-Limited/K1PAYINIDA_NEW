@@ -153,9 +153,9 @@ export default function DMT2() {
                 reSendOTP(data.mobileNumber);
                 openEditModal2();
               }
-              enqueueSnackbar(Response.data.message);
+              enqueueSnackbar(Response.data.message, { variant: "warning" });
             } else {
-              enqueueSnackbar(Response.data.message);
+              enqueueSnackbar(Response.data.message, { variant: "error" });
             }
           } else {
             remitterDispatch({ type: "REMITTER_NOT_FOUND" });
@@ -176,7 +176,7 @@ export default function DMT2() {
           enqueueSnackbar(Response.data.message);
           console.log("==============>>> sendOtp data 200", Response.data.data);
         } else {
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "error" });
           console.log(
             "==============>>> sendOtp message",
             Response.data.message
@@ -206,9 +206,9 @@ export default function DMT2() {
             reSendOTP(val);
             openEditModal2();
           }
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "warning" });
         } else {
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "error" });
         }
       } else {
         remitterDispatch({ type: "SERVER_ERROR" });
@@ -233,11 +233,7 @@ export default function DMT2() {
           <title>Money Transfer | {process.env.REACT_APP_COMPANY_NAME}</title>
         </Helmet>
         <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-          <Grid
-            container
-            spacing={2}
-            sx={{ maxHeight: window.innerHeight - 250 }}
-          >
+          <Grid container spacing={2}>
             <Grid item sm={4}>
               <Box
                 rowGap={2}
@@ -387,7 +383,7 @@ const OtpSubmissionForRegistrantion = ({
               Response.data.data.message
             );
           } else {
-            enqueueSnackbar(Response.data.message);
+            enqueueSnackbar(Response.data.message, { variant: "error" });
             setIsLoading(false);
             console.log(
               "==============>>> register remmiter message",
@@ -485,7 +481,7 @@ const NewRegistration = ({ mobilenumber, handleNewRegistaion }: any) => {
           setIsLoading(false);
           handleNewRegistaion("SUCCESS");
         } else {
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "error" });
           setIsLoading(false);
           handleNewRegistaion("FAIL");
         }

@@ -5,6 +5,7 @@ export type TransactionProps = {
   categoryName: string;
   agentDetails: {
     id: {
+      company_name: string;
       _id: string;
       userCode: string;
       role: string;
