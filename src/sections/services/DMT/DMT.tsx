@@ -129,6 +129,7 @@ export default function DMT() {
     bgcolor: "#ffffff",
     boxShadow: 24,
     borderRadius: 2,
+    width: { xs: "95%", md: 500 },
     p: 4,
   };
 
@@ -366,7 +367,8 @@ const OtpSubmissionForRegistrantion = ({
     let token = localStorage.getItem("token");
     let body = {
       remitterMobile: mobilenumber,
-      otp: data.otp1 + data.otp2 + data.otp3,
+      otp:
+        data.otp1 + data.otp2 + data.otp3 + data.otp4 + data.otp5 + data.otp6,
     };
     Api("moneyTransfer/remitter/verifyOTP", "POST", body, token).then(
       (Response: any) => {
