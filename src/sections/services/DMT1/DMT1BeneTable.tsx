@@ -291,6 +291,9 @@ export default function DMTbeneficiary() {
             type: "ADD_BENE_SUCCESS",
             payload: Response.data.data,
           });
+          remitterVerifyDispatch({
+            type: "VERIFY_FETCH_FAILURE",
+          });
           enqueueSnackbar(Response.data.message);
           handleClose();
         } else {

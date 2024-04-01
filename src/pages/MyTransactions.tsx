@@ -111,6 +111,15 @@ export default function MyTransactions() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  const [sumOfTransactions, setSumOfTransactions] = useState({
+    success: 0,
+    failed: 0,
+    pending: 0,
+    in_process: 0,
+    hold: 0,
+    initiated: 0,
+  });
+
   const txnSchema = Yup.object().shape({
     status: Yup.string(),
     clientRefId: Yup.string(),
@@ -197,11 +206,78 @@ export default function MyTransactions() {
         if (Response.status == 200) {
           if (Response.data.code == 200) {
             setFilterdValue(Response.data.data.data);
+
             setTotalCount(Response.data.data.totalNumberOfRecords);
             setCurrentTab("");
+
+            setSumOfTransactions((prevState) => ({
+              ...prevState,
+              success: Response.data.data.data.reduce(
+                (accumulator: number, currentValue: any) => {
+                  if (currentValue.status == "success") {
+                    return accumulator + currentValue.amount;
+                  } else {
+                    return accumulator + 0;
+                  }
+                },
+                0
+              ),
+
+              failed: Response.data.data.data.reduce(
+                (accumulator: number, currentValue: any) => {
+                  if (currentValue.status == "failed") {
+                    return accumulator + currentValue.amount;
+                  } else {
+                    return accumulator + 0;
+                  }
+                },
+                0
+              ),
+              pending: Response.data.data.data.reduce(
+                (accumulator: number, currentValue: any) => {
+                  if (currentValue.status == "pending") {
+                    return accumulator + currentValue.amount;
+                  } else {
+                    return accumulator + 0;
+                  }
+                },
+                0
+              ),
+              in_process: Response.data.data.data.reduce(
+                (accumulator: number, currentValue: any) => {
+                  if (currentValue.status == "in_process") {
+                    return accumulator + currentValue.amount;
+                  } else {
+                    return accumulator + 0;
+                  }
+                },
+                0
+              ),
+              hold: Response.data.data.data.reduce(
+                (accumulator: number, currentValue: any) => {
+                  if (currentValue.status == "hold") {
+                    return accumulator + currentValue.amount;
+                  } else {
+                    return accumulator + 0;
+                  }
+                },
+                0
+              ),
+              initiated: Response.data.data.data.reduce(
+                (accumulator: number, currentValue: any) => {
+                  if (currentValue.status == "initiated") {
+                    return accumulator + currentValue.amount;
+                  } else {
+                    return accumulator + 0;
+                  }
+                },
+                0
+              ),
+            }));
           } else {
             enqueueSnackbar(Response.data.message, { variant: "error" });
           }
+
           setLoading(false);
         } else {
           enqueueSnackbar("Failed", { variant: "error" });
@@ -240,6 +316,70 @@ export default function MyTransactions() {
               setTotalCount(Response.data.data.totalNumberOfRecords);
               handleClose();
               enqueueSnackbar(Response.data.message);
+              setSumOfTransactions((prevState) => ({
+                ...prevState,
+                success: Response.data.data.data.reduce(
+                  (accumulator: number, currentValue: any) => {
+                    if (currentValue.status == "success") {
+                      return accumulator + currentValue.amount;
+                    } else {
+                      return accumulator + 0;
+                    }
+                  },
+                  0
+                ),
+
+                failed: Response.data.data.data.reduce(
+                  (accumulator: number, currentValue: any) => {
+                    if (currentValue.status == "failed") {
+                      return accumulator + currentValue.amount;
+                    } else {
+                      return accumulator + 0;
+                    }
+                  },
+                  0
+                ),
+                pending: Response.data.data.data.reduce(
+                  (accumulator: number, currentValue: any) => {
+                    if (currentValue.status == "pending") {
+                      return accumulator + currentValue.amount;
+                    } else {
+                      return accumulator + 0;
+                    }
+                  },
+                  0
+                ),
+                in_process: Response.data.data.data.reduce(
+                  (accumulator: number, currentValue: any) => {
+                    if (currentValue.status == "in_process") {
+                      return accumulator + currentValue.amount;
+                    } else {
+                      return accumulator + 0;
+                    }
+                  },
+                  0
+                ),
+                hold: Response.data.data.data.reduce(
+                  (accumulator: number, currentValue: any) => {
+                    if (currentValue.status == "hold") {
+                      return accumulator + currentValue.amount;
+                    } else {
+                      return accumulator + 0;
+                    }
+                  },
+                  0
+                ),
+                initiated: Response.data.data.data.reduce(
+                  (accumulator: number, currentValue: any) => {
+                    if (currentValue.status == "initiated") {
+                      return accumulator + currentValue.amount;
+                    } else {
+                      return accumulator + 0;
+                    }
+                  },
+                  0
+                ),
+              }));
             } else {
               enqueueSnackbar(Response.data.message, { variant: "error" });
             }
@@ -447,7 +587,7 @@ export default function MyTransactions() {
         justifyContent={isDesktop ? "space-between" : "end"}
         gap={1}
       >
-        <Stack flexDirection={"row"} m={1} gap={1}>
+        {/* <Stack flexDirection={"row"} m={1} gap={1}>
           {filterdValue.length > 0 &&
             filterdValue.map((item: any) => {
               return (
@@ -460,8 +600,54 @@ export default function MyTransactions() {
                 )
               );
             })}
-        </Stack>
+        </Stack> */}
 
+        <Stack flexDirection={"row"} gap={2}>
+          <Label
+            variant="soft"
+            color={"success"}
+            sx={{ textTransform: "capitalize" }}
+          >
+            Success : {fIndianCurrency(sumOfTransactions?.success) || "₹" + 0}
+          </Label>
+          <Label
+            variant="soft"
+            color={"error"}
+            sx={{ textTransform: "capitalize" }}
+          >
+            Failed : {fIndianCurrency(sumOfTransactions?.failed) || "₹" + 0}
+          </Label>
+          <Label
+            variant="soft"
+            color={"warning"}
+            sx={{ textTransform: "capitalize" }}
+          >
+            Pending : {fIndianCurrency(sumOfTransactions?.pending) || "₹" + 0}
+          </Label>
+          <Label
+            variant="soft"
+            color={"info"}
+            sx={{ textTransform: "capitalize" }}
+          >
+            In Process :{" "}
+            {fIndianCurrency(sumOfTransactions?.in_process) || "₹" + 0}
+          </Label>
+          <Label
+            variant="soft"
+            color={"warning"}
+            sx={{ textTransform: "capitalize" }}
+          >
+            Hold : {fIndianCurrency(sumOfTransactions?.hold) || "₹" + 0}
+          </Label>
+          <Label
+            variant="soft"
+            color={"info"}
+            sx={{ textTransform: "capitalize" }}
+          >
+            Initiated :{" "}
+            {fIndianCurrency(sumOfTransactions?.initiated) || "₹" + 0}
+          </Label>
+        </Stack>
         <Stack flexDirection={"row"} gap={1}>
           <Button variant="contained" onClick={handleReset}>
             <Iconify icon="bx:reset" color={"common.white"} mr={1} />
@@ -476,6 +662,7 @@ export default function MyTransactions() {
             Filter
           </Button>
         </Stack>
+        {/* </Stack> */}
       </Stack>
       <Stack>
         <MotionModal
@@ -945,6 +1132,9 @@ function TransactionRow({ row }: childProps) {
                     {newRow?.agentDetails?.id?.lastName}
                   </Typography>
                   <Typography variant="body2">
+                    {newRow?.agentDetails?.id?.company_name}
+                  </Typography>
+                  <Typography variant="body2">
                     {newRow?.agentDetails?.id?.userCode}
                   </Typography>
                 </Stack>
@@ -1399,159 +1589,156 @@ function TransactionRow({ row }: childProps) {
                   TRX Date: {fDateTime(newRow?.createdAt)}
                 </Typography>
                 {newRow?.categoryName == "MONEY TRANSFER" && (
-                <Stack>
-                  <Typography variant="subtitle1">
-                    Benificary Details
-                  </Typography>
+                  <Stack>
+                    <Typography variant="subtitle1">
+                      Benificary Details
+                    </Typography>
 
-                  <Stack flexDirection={"row"}>
-                    <Typography variant="body2">
-                      {" "}
-                      Account Holder Name:{" "}
-                    </Typography>
-                    <Typography variant="body2">
-                      {newRow?.moneyTransferBeneficiaryDetails?.beneName}
-                    </Typography>
+                    <Stack flexDirection={"row"}>
+                      <Typography variant="body2">
+                        {" "}
+                        Account Holder Name:{" "}
+                      </Typography>
+                      <Typography variant="body2">
+                        {newRow?.moneyTransferBeneficiaryDetails?.beneName}
+                      </Typography>
+                    </Stack>
+                    <Stack flexDirection={"row"} gap={1}>
+                      <Typography variant="body2"> Bank Name: </Typography>
+                      <Typography variant="body2">
+                        {newRow?.moneyTransferBeneficiaryDetails?.bankName}
+                      </Typography>
+                    </Stack>
+                    <Stack flexDirection={"row"} gap={1}>
+                      <Typography variant="body2"> Account Number: </Typography>
+                      <Typography variant="body2">
+                        {newRow?.moneyTransferBeneficiaryDetails?.accountNumber}
+                      </Typography>
+                    </Stack>
+                    <Stack flexDirection={"row"} gap={1}>
+                      <Typography variant="body2"> IFSC : </Typography>
+                      <Typography variant="body2">
+                        {newRow?.moneyTransferBeneficiaryDetails?.ifsc}
+                      </Typography>
+                    </Stack>
                   </Stack>
-                  <Stack flexDirection={"row"} gap={1}>
-                    <Typography variant="body2"> Bank Name: </Typography>
-                    <Typography variant="body2">
-                      {newRow?.moneyTransferBeneficiaryDetails?.bankName}
-                    </Typography>
-                  </Stack>
-                  <Stack flexDirection={"row"} gap={1}>
-                    <Typography variant="body2"> Account Number: </Typography>
-                    <Typography variant="body2">
-                      {newRow?.moneyTransferBeneficiaryDetails?.accountNumber}
-                    </Typography>
-                  </Stack>
-                  <Stack flexDirection={"row"} gap={1}>
-                    <Typography variant="body2"> IFSC : </Typography>
-                    <Typography variant="body2">
-                      {newRow?.moneyTransferBeneficiaryDetails?.ifsc}
-                    </Typography>
-                  </Stack>
-                </Stack>
                 )}
-                  {newRow?.categoryName == "DMT2" && (
-                <Stack>
-                  <Typography variant="subtitle1">
-                    Benificary Details
-                  </Typography>
+                {newRow?.categoryName == "DMT2" && (
+                  <Stack>
+                    <Typography variant="subtitle1">
+                      Benificary Details
+                    </Typography>
 
-                  <Stack flexDirection={"row"}>
-                    <Typography variant="body2">
-                      {" "}
-                      Account Holder Name:{" "}
-                    </Typography>
-                    <Typography variant="body2">
-                      {newRow?.moneyTransferBeneficiaryDetails?.beneName}
-                    </Typography>
+                    <Stack flexDirection={"row"}>
+                      <Typography variant="body2">
+                        {" "}
+                        Account Holder Name:{" "}
+                      </Typography>
+                      <Typography variant="body2">
+                        {newRow?.moneyTransferBeneficiaryDetails?.beneName}
+                      </Typography>
+                    </Stack>
+                    <Stack flexDirection={"row"} gap={1}>
+                      <Typography variant="body2"> Bank Name: </Typography>
+                      <Typography variant="body2">
+                        {newRow?.moneyTransferBeneficiaryDetails?.bankName}
+                      </Typography>
+                    </Stack>
+                    <Stack flexDirection={"row"} gap={1}>
+                      <Typography variant="body2"> Account Number: </Typography>
+                      <Typography variant="body2">
+                        {newRow?.moneyTransferBeneficiaryDetails?.accountNumber}
+                      </Typography>
+                    </Stack>
+                    <Stack flexDirection={"row"} gap={1}>
+                      <Typography variant="body2"> IFSC : </Typography>
+                      <Typography variant="body2">
+                        {newRow?.moneyTransferBeneficiaryDetails?.ifsc}
+                      </Typography>
+                    </Stack>
                   </Stack>
-                  <Stack flexDirection={"row"} gap={1}>
-                    <Typography variant="body2"> Bank Name: </Typography>
-                    <Typography variant="body2">
-                      {newRow?.moneyTransferBeneficiaryDetails?.bankName}
-                    </Typography>
-                  </Stack>
-                  <Stack flexDirection={"row"} gap={1}>
-                    <Typography variant="body2"> Account Number: </Typography>
-                    <Typography variant="body2">
-                      {newRow?.moneyTransferBeneficiaryDetails?.accountNumber}
-                    </Typography>
-                  </Stack>
-                  <Stack flexDirection={"row"} gap={1}>
-                    <Typography variant="body2"> IFSC : </Typography>
-                    <Typography variant="body2">
-                      {newRow?.moneyTransferBeneficiaryDetails?.ifsc}
-                    </Typography>
-                  </Stack>
-                </Stack>
                 )}
-                 {newRow?.categoryName == "RECHARGES" && (
-                <Stack>
-                  <Stack flexDirection={"row"}>
-                    <Typography variant="body2">
-                      {" "}
-                      Operator:{" "}
-                    </Typography>
-                    <Typography variant="body2">
-                    {newRow?.operator?.key1}
-                    </Typography>
+                {newRow?.categoryName == "RECHARGES" && (
+                  <Stack>
+                    <Stack flexDirection={"row"}>
+                      <Typography variant="body2"> Operator: </Typography>
+                      <Typography variant="body2">
+                        {newRow?.operator?.key1}
+                      </Typography>
+                    </Stack>
+                    <Stack flexDirection={"row"} gap={1}>
+                      <Typography variant="body2"> Mobile Number: </Typography>
+                      <Typography variant="body2">
+                        {newRow?.operator?.key2}
+                      </Typography>
+                    </Stack>
                   </Stack>
-                  <Stack flexDirection={"row"} gap={1}>
-                    <Typography variant="body2"> Mobile Number: </Typography>
-                    <Typography variant="body2">
-                      {newRow?.operator?.key2}
-                    </Typography>
-                </Stack>
-                </Stack>
                 )}
                 {newRow?.categoryName == "AADHAAR PAY" && (
-                <Stack>
-                  <Stack flexDirection={"row"} gap={1}>
-                    <Typography variant="body2"> Bank Name: </Typography>
-                    <Typography variant="body2">
-                    {newRow?.operator?.key1}
-                    </Typography>
+                  <Stack>
+                    <Stack flexDirection={"row"} gap={1}>
+                      <Typography variant="body2"> Bank Name: </Typography>
+                      <Typography variant="body2">
+                        {newRow?.operator?.key1}
+                      </Typography>
+                    </Stack>
+                    <Stack flexDirection={"row"} gap={1}>
+                      <Typography variant="body2"> Account Number: </Typography>
+                      <Typography variant="body2">
+                        {newRow?.operator?.key2}
+                      </Typography>
+                    </Stack>
                   </Stack>
-                  <Stack flexDirection={"row"} gap={1}>
-                    <Typography variant="body2"> Account Number: </Typography>
-                    <Typography variant="body2">
-                    {newRow?.operator?.key2}
-                    </Typography>
-                  </Stack>
-                </Stack>
                 )}
-                    {newRow?.categoryName == "AEPS" && (
-                <Stack>
-                  <Stack flexDirection={"row"} gap={1}>
-                    <Typography variant="body2"> Bank Name: </Typography>
-                    <Typography variant="body2">
-                    {newRow?.operator?.key1}
-                    </Typography>
+                {newRow?.categoryName == "AEPS" && (
+                  <Stack>
+                    <Stack flexDirection={"row"} gap={1}>
+                      <Typography variant="body2"> Bank Name: </Typography>
+                      <Typography variant="body2">
+                        {newRow?.operator?.key1}
+                      </Typography>
+                    </Stack>
+                    <Stack flexDirection={"row"} gap={1}>
+                      <Typography variant="body2"> Account Number: </Typography>
+                      <Typography variant="body2">
+                        {newRow?.operator?.key2}
+                      </Typography>
+                    </Stack>
                   </Stack>
-                  <Stack flexDirection={"row"} gap={1}>
-                    <Typography variant="body2"> Account Number: </Typography>
-                    <Typography variant="body2">
-                    {newRow?.operator?.key2}
-                    </Typography>
-                  </Stack>
-                </Stack>
                 )}
-                    {newRow?.categoryName == "withdraw" && (
-                <Stack>
-                  <Stack flexDirection={"row"} gap={1}>
-                    <Typography variant="body2"> Bank Name: </Typography>
-                    <Typography variant="body2">
-                      {newRow?.moneyTransferBeneficiaryDetails?.bankName}
-                    </Typography>
+                {newRow?.categoryName == "withdraw" && (
+                  <Stack>
+                    <Stack flexDirection={"row"} gap={1}>
+                      <Typography variant="body2"> Bank Name: </Typography>
+                      <Typography variant="body2">
+                        {newRow?.moneyTransferBeneficiaryDetails?.bankName}
+                      </Typography>
+                    </Stack>
+                    <Stack flexDirection={"row"} gap={1}>
+                      <Typography variant="body2"> Account Number: </Typography>
+                      <Typography variant="body2">
+                        {newRow?.moneyTransferBeneficiaryDetails?.accountNumber}
+                      </Typography>
+                    </Stack>
                   </Stack>
-                  <Stack flexDirection={"row"} gap={1}>
-                    <Typography variant="body2"> Account Number: </Typography>
-                    <Typography variant="body2">
-                      {newRow?.moneyTransferBeneficiaryDetails?.accountNumber}
-                    </Typography>
-                  </Stack>
-                </Stack>
                 )}
-                        {newRow?.categoryName == "Mini Statement" && (
-                <Stack>
-                  <Stack flexDirection={"row"} gap={1}>
-                    <Typography variant="body2"> Bank Name: </Typography>
-                    <Typography variant="body2">
-                      {newRow?.moneyTransferBeneficiaryDetails?.bankName}
-                    </Typography>
+                {newRow?.categoryName == "Mini Statement" && (
+                  <Stack>
+                    <Stack flexDirection={"row"} gap={1}>
+                      <Typography variant="body2"> Bank Name: </Typography>
+                      <Typography variant="body2">
+                        {newRow?.moneyTransferBeneficiaryDetails?.bankName}
+                      </Typography>
+                    </Stack>
+                    <Stack flexDirection={"row"} gap={1}>
+                      <Typography variant="body2"> Account Number: </Typography>
+                      <Typography variant="body2">
+                        {newRow?.moneyTransferBeneficiaryDetails?.accountNumber}
+                      </Typography>
+                    </Stack>
                   </Stack>
-                  <Stack flexDirection={"row"} gap={1}>
-                    <Typography variant="body2"> Account Number: </Typography>
-                    <Typography variant="body2">
-                      {newRow?.moneyTransferBeneficiaryDetails?.accountNumber}
-                    </Typography>
-                  </Stack>
-                </Stack>
                 )}
-                     {/* {newRow?.categoryName == "BILL PAYMENT" && (
+                {/* {newRow?.categoryName == "BILL PAYMENT" && (
                 <Stack>
                   <Stack flexDirection={"row"} gap={1}>
                     <Typography variant="body2"> Operator Name: </Typography>
@@ -1567,15 +1754,18 @@ function TransactionRow({ row }: childProps) {
                   </Stack>
                 </Stack>
                 )} */}
-                         {newRow?.categoryName == "LOAN" && (
-                <Stack>
-                  <Stack flexDirection={"row"} gap={1}>
-                    <Typography variant="body2"> Loan Applied for : </Typography>
-                    <Typography variant="body2">
-                      {newRow?.productName}
-                    </Typography>
+                {newRow?.categoryName == "LOAN" && (
+                  <Stack>
+                    <Stack flexDirection={"row"} gap={1}>
+                      <Typography variant="body2">
+                        {" "}
+                        Loan Applied for :{" "}
+                      </Typography>
+                      <Typography variant="body2">
+                        {newRow?.productName}
+                      </Typography>
+                    </Stack>
                   </Stack>
-                </Stack>
                 )}
               </Grid>
             </Grid>
