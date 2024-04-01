@@ -217,7 +217,7 @@ export default function FundFlow() {
           methods={methods}
           onSubmit={handleSubmit(filterTransaction)}
         >
-          <Stack flexDirection={"row"} justifyContent={"end"}>
+          <Stack flexDirection={"row"} justifyContent={"start"} gap={1} mb={1}>
             <RHFSelect
               name="transactionType"
               label="Transaction Type"

@@ -43,6 +43,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import MotionModal from "src/components/animate/MotionModal";
 import FundFlow from "../FundManagement/FundFlow";
+import DirectFundTransfer from "./DirectFundTransfer";
 
 // ----------------------------------------------------------------------
 
@@ -73,6 +74,8 @@ type RowProps = {
   company_name: string;
 };
 
+export let handleClosefunTransDist: any;
+
 export default function AllDistributor() {
   const [appdata, setAppdata] = useState([]);
   const isMobile = useResponsive("up", "sm");
@@ -86,8 +89,9 @@ export default function AllDistributor() {
   const [selectedRow, setSelectedRow] = useState<RowProps | null>(null);
   const [openFundtrans, setFundTrans] = React.useState(false);
   const [SelectAgent, setSelectAgent] = useState([]);
-  console.log("========== SelectAgent==============", SelectAgent);
 
+  const handleClose = () => setModalEdit(false);
+  handleClosefunTransDist = () => setFundTrans(false);
   type FormValuesProps = {
     status: string;
     shopName: string;
@@ -133,10 +137,6 @@ export default function AllDistributor() {
       },
     };
 
-    const FundTransfer = (val: any) => {
-      setFundTrans(true);
-    };
-
     let token = localStorage.getItem("token");
     Api(
       `agent/get_Distributors_All_Agents?distId=${val._id}&page=${currentPageAgent}&limit=${pageSizeAgent}`,
@@ -156,9 +156,6 @@ export default function AllDistributor() {
       }
     });
   };
-
-  const handleClose = () => setModalEdit(false);
-  const handleClosefunTrans = () => setFundTrans(false);
 
   const tableLabels: any = [
     { id: "product", label: "Name" },
@@ -228,6 +225,7 @@ export default function AllDistributor() {
 
   const FundTransfer = (val: any) => {
     setFundTrans(true);
+    setSelectedRow(val);
   };
   return (
     <>
@@ -351,10 +349,10 @@ export default function AllDistributor() {
 
       <MotionModal
         open={openFundtrans}
-        onClose={handleClosefunTrans}
+        onClose={handleClosefunTransDist}
         width={{ xs: "95%", sm: 500 }}
       >
-        <FundFlow />
+        <DirectFundTransfer props={selectedRow} />
       </MotionModal>
     </>
   );
