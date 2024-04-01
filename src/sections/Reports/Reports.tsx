@@ -49,6 +49,7 @@ import { sentenceCase } from "change-case";
 import useCopyToClipboard from "src/hooks/useCopyToClipboard";
 import dayjs from "dayjs";
 import CustomPagination from "src/components/customFunctions/CustomPagination";
+import { TableNoData } from "src/components/table";
 //aws
 AWS.config.update({
   accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
@@ -319,8 +320,6 @@ function HistoricalDataExport() {
         if (Response.data.code == 200) {
           setTableData(Response.data.data.data);
           setPageCount(Response?.data?.data?.totalNumberOfRecords);
-
-          enqueueSnackbar(Response.data.message);
         } else {
           enqueueSnackbar(Response.data.message, { variant: "error" });
         }
@@ -500,6 +499,7 @@ function HistoricalDataExport() {
                       </TableCell>
                     </TableRow>
                   ))}
+                  <TableNoData isNotFound={!tableData.length} />
                 </TableBody>
               )}
             </Table>
