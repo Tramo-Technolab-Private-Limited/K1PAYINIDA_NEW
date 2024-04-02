@@ -311,8 +311,8 @@ function MobilePrepaid() {
     let token = localStorage.getItem("token");
     let body = {
       circle: circleList.filter((item: any) => {
-        return item.name === getValues("circle");
-      })[0].value,
+        return item.value === getValues("circle");
+      })[0]?.value,
       operator: getValues("operatorName"),
     };
     Api("agents/v1/get_plan", "POST", body, token).then((Response: any) => {
@@ -420,7 +420,7 @@ function MobilePrepaid() {
               }}
             >
               {circleList.map((item: any, index: any) => (
-                <MenuItem key={item.name} value={item.name}>
+                <MenuItem key={item.value} value={item.value}>
                   {item.name}
                 </MenuItem>
               ))}
@@ -538,15 +538,14 @@ function MobilePrepaid() {
                 No Plans Found{" "}
               </Typography>
             )}
-            <Stack flexDirection={"row"} justifyContent={"end"} my={2}>
-              <Button variant="contained" size="small" onClick={handleClose}>
-                Close
-              </Button>
-            </Stack>
+            <Stack flexDirection={"row"} justifyContent={"end"} my={2}></Stack>
           </TableContainer>
         </Scrollbar>
+        <Button variant="contained" size="small" onClick={handleClose}>
+          Close
+        </Button>
       </MotionModal>
-      <MotionModal open={open1} width={{ xs: "95%", sm: "70%" }}>
+      <MotionModal open={open1} width={{ xs: "95%", md: 500 }}>
         <FormProvider methods={method2} onSubmit={handleOtpSubmit(formSubmit)}>
           <Typography variant="h4" textAlign={"center"}>
             Confirm Details
