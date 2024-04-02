@@ -16,6 +16,7 @@ import {
 } from "./styles";
 import Marquee from "react-fast-marquee";
 import SvgColor from "src/components/svg-color";
+import packageFile from "../../../package.json";
 
 // ----------------------------------------------------------------------
 
@@ -86,6 +87,22 @@ export default function LoginLayout({ children, illustration, title }: Props) {
         }}
       >
         {/* <Divider /> */}
+        <Stack
+          sx={{ bgcolor: "white" }}
+          flexDirection={"row"}
+          justifyContent={"space-between"}
+          px={1}
+        >
+          <Typography variant="caption">
+            v.
+            {process.env.REACT_APP_ENV == "DEV"
+              ? packageFile.versiondev
+              : packageFile.versionprod}
+          </Typography>
+          <Typography variant="caption">
+            Last Updated :- {packageFile.lastUpdated}
+          </Typography>
+        </Stack>
         <Marquee style={{ background: "white" }} pauseOnHover>
           <SvgColor
             src={"/assets/icons/marqueeimages/recharge.svg"}
