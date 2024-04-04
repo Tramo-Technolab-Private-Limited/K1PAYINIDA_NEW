@@ -946,7 +946,7 @@ function TransactionRow({ row }: childProps) {
         ? `agents/v1/checkStatus/` + rowFor._id
         : rowFor.categoryName.toLowerCase() == "dmt2"
         ? `dmt2/transaction/status/` + rowFor._id
-        : rowFor.categoryName.toLowerCase() == "bbps"
+        : rowFor.categoryName.toLowerCase() == "bill payment"
         ? `bbps/checkStatus/` + rowFor._id
         : rowFor.transactionType == "Wallet To Bank Account Settlement" &&
           `settlement/checkStatus/` + rowFor._id,
