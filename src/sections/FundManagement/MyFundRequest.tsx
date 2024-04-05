@@ -385,12 +385,18 @@ export default function (props: any) {
                     sx={{ borderBottom: "1px solid #dadada" }}
                   >
                     <StyledTableCell>
+                      <Stack direction={"row"} gap={1}>
+                      <Typography variant="subtitle1">Created At :</Typography>
                       <Typography variant="body1">
-                      createdAt{fDateTime(row?.createdAt)}
+                      {fDateTime(row?.createdAt)}
                       </Typography>
+                      </Stack>
+                      <Stack direction={"row"} gap={1}>
+                      <Typography variant="subtitle1">Updated At:</Typography>
                       <Typography variant="body1">
-                      updatedAt{fDateTime(row?.actionDate)}
+                      {fDateTime(row?.actionDate)}
                       </Typography>
+                      </Stack> 
                     </StyledTableCell>
 
                     <StyledTableCell>

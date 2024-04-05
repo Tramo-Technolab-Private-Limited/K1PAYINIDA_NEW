@@ -50,6 +50,7 @@ import useCopyToClipboard from "src/hooks/useCopyToClipboard";
 import dayjs from "dayjs";
 import CustomPagination from "src/components/customFunctions/CustomPagination";
 import { TableNoData } from "src/components/table";
+import DownloadIcon from '@mui/icons-material/Download';
 //aws
 AWS.config.update({
   accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
@@ -493,8 +494,9 @@ function HistoricalDataExport() {
                           variant="contained"
                           disabled={row?.status.toLowerCase() !== "generated"}
                           onClick={() => download(row?.url)}
+                          startIcon={<DownloadIcon />}
                         >
-                          Export
+                          Download
                         </Button>
                       </TableCell>
                     </TableRow>
