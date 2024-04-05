@@ -309,7 +309,7 @@ export default function DMT2pay({ clearPayout, remitter, beneficiary }: any) {
           </Typography>
         </FormProvider>
       </MotionModal>
-      <MotionModal open={open} width={{ xs: "95%", sm: 400 }}>
+      <MotionModal open={open} width={{ xs: "95%", sm: 500 }}>
         {checkNPIN ? (
           txn ? (
             <Icon
