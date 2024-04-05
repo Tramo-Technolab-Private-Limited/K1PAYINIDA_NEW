@@ -47,7 +47,7 @@ var localTime: any;
 
 export default function AadharPay() {
   const { enqueueSnackbar } = useSnackbar();
-  const { user, UpdateUserDetail } = useAuthContext();
+  const { user, initialize } = useAuthContext();
   const [postData, setPostData] = useState<any>({
     nationalBankIdentificationNumber: "",
     adhaarNumber: "",
@@ -214,6 +214,7 @@ export default function AadharPay() {
           if (Response.data.data.status == true) {
             reset(defaultValues);
           }
+          initialize();
           setResponseAmount(Response.data.txnId);
           setCheckNPIN(false);
         } else if (Response.data.code == 400) {

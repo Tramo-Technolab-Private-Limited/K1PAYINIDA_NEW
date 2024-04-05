@@ -402,7 +402,7 @@ export default function AEPS(props: any) {
             enqueueSnackbar(
               Response.data.txnId.amount + " Successfully Transfered"
             );
-
+            initialize();
             handleOpenResponse();
             setResponse(Response.data.txnId);
           } else {
@@ -468,6 +468,7 @@ export default function AEPS(props: any) {
               handleOpenError();
               setFailedMessage(Response.data.data.message);
             }
+            initialize();
             handleOpenResponse();
             setStatement(Response.data.data.data.miniStatementStructureModel);
             setResAmount(Response.data.data.data.balanceAmount);

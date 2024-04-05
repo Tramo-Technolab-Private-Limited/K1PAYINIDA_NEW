@@ -190,8 +190,6 @@ export default function UserProfilePage() {
     // },
   ];
 
-  udata.role == "agent" && TABS.pop();
-
   return (
     <>
       <Helmet>

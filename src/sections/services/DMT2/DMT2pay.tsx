@@ -55,7 +55,7 @@ export default function DMT2pay({ clearPayout, remitter, beneficiary }: any) {
   const { dmt2RemitterAvailableLimit } = remitter;
   const { bankName, accountNumber, mobileNumber, beneName, ifsc } = beneficiary;
   const { enqueueSnackbar } = useSnackbar();
-  const { UpdateUserDetail } = useAuthContext();
+  const { initialize } = useAuthContext();
   const [txn, setTxn] = useState(true);
   const [mode, setMode] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
@@ -184,10 +184,7 @@ export default function DMT2pay({ clearPayout, remitter, beneficiary }: any) {
               Response.data.response.map((element: any) => {
                 enqueueSnackbar(element.message);
                 TextToSpeak(element.message);
-                UpdateUserDetail({
-                  main_wallet_amount:
-                    element?.data?.agentDetails?.newMainWalletBalance,
-                });
+                initialize();
               });
               setTransactionDetail(Response.data.response);
               handleClose();

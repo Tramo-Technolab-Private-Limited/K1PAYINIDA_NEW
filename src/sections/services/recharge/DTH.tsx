@@ -54,6 +54,7 @@ type FormValuesProps = {
 };
 
 export default function DTH() {
+  const { initialize } = useAuthContext();
   const subCategoryContext: any = useContext(SubCategoryContext);
   const categoryContext: any = useContext(CategoryContext);
 
@@ -232,7 +233,7 @@ export default function DTH() {
 }
 
 function VerifyNPIN({ data, handleClose }: any) {
-  const { user, UpdateUserDetail } = useAuthContext();
+  const { user, UpdateUserDetail, initialize } = useAuthContext();
   const { DTHNumber, amount, circle, operatorid, productName } = data;
   const { enqueueSnackbar } = useSnackbar();
   const [confirm, setConfirm] = React.useState(false);
@@ -298,10 +299,7 @@ function VerifyNPIN({ data, handleClose }: any) {
                 "==============>>> post mobile data message",
                 Response.data.message
               );
-              UpdateUserDetail({
-                main_wallet_amount:
-                  Response?.data?.data?.agentDetails?.newMainWalletBalance,
-              });
+              initialize();
             } else {
               enqueueSnackbar(Response.data.message, { variant: "error" });
               console.log(

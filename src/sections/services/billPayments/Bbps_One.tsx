@@ -627,7 +627,7 @@ const BbpsBillPayment = ({
   handleToReset,
 }: any) => {
   const { enqueueSnackbar } = useSnackbar();
-  const { user, UpdateUserDetail } = useAuthContext();
+  const { user, initialize } = useAuthContext();
   const [isParentValid, setIsParentValid] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -728,10 +728,7 @@ const BbpsBillPayment = ({
           if (Response.status == 200) {
             if (Response.data.code == 200) {
               if (Response.data.data.status == "success") {
-                UpdateUserDetail({
-                  main_wallet_amount:
-                    Response?.data?.data?.agentDetails?.newMainWalletBalance,
-                });
+                initialize();
               }
               TextToSpeak(Response.data.message);
               enqueueSnackbar(Response.data.message);
