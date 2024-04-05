@@ -68,6 +68,7 @@ import OrderIcon from "src/assets/icons/transaction/OrderIcon";
 import CheckStatusIcon from "src/assets/icons/transaction/CheckStatusIcon";
 import RecieptListIcon from "src/assets/icons/transaction/ReceiptListIcon";
 import { convertToWords } from "src/components/customFunctions/ToWords";
+import DownloadIcon from '@mui/icons-material/Download';
 
 // ----------------------------------------------------------------------
 
@@ -788,8 +789,8 @@ export default function MyTransactions() {
                 >
                   Apply
                 </LoadingButton>
-                <Button variant="contained" onClick={ExportData}>
-                  Export
+                <Button variant="contained" onClick={ExportData}  startIcon={<DownloadIcon />}>
+                  Download
                 </Button>
               </Stack>
             </Stack>
