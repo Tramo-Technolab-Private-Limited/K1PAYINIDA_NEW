@@ -1726,7 +1726,7 @@ function TransactionRow({ row }: childProps) {
                   <Typography variant="caption" sx={{ lineHeight: 1.2 }}>
                     {" "}
                     The convienience fee charged is the sole responsibility of
-                    the Agent. Tramo assumes no libiility for the imposition of
+                    the Agent. {process.env.REACT_APP_COMPANY_NAME} assumes no libiility for the imposition of
                     this fee and any associated consequences or issues arising
                     from its application rest entirely with the Agent .
                   </Typography>
@@ -1757,7 +1757,7 @@ function TransactionRow({ row }: childProps) {
               <Typography sx={{ lineHeight: 1, fontSize: 10 }}>
                 NOTE :- This transaction receipt is generated automatically and
                 dose not require a physical signature. It is not a tax invoice
-                but serves as a record of your transaction with Tramo. Please
+                but serves as a record of your transaction with {process.env.REACT_APP_COMPANY_NAME}. Please
                 retain it for your refrence, and if you have any queries, fell
                 free to contact our Customer Support team.
               </Typography>
