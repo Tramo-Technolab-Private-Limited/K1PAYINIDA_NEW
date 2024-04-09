@@ -229,7 +229,7 @@ export default function DMT2BeneTable() {
             }),
           });
           openEditModal();
-          enqueueSnackbar(Response.data.message, { variant: "error" });
+          // enqueueSnackbar(Response.data.message, { variant: "error" });
         } else {
           getbeneDispatch({ type: "GET_BANK_FAILURE" });
         }
