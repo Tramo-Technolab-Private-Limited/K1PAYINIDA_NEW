@@ -15,6 +15,7 @@ import Pending from "src/assets/transactionIcons/Pending";
 import Hold from "src/assets/transactionIcons/Hold";
 import Inprocess from "src/assets/transactionIcons/Inprocess";
 import Initiated from "src/assets/transactionIcons/Initiated";
+import CustomTransactionSlip from "./CustomTransactionSlip";
 
 const style = {
   position: "absolute" as "absolute",
@@ -29,6 +30,8 @@ const style = {
   p: 2,
 };
 
+export let HandleClose: any;
+
 export default function TransactionModal({
   transactionDetail,
   errorMsg,
@@ -36,6 +39,14 @@ export default function TransactionModal({
   isTxnOpen,
   handleTxnModal,
 }: any) {
+  const [slip, setSlip] = React.useState(false);
+
+  const printSliip = () => {
+    setSlip(true);
+  };
+
+  HandleClose = () => setSlip(false);
+
   if (errorMsg) {
     return (
       <Modal
@@ -51,73 +62,83 @@ export default function TransactionModal({
             Transaction Failed
           </Typography>
           <Typography
-            variant="h4"
+            variant="h6"
             textAlign={"center"}
             color={"#9e9e9ef0"}
             my={1}
           >
             {errorMsg}
           </Typography>
-          <Button onClick={handleTxnModal} variant="contained">
-            Close
-          </Button>
+          <Stack flexDirection="row" gap={2}>
+            <Button onClick={handleTxnModal} variant="contained">
+              Close
+            </Button>
+          </Stack>
         </Box>
       </Modal>
     );
   }
 
   return (
-    <Modal
-      open={isTxnOpen}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box sx={style}>
-        <Stack flexDirection={"row"} justifyContent={"center"}>
-          {transactionDetail?.status == "success" ? (
-            <>
-              <Typography variant="h4" textAlign={"center"}>
-                <Success />
-                Transaction Successful
-              </Typography>
-            </>
-          ) : transactionDetail?.status == "pending" ? (
-            <>
-              <Typography variant="h4" textAlign={"center"}>
-                <Pending />
-                Transaction Pending
-              </Typography>
-            </>
-          ) : transactionDetail?.status == "hold" ? (
-            <>
-              <Typography variant="h4" textAlign={"center"}>
-                <Hold />
-                Transaction Hold
-              </Typography>
-            </>
-          ) : transactionDetail?.status == "in_process" ? (
-            <>
-              <Typography variant="h4" textAlign={"center"}>
-                <Inprocess />
-                Transaction Inprocess
-              </Typography>
-            </>
-          ) : (
-            <Initiated />
-          )}
-        </Stack>
-        <Typography
-          variant="h4"
-          textAlign={"center"}
-          color={"#9e9e9ef0"}
-          my={1}
-        >
-          {successMsg}
-        </Typography>
-        <Button onClick={handleTxnModal} variant="contained">
-          Close
-        </Button>
-      </Box>
-    </Modal>
+    <>
+      <Modal
+        open={isTxnOpen}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Stack flexDirection={"row"} justifyContent={"center"}>
+            {transactionDetail?.status == "success" ? (
+              <>
+                <Typography variant="h4" textAlign={"center"}>
+                  <Success />
+                  Transaction Successful
+                </Typography>
+              </>
+            ) : transactionDetail?.status == "pending" ? (
+              <>
+                <Typography variant="h4" textAlign={"center"}>
+                  <Pending />
+                  Transaction Pending
+                </Typography>
+              </>
+            ) : transactionDetail?.status == "hold" ? (
+              <>
+                <Typography variant="h4" textAlign={"center"}>
+                  <Hold />
+                  Transaction Hold
+                </Typography>
+              </>
+            ) : transactionDetail?.status == "in_process" ? (
+              <>
+                <Typography variant="h4" textAlign={"center"}>
+                  <Inprocess />
+                  Transaction Inprocess
+                </Typography>
+              </>
+            ) : (
+              <Initiated />
+            )}
+          </Stack>
+          <Typography
+            variant="h4"
+            textAlign={"center"}
+            color={"#9e9e9ef0"}
+            my={1}
+          >
+            {successMsg}
+          </Typography>
+          <Stack flexDirection="row" gap={1}>
+            <Button onClick={handleTxnModal} variant="contained">
+              Close
+            </Button>
+            <Button onClick={printSliip} variant="contained">
+              Export Slip
+            </Button>
+          </Stack>
+          {slip && <CustomTransactionSlip newRow={transactionDetail} />}
+        </Box>
+      </Modal>
+    </>
   );
 }

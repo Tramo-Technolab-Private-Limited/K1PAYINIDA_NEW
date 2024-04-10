@@ -16,6 +16,8 @@ import {
   Modal,
   Hidden,
   Avatar,
+  Tooltip,
+  IconButton,
 } from "@mui/material";
 // routes
 import { PATH_DASHBOARD } from "../routes/paths";
@@ -45,6 +47,7 @@ import { AwsDocSign } from "../components/customFunctions/AwsDocSign";
 import jsPDF from "jspdf";
 import { useAuthContext } from "src/auth/useAuthContext";
 import Image from "src/components/image/Image";
+import ReactToPrint from "react-to-print";
 // ----------------------------------------------------------------------
 
 export default function UserProfilePage() {
@@ -345,7 +348,18 @@ export default function UserProfilePage() {
           </Grid>
           <Stack flexDirection={"row"}>
             <Button onClick={closeModal}>close</Button>
-            <Button onClick={downloadAsPDF}>Download PDF</Button>
+            {/* <Button onClick={downloadAsPDF}>Download PDF</Button> */}
+            <ReactToPrint
+              trigger={() => (
+                <Tooltip title="Print">
+                  <IconButton>
+                    <Iconify icon="eva:printer-fill" />
+                  </IconButton>
+                </Tooltip>
+              )}
+              content={() => componentRef.current}
+              onAfterPrint={closeModal}
+            />
           </Stack>
         </Grid>
       </Modal>
