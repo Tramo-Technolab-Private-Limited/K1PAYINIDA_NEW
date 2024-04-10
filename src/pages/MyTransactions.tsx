@@ -68,7 +68,7 @@ import OrderIcon from "src/assets/icons/transaction/OrderIcon";
 import CheckStatusIcon from "src/assets/icons/transaction/CheckStatusIcon";
 import RecieptListIcon from "src/assets/icons/transaction/ReceiptListIcon";
 import { convertToWords } from "src/components/customFunctions/ToWords";
-import DownloadIcon from '@mui/icons-material/Download';
+import DownloadIcon from "@mui/icons-material/Download";
 
 // ----------------------------------------------------------------------
 
@@ -789,7 +789,11 @@ export default function MyTransactions() {
                 >
                   Apply
                 </LoadingButton>
-                <Button variant="contained" onClick={ExportData}  startIcon={<DownloadIcon />}>
+                <Button
+                  variant="contained"
+                  onClick={ExportData}
+                  startIcon={<DownloadIcon />}
+                >
                   Download
                 </Button>
               </Stack>
@@ -1484,7 +1488,9 @@ function TransactionRow({ row }: childProps) {
                   flexDirection="column"
                   justifyContent="end"
                 >
-                  {newRow?.categoryName?.toLowerCase() == "money transfer" && (
+                  {(newRow?.categoryName?.toLowerCase() == "money transfer" ||
+                    newRow?.categoryName?.toLowerCase() == "dmt1" ||
+                    newRow?.categoryName?.toLowerCase() == "dmt2") && (
                     <React.Fragment>
                       <Typography variant="subtitle1">
                         Sender Details
@@ -1537,8 +1543,9 @@ function TransactionRow({ row }: childProps) {
                   alignItems="start"
                 >
                   <Stack alignItems="end">
-                    {newRow?.categoryName?.toLowerCase() ==
-                      "money transfer" && (
+                    {(newRow?.categoryName?.toLowerCase() == "money transfer" ||
+                      newRow?.categoryName?.toLowerCase() == "dmt1" ||
+                      newRow?.categoryName?.toLowerCase() == "dmt2") && (
                       <React.Fragment>
                         <Typography variant="subtitle1">
                           Benificary Details
@@ -1656,6 +1663,14 @@ function TransactionRow({ row }: childProps) {
                       <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
                         Transaction Id
                       </TableCell>
+                      {(newRow?.categoryName?.toLowerCase() ==
+                        "money transfer" ||
+                        newRow?.categoryName?.toLowerCase() == "dmt1" ||
+                        newRow?.categoryName?.toLowerCase() == "dmt2") && (
+                        <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
+                          Mode
+                        </TableCell>
+                      )}
                       <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
                         Service
                       </TableCell>
@@ -1678,6 +1693,14 @@ function TransactionRow({ row }: childProps) {
                       <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
                         {newRow?.clientRefId}
                       </TableCell>
+                      {(newRow?.categoryName?.toLowerCase() ==
+                        "money transfer" ||
+                        newRow?.categoryName?.toLowerCase() == "dmt1" ||
+                        newRow?.categoryName?.toLowerCase() == "dmt2") && (
+                        <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
+                          {newRow?.modeOfPayment}
+                        </TableCell>
+                      )}
                       <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
                         {newRow?.productName}
                       </TableCell>
@@ -1726,9 +1749,10 @@ function TransactionRow({ row }: childProps) {
                   <Typography variant="caption" sx={{ lineHeight: 1.2 }}>
                     {" "}
                     The convienience fee charged is the sole responsibility of
-                    the Agent. {process.env.REACT_APP_COMPANY_NAME} assumes no libiility for the imposition of
-                    this fee and any associated consequences or issues arising
-                    from its application rest entirely with the Agent .
+                    the Agent. {process.env.REACT_APP_COMPANY_NAME} assumes no
+                    libiility for the imposition of this fee and any associated
+                    consequences or issues arising from its application rest
+                    entirely with the Agent .
                   </Typography>
                 </Stack>
                 <Stack
@@ -1757,9 +1781,10 @@ function TransactionRow({ row }: childProps) {
               <Typography sx={{ lineHeight: 1, fontSize: 10 }}>
                 NOTE :- This transaction receipt is generated automatically and
                 dose not require a physical signature. It is not a tax invoice
-                but serves as a record of your transaction with {process.env.REACT_APP_COMPANY_NAME}. Please
-                retain it for your refrence, and if you have any queries, fell
-                free to contact our Customer Support team.
+                but serves as a record of your transaction with{" "}
+                {process.env.REACT_APP_COMPANY_NAME}. Please retain it for your
+                refrence, and if you have any queries, fell free to contact our
+                Customer Support team.
               </Typography>
               <Stack
                 flexDirection="row"
