@@ -201,8 +201,8 @@ export default function FundFlow() {
     { id: "Date&Time", label: "Date & Time" },
     { id: "TransactionType", label: "Transaction Type" },
     { id: "Client Ref Id", label: "Client Ref Id" },
-    { id: "From", label: "From" },
-    { id: "to", label: "To" },
+    { id: "From", label: "From/To" },
+    // { id: "to", label: "To" },
     { id: "amount", label: "Amount" },
     { id: "status", label: "Status" },
   ];
@@ -217,7 +217,7 @@ export default function FundFlow() {
           methods={methods}
           onSubmit={handleSubmit(filterTransaction)}
         >
-          <Stack flexDirection={"row"} justifyContent={"start"} gap={1} mb={1}>
+          <Stack flexDirection={"row"} justifyContent={"end"} gap={1}>
             <RHFSelect
               name="transactionType"
               label="Transaction Type"
@@ -272,24 +272,26 @@ export default function FundFlow() {
                 />
               </LocalizationProvider>
             </Stack>
-            <LoadingButton
-              variant="contained"
-              type="submit"
-              loading={isSubmitting}
-            >
-              Search
-            </LoadingButton>
-            <LoadingButton
-              variant="contained"
-              onClick={() => {
-                reset(defaultValues);
-                onChangeEndDate(null);
-                onChangeStartDate(null);
-                getTransaction();
-              }}
-            >
-              Clear
-            </LoadingButton>
+            <Stack flexDirection={"row"} gap={1}>
+              <LoadingButton
+                variant="contained"
+                type="submit"
+                loading={isSubmitting}
+              >
+                Search
+              </LoadingButton>
+              <LoadingButton
+                variant="contained"
+                onClick={() => {
+                  reset(defaultValues);
+                  onChangeEndDate(null);
+                  onChangeStartDate(null);
+                  getTransaction();
+                }}
+              >
+                Clear
+              </LoadingButton>
+            </Stack>
           </Stack>
         </FormProvider>
       </Stack>
@@ -386,217 +388,242 @@ const TransactionRow = React.memo(({ row }: childProps) => {
         </TableCell>
         {/* From */}
         <TableCell>
-          {newRow?.walletLedgerData?.from?.id ==
-          newRow?.adminDetails.id?._id ? (
-            <Stack flexDirection={"row"} gap={1}>
-              <CustomAvatar
-                name={newRow?.adminDetails?.id?.email}
-                alt={newRow?.adminDetails?.id?.email}
-                src={
-                  newRow?.adminDetails?.id?.selfie &&
-                  newRow?.adminDetails?.id?.selfie[0]
-                }
-              />
-              <Stack>
-                <Typography variant="body2" noWrap>
-                  Admin
-                </Typography>
-                <Typography variant="body2" noWrap>
-                  {newRow?.adminDetails?.id?.email}
-                </Typography>
-              </Stack>
-            </Stack>
-          ) : newRow?.walletLedgerData?.from?.id ==
-            newRow.agentDetails.id?._id ? (
-            <Stack flexDirection={"row"} gap={1}>
-              <CustomAvatar
-                name={newRow?.agentDetails?.id?.firstName}
-                alt={newRow?.agentDetails?.id?.firstName}
-                src={
-                  newRow?.agentDetails?.id?.selfie &&
-                  newRow?.agentDetails?.id?.selfie[0]
-                }
-              />
-              <Stack>
-                <Typography variant="body2" noWrap>
-                  {newRow?.agentDetails?.id?.firstName}{" "}
-                  {newRow?.agentDetails?.id?.lastName}
-                </Typography>
-                <Typography variant="body2">
-                  {newRow?.agentDetails?.id?.userCode}
-                </Typography>
-              </Stack>
-            </Stack>
-          ) : newRow?.walletLedgerData?.from?.id ==
-            newRow.distributorDetails.id?._id ? (
-            <Stack flexDirection={"row"} gap={1}>
-              <CustomAvatar
-                name={newRow?.distributorDetails?.id?.firstName}
-                alt={newRow?.distributorDetails?.id?.firstName}
-                src={
-                  newRow?.distributorDetails?.id?.selfie &&
-                  newRow?.distributorDetails?.id?.selfie[0]
-                }
-              />
-              <Stack>
-                <Typography variant="body2" noWrap>
-                  {newRow?.distributorDetails?.id?.firstName}{" "}
-                  {newRow?.distributorDetails?.id?.lastName}
-                </Typography>
-                <Typography variant="body2">
-                  {newRow?.distributorDetails?.id?.userCode}
-                </Typography>
-                <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                  {newRow?.company_name
-                    ? newRow?.company_name
-                    : " No Shop Name "}
-                </Typography>
-              </Stack>
-            </Stack>
-          ) : newRow?.walletLedgerData?.from?.id ==
-            newRow.masterDistributorDetails.id?._id ? (
-            <Stack flexDirection={"row"} gap={1}>
-              <CustomAvatar
-                name={newRow?.masterDistributorDetails?.id?.firstName}
-                alt={newRow?.masterDistributorDetails?.id?.firstName}
-                src={
-                  newRow?.masterDistributorDetails?.id?.selfie &&
-                  newRow?.masterDistributorDetails?.id?.selfie[0]
-                }
-              />
-              <Stack>
-                <Typography variant="body2" noWrap>
-                  {newRow?.masterDistributorDetails?.id?.firstName}{" "}
-                  {newRow?.masterDistributorDetails?.id?.lastName}
-                </Typography>
-                <Typography variant="body2">
-                  {newRow?.masterDistributorDetails?.id?.userCode}
-                </Typography>
-                <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                  {newRow?.company_name
-                    ? newRow?.company_name
-                    : " No Shop Name "}
-                </Typography>
-              </Stack>
-            </Stack>
-          ) : (
-            <Stack flexDirection={"row"} gap={1}>
-              <CustomAvatar
-                name={newRow?.agentDetails?.id?.firstName}
-                alt={newRow?.agentDetails?.id?.firstName}
-                src={
-                  newRow?.agentDetails?.id?.selfie &&
-                  newRow?.agentDetails?.id?.selfie[0]
-                }
-              />
-              <Stack>
-                <Typography variant="body2" noWrap>
-                  {newRow?.agentDetails?.id?.firstName}{" "}
-                  {newRow?.agentDetails?.id?.lastName}
-                </Typography>
-                <Typography variant="body2">
-                  {newRow?.agentDetails?.id?.userCode}
-                </Typography>
-                <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                  {newRow?.agentDetails?.id?.company_name
-                    ? newRow?.agentDetails?.id?.company_name
-                    : " No Shop Name "}
-                </Typography>
-              </Stack>
-            </Stack>
-          )}
-        </TableCell>
-        {/* To */}
-        <TableCell>
-          {newRow?.walletLedgerData?.to?.id == newRow.adminDetails.id?._id ? (
-            <Stack flexDirection={"row"} gap={1}>
-              <CustomAvatar
-                name={newRow?.adminDetails?.id?.email}
-                alt={newRow?.adminDetails?.id?.email}
-                src={
-                  newRow?.adminDetails?.id?.selfie &&
-                  newRow?.adminDetails?.id?.selfie[0]
-                }
-              />
-              <Stack>
-                <Typography variant="body2" noWrap>
-                  Admin
-                </Typography>
-                <Typography variant="body2" noWrap>
-                  {newRow?.adminDetails?.id?.email}
-                </Typography>
-              </Stack>
-            </Stack>
-          ) : newRow?.walletLedgerData?.to?.id ==
-            newRow.agentDetails.id?._id ? (
-            <Stack flexDirection={"row"} gap={1}>
-              <CustomAvatar
-                name={newRow?.agentDetails?.id?.firstName}
-                alt={newRow?.agentDetails?.id?.firstName}
-                src={
-                  newRow?.agentDetails?.id?.selfie &&
-                  newRow?.agentDetails?.id?.selfie[0]
-                }
-              />
-              <Stack>
-                <Typography variant="body2" noWrap>
-                  {newRow?.agentDetails?.id?.firstName}{" "}
-                  {newRow?.agentDetails?.id?.lastName}
-                </Typography>
-                <Typography variant="body2">
-                  {newRow?.agentDetails?.id?.userCode}
-                </Typography>
-                <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                  {newRow?.agentDetails?.id?.company_name
-                    ? newRow?.agentDetails?.id?.company_name
-                    : " No Shop Name "}
-                </Typography>
-              </Stack>
-            </Stack>
-          ) : newRow?.walletLedgerData?.to?.id ==
-            newRow.distributorDetails.id?._id ? (
-            <Stack flexDirection={"row"} gap={1}>
-              <CustomAvatar
-                name={newRow?.distributorDetails?.id?.firstName}
-                alt={newRow?.distributorDetails?.id?.firstName}
-                src={
-                  newRow?.distributorDetails?.id?.selfie &&
-                  newRow?.distributorDetails?.id?.selfie[0]
-                }
-              />
-              <Stack>
-                <Typography variant="body2" noWrap>
-                  {newRow?.distributorDetails?.id?.firstName}{" "}
-                  {newRow?.distributorDetails?.id?.lastName}
-                </Typography>
-                <Typography variant="body2">
-                  {newRow?.distributorDetails?.id?.userCode}
-                </Typography>
-              </Stack>
-            </Stack>
-          ) : (
-            newRow?.walletLedgerData?.to?.id ==
-              newRow.masterDistributorDetails.id?._id && (
-              <Stack flexDirection={"row"} gap={1}>
-                <CustomAvatar
-                  name={newRow?.masterDistributorDetails?.id?.firstName}
-                  alt={newRow?.masterDistributorDetails?.id?.firstName}
-                  src={
-                    newRow?.masterDistributorDetails?.id?.selfie &&
-                    newRow?.masterDistributorDetails?.id?.selfie[0]
-                  }
-                />
-                <Stack>
-                  <Typography variant="body2" noWrap>
-                    {newRow?.masterDistributorDetails?.id?.firstName}{" "}
-                    {newRow?.masterDistributorDetails?.id?.lastName}
-                  </Typography>
-                  <Typography variant="body2">
-                    {newRow?.masterDistributorDetails?.id?.userCode}
-                  </Typography>
+          {newRow?.walletLedgerData?.from?.id !== user?._id ? (
+            <>
+              {newRow?.walletLedgerData?.from?.id ==
+              newRow?.adminDetails.id?._id ? (
+                <Stack flexDirection={"row"} gap={1}>
+                  <CustomAvatar
+                    name={newRow?.adminDetails?.id?.email}
+                    alt={newRow?.adminDetails?.id?.email}
+                    src={
+                      newRow?.adminDetails?.id?.selfie &&
+                      newRow?.adminDetails?.id?.selfie[0]
+                    }
+                  />
+                  <Stack>
+                    <Typography variant="body2" noWrap>
+                      Admin
+                    </Typography>
+                    <Typography variant="body2" noWrap>
+                      {newRow?.adminDetails?.id?.email}
+                    </Typography>
+                  </Stack>
                 </Stack>
-              </Stack>
-            )
+              ) : newRow?.walletLedgerData?.from?.id ==
+                newRow.agentDetails.id?._id ? (
+                <Stack flexDirection={"row"} gap={1}>
+                  <CustomAvatar
+                    name={newRow?.agentDetails?.id?.firstName}
+                    alt={newRow?.agentDetails?.id?.firstName}
+                    src={
+                      newRow?.agentDetails?.id?.selfie &&
+                      newRow?.agentDetails?.id?.selfie[0]
+                    }
+                  />
+                  <Stack>
+                    <Typography variant="body2" noWrap>
+                      {newRow?.agentDetails?.id?.firstName}{" "}
+                      {newRow?.agentDetails?.id?.lastName}
+                    </Typography>
+                    <Typography variant="body2">
+                      {newRow?.agentDetails?.id?.userCode}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "text.secondary" }}
+                    >
+                      {newRow?.agentDetails?.id?.company_name
+                        ? newRow?.agentDetails?.id?.company_name
+                        : " No Shop Name "}
+                    </Typography>
+                  </Stack>
+                </Stack>
+              ) : newRow?.walletLedgerData?.from?.id ==
+                newRow.distributorDetails.id?._id ? (
+                <Stack flexDirection={"row"} gap={1}>
+                  <CustomAvatar
+                    name={newRow?.distributorDetails?.id?.firstName}
+                    alt={newRow?.distributorDetails?.id?.firstName}
+                    src={
+                      newRow?.distributorDetails?.id?.selfie &&
+                      newRow?.distributorDetails?.id?.selfie[0]
+                    }
+                  />
+                  <Stack>
+                    <Typography variant="body2" noWrap>
+                      {newRow?.distributorDetails?.id?.firstName}{" "}
+                      {newRow?.distributorDetails?.id?.lastName}
+                    </Typography>
+                    <Typography variant="body2">
+                      {newRow?.distributorDetails?.id?.userCode}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "text.secondary" }}
+                    >
+                      {newRow?.company_name
+                        ? newRow?.company_name
+                        : " No Shop Name "}
+                    </Typography>
+                  </Stack>
+                </Stack>
+              ) : newRow?.walletLedgerData?.from?.id ==
+                newRow.masterDistributorDetails.id?._id ? (
+                <Stack flexDirection={"row"} gap={1}>
+                  <CustomAvatar
+                    name={newRow?.masterDistributorDetails?.id?.firstName}
+                    alt={newRow?.masterDistributorDetails?.id?.firstName}
+                    src={
+                      newRow?.masterDistributorDetails?.id?.selfie &&
+                      newRow?.masterDistributorDetails?.id?.selfie[0]
+                    }
+                  />
+                  <Stack>
+                    <Typography variant="body2" noWrap>
+                      {newRow?.masterDistributorDetails?.id?.firstName}{" "}
+                      {newRow?.masterDistributorDetails?.id?.lastName}
+                    </Typography>
+                    <Typography variant="body2">
+                      {newRow?.masterDistributorDetails?.id?.userCode}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "text.secondary" }}
+                    >
+                      {newRow?.company_name
+                        ? newRow?.company_name
+                        : " No Shop Name "}
+                    </Typography>
+                  </Stack>
+                </Stack>
+              ) : (
+                <Stack flexDirection={"row"} gap={1}>
+                  <CustomAvatar
+                    name={newRow?.agentDetails?.id?.firstName}
+                    alt={newRow?.agentDetails?.id?.firstName}
+                    src={
+                      newRow?.agentDetails?.id?.selfie &&
+                      newRow?.agentDetails?.id?.selfie[0]
+                    }
+                  />
+                  <Stack>
+                    <Typography variant="body2" noWrap>
+                      {newRow?.agentDetails?.id?.firstName}{" "}
+                      {newRow?.agentDetails?.id?.lastName}
+                    </Typography>
+                    <Typography variant="body2">
+                      {newRow?.agentDetails?.id?.userCode}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "text.secondary" }}
+                    >
+                      {newRow?.agentDetails?.id?.company_name
+                        ? newRow?.agentDetails?.id?.company_name
+                        : " No Shop Name "}
+                    </Typography>
+                  </Stack>
+                </Stack>
+              )}
+            </>
+          ) : (
+            <>
+              {newRow?.walletLedgerData?.to?.id ==
+              newRow.adminDetails.id?._id ? (
+                <Stack flexDirection={"row"} gap={1}>
+                  <CustomAvatar
+                    name={newRow?.adminDetails?.id?.email}
+                    alt={newRow?.adminDetails?.id?.email}
+                    src={
+                      newRow?.adminDetails?.id?.selfie &&
+                      newRow?.adminDetails?.id?.selfie[0]
+                    }
+                  />
+                  <Stack>
+                    <Typography variant="body2" noWrap>
+                      Admin
+                    </Typography>
+                    <Typography variant="body2" noWrap>
+                      {newRow?.adminDetails?.id?.email}
+                    </Typography>
+                  </Stack>
+                </Stack>
+              ) : newRow?.walletLedgerData?.to?.id ==
+                newRow.agentDetails.id?._id ? (
+                <Stack flexDirection={"row"} gap={1}>
+                  <CustomAvatar
+                    name={newRow?.agentDetails?.id?.firstName}
+                    alt={newRow?.agentDetails?.id?.firstName}
+                    src={
+                      newRow?.agentDetails?.id?.selfie &&
+                      newRow?.agentDetails?.id?.selfie[0]
+                    }
+                  />
+                  <Stack>
+                    <Typography variant="body2" noWrap>
+                      {newRow?.agentDetails?.id?.firstName}{" "}
+                      {newRow?.agentDetails?.id?.lastName}
+                    </Typography>
+                    <Typography variant="body2">
+                      {newRow?.agentDetails?.id?.userCode}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "text.secondary" }}
+                    >
+                      {newRow?.agentDetails?.id?.company_name
+                        ? newRow?.agentDetails?.id?.company_name
+                        : " No Shop Name "}
+                    </Typography>
+                  </Stack>
+                </Stack>
+              ) : newRow?.walletLedgerData?.to?.id ==
+                newRow.distributorDetails.id?._id ? (
+                <Stack flexDirection={"row"} gap={1}>
+                  <CustomAvatar
+                    name={newRow?.distributorDetails?.id?.firstName}
+                    alt={newRow?.distributorDetails?.id?.firstName}
+                    src={
+                      newRow?.distributorDetails?.id?.selfie &&
+                      newRow?.distributorDetails?.id?.selfie[0]
+                    }
+                  />
+                  <Stack>
+                    <Typography variant="body2" noWrap>
+                      {newRow?.distributorDetails?.id?.firstName}{" "}
+                      {newRow?.distributorDetails?.id?.lastName}
+                    </Typography>
+                    <Typography variant="body2">
+                      {newRow?.distributorDetails?.id?.userCode}
+                    </Typography>
+                  </Stack>
+                </Stack>
+              ) : (
+                newRow?.walletLedgerData?.to?.id ==
+                  newRow.masterDistributorDetails.id?._id && (
+                  <Stack flexDirection={"row"} gap={1}>
+                    <CustomAvatar
+                      name={newRow?.masterDistributorDetails?.id?.firstName}
+                      alt={newRow?.masterDistributorDetails?.id?.firstName}
+                      src={
+                        newRow?.masterDistributorDetails?.id?.selfie &&
+                        newRow?.masterDistributorDetails?.id?.selfie[0]
+                      }
+                    />
+                    <Stack>
+                      <Typography variant="body2" noWrap>
+                        {newRow?.masterDistributorDetails?.id?.firstName}{" "}
+                        {newRow?.masterDistributorDetails?.id?.lastName}
+                      </Typography>
+                      <Typography variant="body2">
+                        {newRow?.masterDistributorDetails?.id?.userCode}
+                      </Typography>
+                    </Stack>
+                  </Stack>
+                )
+              )}
+            </>
           )}
         </TableCell>
 
@@ -612,39 +639,7 @@ const TransactionRow = React.memo(({ row }: childProps) => {
             </Typography>
           )}
         </TableCell>
-        {/* Commission */}
-        {/* <TableCell sx={{ whiteSpace: "nowrap" }}>
-          <Typography variant="body2">
-            Commission :{" "}
-            {parseFloat(
-              user?.role === "agent"
-                ? newRow?.agentDetails?.creditedAmount
-                : user?.role === "distributor"
-                ? newRow?.distributorDetails?.creditedAmount
-                : newRow?.masterDistributorDetails?.creditedAmount
-            )?.toFixed(2)}
-          </Typography>
-          <Typography variant="body2">
-            Opening Balance :{" "}
-            {parseFloat(
-              user?.role === "agent"
-                ? newRow?.agentDetails?.oldMainWalletBalance
-                : user?.role === "distributor"
-                ? newRow?.distributorDetails?.oldMainWalletBalance
-                : newRow?.masterDistributorDetails?.oldMainWalletBalance
-            )?.toFixed(2)}
-          </Typography>
-          <Typography variant="body2">
-            Closing Balance :{" "}
-            {parseFloat(
-              user?.role === "agent"
-                ? newRow?.agentDetails?.newMainWalletBalance
-                : user?.role === "distributor"
-                ? newRow?.distributorDetails?.newMainWalletBalance
-                : newRow?.masterDistributorDetails?.newMainWalletBalance
-            )?.toFixed(2)}
-          </Typography>
-        </TableCell> */}
+
         <TableCell
           sx={{
             textTransform: "lowercase",
