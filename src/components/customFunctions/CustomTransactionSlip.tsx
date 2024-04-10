@@ -25,8 +25,8 @@ import { sentenceCase } from "change-case";
 import { fIndianCurrency } from "src/utils/formatNumber";
 import Logo from "../logo/Logo";
 import Label from "../label/Label";
-import HandleClose from "./TrasactionModal";
-function CustomTransactionSlip(newRow: any) {
+// import HandleClose from "./TrasactionModal";
+function CustomTransactionSlip(newRow: any, handleClose: any) {
   const { user } = useAuthContext();
   const [modalOpen, setModalOpen] = useState(true);
   const [textFieldValue, setTextFieldValue] = useState("");
@@ -59,10 +59,9 @@ function CustomTransactionSlip(newRow: any) {
     <>
       <Grid sx={style}>
         <Stack flexDirection={"row"} justifyContent={"flex-end"} mx={1}>
-          <Tooltip title="Close" onClick={HandleClose}>
+          <Tooltip title="Close" onClick={handleClose}>
             <IconButton>
               <Iconify icon="carbon:close-outline" />
-              ss
             </IconButton>
           </Tooltip>
           <ReactToPrint

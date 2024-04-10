@@ -30,8 +30,6 @@ const style = {
   p: 2,
 };
 
-export let HandleClose: any;
-
 export default function TransactionModal({
   transactionDetail,
   errorMsg,
@@ -41,12 +39,7 @@ export default function TransactionModal({
 }: any) {
   const [slip, setSlip] = React.useState(false);
 
-  const printSliip = () => {
-    setSlip(true);
-  };
-
-  HandleClose = () => setSlip(false);
-
+  const HandleClose = () => setSlip(false);
   if (errorMsg) {
     return (
       <Modal
@@ -132,11 +125,16 @@ export default function TransactionModal({
             <Button onClick={handleTxnModal} variant="contained">
               Close
             </Button>
-            <Button onClick={printSliip} variant="contained">
+            <Button onClick={() => setSlip(true)} variant="contained">
               Export Slip
             </Button>
           </Stack>
-          {slip && <CustomTransactionSlip newRow={transactionDetail} />}
+          {slip && (
+            <CustomTransactionSlip
+              newRow={transactionDetail}
+              handleClose={HandleClose}
+            />
+          )}
         </Box>
       </Modal>
     </>
