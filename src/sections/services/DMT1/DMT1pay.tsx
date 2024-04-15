@@ -516,84 +516,17 @@ export default function DMT1pay({ clearPayout, remitter, beneficiary }: any) {
           </Box>
         )}
       </Modal>
-      <Modal
-        open={open1}
-        onClose={handleClose1}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box
-          sx={style}
-          style={{ borderRadius: "20px" }}
-          p={2}
-          width={{ xs: "100%", sm: "fit-content" }}
-        >
-          {/* <Stack
-              sx={{ border: "1.5px dashed #000000" }}
-              p={3}
-              borderRadius={2}
-            >
-              <Table
-                stickyHeader
-                aria-label="sticky table"
-                style={{ borderBottom: "1px solid #dadada" }}
-              >
-                <TableHead>
-                  <TableRow>
-                    <TableCell sx={{ fontWeight: 800, textAlign: "center" }}>
-                      Client ref Id
-                    </TableCell>
-                    <TableCell sx={{ fontWeight: 800, textAlign: "center" }}>
-                      Created At
-                    </TableCell>
-                    <TableCell sx={{ fontWeight: 800, textAlign: "center" }}>
-                      Amount
-                    </TableCell>
-                    <TableCell sx={{ fontWeight: 800, textAlign: "center" }}>
-                      status
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {transactionDetail.map((item: any) => (
-                    <TableRow key={item.data._id}>
-                      <TableCell sx={{ fontWeight: 800 }}>
-                        {item.data.clientRefId || "NA"}
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: 800 }}>
-                        {fDateTime(item?.data?.createdAt)}
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: 800 }}>
-                        {item.data.amount && "₹"} {item.data.amount || "NA"}
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: 800 }}>
-                        {item.data.status || "NA"}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Stack> */}
-          <Stack flexDirection={"row"} gap={1} mt={1} justifyContent={"center"}>
-            {/* <Button variant="contained" onClick={handleClose1} size="small">
-                Download Receipt
-              </Button> */}
 
-            <TransactionModal
-              isTxnOpen={open1}
-              handleTxnModal={() => {
-                setOpen1(false);
-                setErrorMsg("");
-                setMode("");
-              }}
-              errorMsg={errorMsg}
-              transactionDetail={transactionDetail}
-            />
-
-            {/* <Button variant="contained">Close({count})</Button> */}
-          </Stack>
-        </Box>
-      </Modal>
+      <TransactionModal
+        isTxnOpen={open1}
+        handleTxnModal={() => {
+          setOpen1(false);
+          setErrorMsg("");
+          setMode("");
+        }}
+        errorMsg={errorMsg}
+        transactionDetail={transactionDetail}
+      />
     </>
   );
 }
