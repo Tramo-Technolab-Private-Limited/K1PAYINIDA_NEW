@@ -416,7 +416,6 @@ function HistoricalDataExport() {
         </Tabs>
       </Stack>
       <Stack direction="row" spacing={2} m={1} justifyContent="flex-end">
-        {/* addressnewleads */}
         {tableData.find(
           (row: any) => row.report_generator_data.status !== "Pending"
         ) && (
