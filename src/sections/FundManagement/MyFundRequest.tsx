@@ -385,12 +385,20 @@ export default function (props: any) {
                     sx={{ borderBottom: "1px solid #dadada" }}
                   >
                     <StyledTableCell>
-                      <Typography variant="body1">
-                      createdAt{fDateTime(row?.createdAt)}
-                      </Typography>
-                      <Typography variant="body1">
-                      updatedAt{fDateTime(row?.actionDate)}
-                      </Typography>
+                      <Stack direction={"row"} gap={1}>
+                        <Typography variant="subtitle1">
+                          Created At :
+                        </Typography>
+                        <Typography variant="body1">
+                          {fDateTime(row?.createdAt)}
+                        </Typography>
+                      </Stack>
+                      <Stack direction={"row"} gap={1}>
+                        <Typography variant="subtitle1">Updated At:</Typography>
+                        <Typography variant="body1">
+                          {fDateTime(row?.actionDate)}
+                        </Typography>
+                      </Stack>
                     </StyledTableCell>
 
                     <StyledTableCell>
@@ -441,21 +449,30 @@ export default function (props: any) {
                         textAlign: "center",
                       }}
                     >
-                      <Label
-                        variant="soft"
-                        color={
-                          (row.status.toLowerCase() === "rejected" && "error") ||
-                          ((row.status.toLowerCase() === "pending" ||
-                            row.status.toLowerCase() === "in_process") &&
-                            "warning") ||
-                          "success"
-                        }
-                        sx={{ textTransform: "capitalize" }}
-                      >
-                        {row.status.toLowerCase()
-                          ? sentenceCase(row.status.toLowerCase())
-                          : ""}
-                      </Label>
+                      <Stack>
+                        <Label
+                          variant="soft"
+                          alignSelf={"start"}
+                          color={
+                            (row.status.toLowerCase() === "rejected" &&
+                              "error") ||
+                            ((row.status.toLowerCase() === "pending" ||
+                              row.status.toLowerCase() === "in_process") &&
+                              "warning") ||
+                            "success"
+                          }
+                          sx={{ textTransform: "capitalize" }}
+                        >
+                          {row.status.toLowerCase()
+                            ? sentenceCase(row.status.toLowerCase())
+                            : ""}
+                        </Label>
+                        {row.status.toLowerCase() === "rejected" && (
+                          <Typography variant="caption" alignSelf={"start"}>
+                            {row.comments}
+                          </Typography>
+                        )}
+                      </Stack>
                     </StyledTableCell>
                   </StyledTableRow>
                 ))}

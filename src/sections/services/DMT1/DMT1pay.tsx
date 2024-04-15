@@ -35,6 +35,7 @@ import { convertToWords } from "src/components/customFunctions/ToWords";
 import { useAuthContext } from "src/auth/useAuthContext";
 import { fDateTime } from "src/utils/formatTime";
 import { TextToSpeak } from "src/components/customFunctions/TextToSpeak";
+import TransactionModal from "src/components/customFunctions/TrasactionModal";
 
 // ----------------------------------------------------------------------
 
@@ -54,7 +55,7 @@ export default function DMT1pay({ clearPayout, remitter, beneficiary }: any) {
   const { dmt1RemitterAvailableLimit } = remitter;
   const { bankName, accountNumber, mobileNumber, beneName, ifsc } = beneficiary;
   const { enqueueSnackbar } = useSnackbar();
-  const { UpdateUserDetail } = useAuthContext();
+  const { initialize } = useAuthContext();
   const [txn, setTxn] = useState(true);
   const [mode, setMode] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
@@ -143,18 +144,18 @@ export default function DMT1pay({ clearPayout, remitter, beneficiary }: any) {
     formState: { errors, isSubmitting },
   } = methods;
 
-  useEffect(() => {
-    if (count !== null) {
-      if (count > 0) {
-        const timer = setInterval(() => {
-          setCount((prevCount: any) => prevCount - 1);
-        }, 1000);
-        return () => clearInterval(timer);
-      } else {
-        window.location.reload();
-      }
-    }
-  }, [count]);
+  // useEffect(() => {
+  //   if (count !== null) {
+  //     if (count > 0) {
+  //       const timer = setInterval(() => {
+  //         setCount((prevCount: any) => prevCount - 1);
+  //       }, 1000);
+  //       return () => clearInterval(timer);
+  //     } else {
+  //       window.location.reload();
+  //     }
+  //   }
+  // }, [count]);
 
   const transaction = (data: FormValuesProps) => {
     let token = localStorage.getItem("token");
@@ -182,27 +183,29 @@ export default function DMT1pay({ clearPayout, remitter, beneficiary }: any) {
             if (Response.data.code == 200) {
               Response.data.response.map((element: any) => {
                 enqueueSnackbar(element.message);
-                UpdateUserDetail({
-                  main_wallet_amount:
-                    element?.data?.agentDetails?.newMainWalletBalance,
-                });
+                initialize();
               });
-              setTransactionDetail(Response.data.response);
+              setTransactionDetail(Response.data.response?.[0]?.data);
+
+              // setTransactionDetail(Response.data.data);
               TextToSpeak(Response.data.message);
               handleClose();
               handleOpen1();
-              setCount(5);
+              // setCount(5);
+
               setTxn(false);
               setErrorMsg("");
             } else {
               enqueueSnackbar(Response.data.message, { variant: "error" });
               setErrorMsg(Response.data.message);
+              setTxn(false);
             }
             clearPayout();
           } else {
             setCheckNPIN(false);
             enqueueSnackbar(Response, { variant: "error" });
             clearPayout();
+            setTxn(false);
           }
         });
     }
@@ -519,14 +522,13 @@ export default function DMT1pay({ clearPayout, remitter, beneficiary }: any) {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style} style={{ borderRadius: "20px" }} width={"fit-content"}>
-          <Box
-            sx={style}
-            style={{ borderRadius: "20px" }}
-            p={2}
-            width={{ xs: "100%", sm: "fit-content" }}
-          >
-            <Stack
+        <Box
+          sx={style}
+          style={{ borderRadius: "20px" }}
+          p={2}
+          width={{ xs: "100%", sm: "fit-content" }}
+        >
+          {/* <Stack
               sx={{ border: "1.5px dashed #000000" }}
               p={3}
               borderRadius={2}
@@ -571,19 +573,25 @@ export default function DMT1pay({ clearPayout, remitter, beneficiary }: any) {
                   ))}
                 </TableBody>
               </Table>
-            </Stack>
-            <Stack
-              flexDirection={"row"}
-              gap={1}
-              mt={1}
-              justifyContent={"center"}
-            >
-              {/* <Button variant="contained" onClick={handleClose1} size="small">
+            </Stack> */}
+          <Stack flexDirection={"row"} gap={1} mt={1} justifyContent={"center"}>
+            {/* <Button variant="contained" onClick={handleClose1} size="small">
                 Download Receipt
               </Button> */}
-              <Button variant="contained">Close({count})</Button>
-            </Stack>
-          </Box>
+
+            <TransactionModal
+              isTxnOpen={open1}
+              handleTxnModal={() => {
+                setOpen1(false);
+                setErrorMsg("");
+                setMode("");
+              }}
+              errorMsg={errorMsg}
+              transactionDetail={transactionDetail}
+            />
+
+            {/* <Button variant="contained">Close({count})</Button> */}
+          </Stack>
         </Box>
       </Modal>
     </>

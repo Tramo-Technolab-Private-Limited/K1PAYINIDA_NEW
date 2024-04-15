@@ -34,8 +34,9 @@ export default function ProfileCover({ cover }: any) {
   const StyledRoot = styled("div")(({ theme }) => ({
     "&:before": {
       ...bgBlur({
-        color: theme.palette.primary.light,
+        imgUrl: `${AwsDocSign(user?.shopImage[0])}`,
       }),
+      filter: "blur(4px)",
       top: 0,
       zIndex: 9,
       content: "''",
@@ -74,14 +75,24 @@ export default function ProfileCover({ cover }: any) {
           <Typography
             variant="h4"
             sx={{ color: (theme) => theme.palette.common.white }}
-          >{`${user?.firstName} ${user?.lastName}`}</Typography>
-
-          <Typography sx={{ color: (theme) => theme.palette.common.white }}>
-            {user?.role == "agent"
-              ? "Agent"
-              : user?.role == "distributor"
-              ? "Distributor"
-              : "Master Distributor"}
+          >{`${user?.company_name}`}</Typography>
+          <Typography
+            variant="h6"
+            sx={{ color: (theme) => theme.palette.common.white }}
+          >
+            {`${user?.firstName} ${user?.lastName}`}{" "}
+            <Typography
+              component={"span"}
+              sx={{ color: (theme) => theme.palette.common.white }}
+            >
+              ({" "}
+              {user?.role == "agent"
+                ? "Agent"
+                : user?.role == "distributor"
+                ? "Distributor"
+                : "Master Distributor"}{" "}
+              )
+            </Typography>
           </Typography>
         </Box>
       </StyledInfo>

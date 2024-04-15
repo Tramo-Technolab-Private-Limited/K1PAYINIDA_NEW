@@ -42,7 +42,7 @@ import {
   ProfileFollowers,
 } from "../sections/profile";
 import { Api } from "src/webservices";
-import TramoCertificate from "../assets/icons/photo-1526925539332-aa3b66e35444.avif.png";
+import TramoCertificate from "../assets/icons/Tramo-Certificate-3.png";
 import { AwsDocSign } from "../components/customFunctions/AwsDocSign";
 import jsPDF from "jspdf";
 import { useAuthContext } from "src/auth/useAuthContext";
@@ -193,8 +193,6 @@ export default function UserProfilePage() {
     // },
   ];
 
-  udata.role == "agent" && TABS.pop();
-
   return (
     <>
       <Helmet>
@@ -240,9 +238,7 @@ export default function UserProfilePage() {
               label={tab.label}
             />
           ))}
-          <Button onClick={openModal} sx={{ ml: 1 }}>
-            Download Certificate
-          </Button>
+          <Button onClick={openModal}>certificate</Button>
         </Tabs>
       </Card>
       {TABS.map(
@@ -259,12 +255,15 @@ export default function UserProfilePage() {
       >
         <Grid
           sx={{
-            width: { xs: "95%", md: 600 },
-            margin: "auto",
-            backgroundColor: "#fff",
-            borderRadius: 2,
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            bgcolor: "#ffffff",
             boxShadow: 24,
-            p: 2,
+            width: { xs: "95%", md: 600 },
+            p: 4,
+            borderRadius: "20px",
           }}
         >
           <Grid ref={componentRef}>
@@ -333,7 +332,7 @@ export default function UserProfilePage() {
               {formatDateted(user?.approvalDate)}
             </Typography>
             <img
-              src={user?.selfie[0]}
+              src={user?.selfie[0].length && AwsDocSign(user?.selfie[0])}
               width={90}
               height={85}
               style={{

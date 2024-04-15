@@ -144,10 +144,7 @@ export default function DMTpay({
             setTransactionDetail(Response.data.data);
 
             TextToSpeak(Response.data.message);
-            UpdateUserDetail({
-              main_wallet_amount:
-                Response?.data?.data?.agentDetails?.newMainWalletBalance,
-            });
+            initialize();
           } else {
             enqueueSnackbar(Response.data.message, { variant: "error" });
             setErrorMsg(Response.data.message);
@@ -213,6 +210,7 @@ export default function DMTpay({
                   display: "flex",
                   flexDirection: "row",
                   marginTop: "10px",
+                  marginLeft: "2px",
                 }}
               >
                 <FormControlLabel

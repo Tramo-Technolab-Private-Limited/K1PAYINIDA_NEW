@@ -6,7 +6,7 @@ import Modal from "@mui/material/Modal";
 import Image from "src/components/image/Image";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import { Stack } from "@mui/material";
+import { Grid, IconButton, Stack, Tooltip } from "@mui/material";
 import { Icon } from "@iconify/react";
 import { sentenceCase } from "change-case";
 import Failed from "src/assets/transactionIcons/Failed";
@@ -16,6 +16,8 @@ import Hold from "src/assets/transactionIcons/Hold";
 import Inprocess from "src/assets/transactionIcons/Inprocess";
 import Initiated from "src/assets/transactionIcons/Initiated";
 import CustomTransactionSlip from "./CustomTransactionSlip";
+import { Margin } from "@mui/icons-material";
+import Iconify from "../iconify";
 
 const style = {
   position: "absolute" as "absolute",
@@ -39,36 +41,87 @@ export default function TransactionModal({
 }: any) {
   const [slip, setSlip] = React.useState(false);
 
-  const HandleClose = () => setSlip(false);
+  function handleCloseRecipt() {
+    setSlip(false);
+    handleCloseRecipt();
+  }
+
   if (errorMsg) {
     return (
-      <Modal
-        open={isTxnOpen}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Stack flexDirection={"row"} justifyContent={"center"}>
-            <Failed />
-          </Stack>
-          <Typography variant="h4" textAlign={"center"}>
-            Transaction Failed
-          </Typography>
-          <Typography
-            variant="h6"
-            textAlign={"center"}
-            color={"#9e9e9ef0"}
-            my={1}
-          >
-            {errorMsg}
-          </Typography>
-          <Stack flexDirection="row" gap={2}>
-            <Button onClick={handleTxnModal} variant="contained">
-              Close
-            </Button>
-          </Stack>
-        </Box>
-      </Modal>
+      <>
+        <Modal
+          open={isTxnOpen}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <Stack flexDirection={"row"} justifyContent={"center"}>
+              <Failed />
+            </Stack>
+            <Typography variant="h4" textAlign={"center"}>
+              Transaction Failed
+            </Typography>
+            <Typography
+              variant="h6"
+              textAlign={"center"}
+              color={"#9e9e9ef0"}
+              my={1}
+            >
+              {errorMsg}
+            </Typography>
+
+            <Stack flexDirection="row" gap={1}>
+              <Button onClick={handleTxnModal} variant="contained">
+                Close
+              </Button>
+              <Button onClick={() => setSlip(true)} variant="contained">
+                Receipt
+              </Button>
+            </Stack>
+          </Box>
+        </Modal>
+        <Modal
+          open={slip}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+          onClose={() => setSlip(false)}
+        >
+          <>
+            <Grid
+              sx={{
+                position: "absolute" as "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                bgcolor: "#ffffff",
+                boxShadow: 4,
+                p: 2,
+
+                borderRadius: "20px",
+              }}
+              width={{
+                sm: "95%",
+                md: "90%",
+                lg: "60%",
+                xl: "70%",
+              }}
+            >
+              <Box display="grid" gridTemplateColumns="repeat(12, 1fr)">
+                <>
+                  <CustomTransactionSlip newRow={transactionDetail} />
+                  <Stack mb={40} ml={85}>
+                    <Tooltip title="Close" onClick={handleCloseRecipt}>
+                      <IconButton>
+                        <Iconify icon="carbon:close-outline" />
+                      </IconButton>
+                    </Tooltip>
+                  </Stack>
+                </>
+              </Box>
+            </Grid>
+          </>
+        </Modal>
+      </>
     );
   }
 
@@ -126,16 +179,51 @@ export default function TransactionModal({
               Close
             </Button>
             <Button onClick={() => setSlip(true)} variant="contained">
-              Export Slip
+              Receipt
             </Button>
           </Stack>
-          {slip && (
-            <CustomTransactionSlip
-              newRow={transactionDetail}
-              handleClose={HandleClose}
-            />
-          )}
         </Box>
+      </Modal>
+      <Modal
+        open={slip}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+        onClose={() => setSlip(false)}
+      >
+        <>
+          <Grid
+            sx={{
+              position: "absolute" as "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              bgcolor: "#ffffff",
+              boxShadow: 4,
+              p: 2,
+
+              borderRadius: "20px",
+            }}
+            width={{
+              sm: "95%",
+              md: "90%",
+              lg: "60%",
+              xl: "70%",
+            }}
+          >
+            <Box display="grid" gridTemplateColumns="repeat(12, 1fr)">
+              <>
+                <CustomTransactionSlip newRow={transactionDetail} />
+                <Stack mb={52} ml={85}>
+                  <Tooltip title="Close" onClick={handleCloseRecipt}>
+                    <IconButton>
+                      <Iconify icon="carbon:close-outline" />
+                    </IconButton>
+                  </Tooltip>
+                </Stack>
+              </>
+            </Box>
+          </Grid>
+        </>
       </Modal>
     </>
   );

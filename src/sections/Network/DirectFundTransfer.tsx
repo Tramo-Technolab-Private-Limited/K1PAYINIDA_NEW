@@ -75,7 +75,7 @@ export default function DirectFundTransfer(props: any) {
   };
   const onSubmit = () => handleOpenDetails();
 
-  const { user, UpdateUserDetail } = useAuthContext();
+  const { user, initialize } = useAuthContext();
   const methods = useForm<FormValuesProps>({
     resolver: yupResolver(accountValidate),
     defaultValues,
@@ -121,13 +121,7 @@ export default function DirectFundTransfer(props: any) {
           if (Response.status == 200) {
             if (Response.data.code == 200) {
               enqueueSnackbar(Response.data.message);
-              getValues("transactionType") === "debit"
-                ? UpdateUserDetail({
-                    main_wallet_amount: user?.main_wallet_amount + +body.amount,
-                  })
-                : UpdateUserDetail({
-                    main_wallet_amount: user?.main_wallet_amount - +body.amount,
-                  });
+              initialize();
 
               setSuccessMsg(Response.data.message);
 
