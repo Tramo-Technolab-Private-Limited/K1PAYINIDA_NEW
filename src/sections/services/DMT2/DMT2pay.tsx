@@ -36,6 +36,7 @@ import { useAuthContext } from "src/auth/useAuthContext";
 import { fDateTime } from "src/utils/formatTime";
 import { TextToSpeak } from "src/components/customFunctions/TextToSpeak";
 import MotionModal from "src/components/animate/MotionModal";
+import TransactionModal from "src/components/customFunctions/TrasactionModal";
 
 // ----------------------------------------------------------------------
 
@@ -144,18 +145,18 @@ export default function DMT2pay({ clearPayout, remitter, beneficiary }: any) {
     formState: { errors, isSubmitting },
   } = methods;
 
-  useEffect(() => {
-    if (count !== null) {
-      if (count > 0) {
-        const timer = setInterval(() => {
-          setCount((prevCount: any) => prevCount - 1);
-        }, 1000);
-        return () => clearInterval(timer);
-      } else {
-        window.location.reload();
-      }
-    }
-  }, [count]);
+  // useEffect(() => {
+  //   if (count !== null) {
+  //     if (count > 0) {
+  //       const timer = setInterval(() => {
+  //         setCount((prevCount: any) => prevCount - 1);
+  //       }, 1000);
+  //       return () => clearInterval(timer);
+  //     } else {
+  //       window.location.reload();
+  //     }
+  //   }
+  // }, [count]);
 
   const transaction = (data: FormValuesProps) => {
     let token = localStorage.getItem("token");
@@ -186,21 +187,23 @@ export default function DMT2pay({ clearPayout, remitter, beneficiary }: any) {
                 TextToSpeak(element.message);
                 initialize();
               });
-              setTransactionDetail(Response.data.response);
-              handleClose();
+              setTransactionDetail(Response.data.response?.[0]?.data);
               handleOpen1();
-              setCount(5);
+              handleClose();
+              // setCount(5);
               setTxn(false);
               setErrorMsg("");
             } else {
               enqueueSnackbar(Response.data.message, { variant: "error" });
               setErrorMsg(Response.data.message);
+              setTxn(false);
             }
             clearPayout();
           } else {
             setCheckNPIN(false);
             enqueueSnackbar(Response, { variant: "error" });
             clearPayout();
+            setTxn(false);
           }
         });
     }
@@ -476,60 +479,84 @@ export default function DMT2pay({ clearPayout, remitter, beneficiary }: any) {
           </Box>
         )}
       </MotionModal>
-      <MotionModal
+      <Modal
         open={open1}
         onClose={handleClose1}
-        width={{ xs: "95%", sm: 500 }}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
       >
-        <Stack sx={{ border: "1.5px dashed #000000" }} p={3} borderRadius={2}>
-          <Table
-            stickyHeader
-            aria-label="sticky table"
-            style={{ borderBottom: "1px solid #dadada" }}
-          >
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{ fontWeight: 800, textAlign: "center" }}>
-                  Client ref Id
-                </TableCell>
-                <TableCell sx={{ fontWeight: 800, textAlign: "center" }}>
-                  Created At
-                </TableCell>
-                <TableCell sx={{ fontWeight: 800, textAlign: "center" }}>
-                  Amount
-                </TableCell>
-                <TableCell sx={{ fontWeight: 800, textAlign: "center" }}>
-                  status
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {transactionDetail.map((item: any) => (
-                <TableRow key={item.data._id}>
-                  <TableCell sx={{ fontWeight: 800 }}>
-                    {item.data.clientRefId || "NA"}
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: 800 }}>
-                    {fDateTime(item?.data?.createdAt)}
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: 800 }}>
-                    {item.data.amount && "₹"} {item.data.amount || "NA"}
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: 800 }}>
-                    {item.data.status || "NA"}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Stack>
-        <Stack flexDirection={"row"} gap={1} mt={1} justifyContent={"center"}>
-          {/* <Button variant="contained" onClick={handleClose1} size="small">
+        <Box
+          sx={style}
+          style={{ borderRadius: "20px" }}
+          p={2}
+          width={{ xs: "100%", sm: "fit-content" }}
+        >
+          {/* <Stack
+              sx={{ border: "1.5px dashed #000000" }}
+              p={3}
+              borderRadius={2}
+            >
+              <Table
+                stickyHeader
+                aria-label="sticky table"
+                style={{ borderBottom: "1px solid #dadada" }}
+              >
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: 800, textAlign: "center" }}>
+                      Client ref Id
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 800, textAlign: "center" }}>
+                      Created At
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 800, textAlign: "center" }}>
+                      Amount
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 800, textAlign: "center" }}>
+                      status
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {transactionDetail.map((item: any) => (
+                    <TableRow key={item.data._id}>
+                      <TableCell sx={{ fontWeight: 800 }}>
+                        {item.data.clientRefId || "NA"}
+                      </TableCell>
+                      <TableCell sx={{ fontWeight: 800 }}>
+                        {fDateTime(item?.data?.createdAt)}
+                      </TableCell>
+                      <TableCell sx={{ fontWeight: 800 }}>
+                        {item.data.amount && "₹"} {item.data.amount || "NA"}
+                      </TableCell>
+                      <TableCell sx={{ fontWeight: 800 }}>
+                        {item.data.status || "NA"}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Stack> */}
+          <Stack flexDirection={"row"} gap={1} mt={1} justifyContent={"center"}>
+            {/* <Button variant="contained" onClick={handleClose1} size="small">
                 Download Receipt
               </Button> */}
-          <Button variant="contained">Close({count})</Button>
-        </Stack>
-      </MotionModal>
+
+            <TransactionModal
+              isTxnOpen={open1}
+              handleTxnModal={() => {
+                setOpen1(false);
+                setErrorMsg("");
+                setMode("");
+              }}
+              errorMsg={errorMsg}
+              transactionDetail={transactionDetail}
+            />
+
+            {/* <Button variant="contained">Close({count})</Button> */}
+          </Stack>
+        </Box>
+      </Modal>
     </>
   );
 }

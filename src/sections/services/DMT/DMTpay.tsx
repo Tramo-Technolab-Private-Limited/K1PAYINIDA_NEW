@@ -210,6 +210,7 @@ export default function DMTpay({
                   display: "flex",
                   flexDirection: "row",
                   marginTop: "10px",
+                  marginLeft: "2px",
                 }}
               >
                 <FormControlLabel
