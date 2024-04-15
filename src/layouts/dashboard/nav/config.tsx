@@ -104,7 +104,7 @@ const NavConfig = [
             path: PATH_DASHBOARD.transaction.fundflow,
           },
           {
-            title: "Wallet Ladger",
+            title: "Account Statement",
             path: PATH_DASHBOARD.transaction.walletladger,
           },
           {
