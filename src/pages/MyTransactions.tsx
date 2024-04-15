@@ -652,7 +652,7 @@ export default function MyTransactions() {
             </Label>
           </Stack>
         </Scrollbar>
-        <Stack flexDirection={"row"} gap={1}>
+        <Stack flexDirection={"row"} gap={1} >
           <Button variant="contained" onClick={handleReset}>
             <Iconify icon="bx:reset" color={"common.white"} mr={1} />
             Reset
