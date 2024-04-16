@@ -417,9 +417,7 @@ function HistoricalDataExport() {
         </Tabs>
       </Stack>
       <Stack direction="row" spacing={2} m={1} justifyContent="flex-end">
-        {tableData?.find(
-          (row: any) => row?.status?.toLowerCase() == "Pending"
-        ) && (
+        {tableData?.find((row: any) => row?.status == "Pending") && (
           <>
             <Tooltip title="Refresh" placement="top">
               <IconButton
