@@ -321,6 +321,7 @@ function HistoricalDataExport() {
       if (Response.status == 200) {
         if (Response.data.code == 200) {
           setTableData(Response.data.data.data);
+
           setPageCount(Response?.data?.data?.totalNumberOfRecords);
         } else {
           enqueueSnackbar(Response.data.message, { variant: "error" });
@@ -416,8 +417,8 @@ function HistoricalDataExport() {
         </Tabs>
       </Stack>
       <Stack direction="row" spacing={2} m={1} justifyContent="flex-end">
-        {tableData.find(
-          (row: any) => row.report_generator_data.status !== "Pending"
+        {tableData?.find(
+          (row: any) => row?.report_generator_data?.status == "Pending"
         ) && (
           <>
             <Tooltip title="Refresh" placement="top">
