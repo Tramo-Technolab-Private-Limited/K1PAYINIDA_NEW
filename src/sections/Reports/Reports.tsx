@@ -418,7 +418,7 @@ function HistoricalDataExport() {
       </Stack>
       <Stack direction="row" spacing={2} m={1} justifyContent="flex-end">
         {tableData?.find(
-          (row: any) => row?.report_generator_data?.status == "Pending"
+          (row: any) => row?.status?.toLowerCase() == "Pending"
         ) && (
           <>
             <Tooltip title="Refresh" placement="top">
