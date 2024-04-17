@@ -42,7 +42,7 @@ export default function Login() {
         <Typography variant="h4">
           Sign in to {process.env.REACT_APP_COMPANY_NAME}
         </Typography>
-
+{/* 
         <Tooltip title={method} placement="left">
           <Box
             component="img"
@@ -50,7 +50,7 @@ export default function Login() {
             src={`/assets/icons/auth/ic_${method}.png`}
             sx={{ width: 32, height: 32, position: "absolute", right: 0 }}
           />
-        </Tooltip>
+        </Tooltip> */}
       </Stack>
 
       <AuthLoginForm />

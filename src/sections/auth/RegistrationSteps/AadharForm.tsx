@@ -206,6 +206,7 @@ export default function AadharForm(props: any) {
               enqueueSnackbar(Response.data.err.message, { variant: "error" });
             }
           } else {
+            enqueueSnackbar("Failed", { variant: "error" });
           }
         }
       );
@@ -804,10 +805,7 @@ function PanCard(props: any) {
           sx={{
             width: "40%",
             marginTop: "50px",
-            // height: '200px',
-            // backgroundSize: 'cover',
-            // boxShadow: 10,
-            // border: '20px  #F0F9FB',
+
             marginLeft: "350px",
           }}
         />
