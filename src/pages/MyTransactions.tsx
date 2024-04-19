@@ -27,6 +27,7 @@ import {
   FormHelperText,
   Link,
   TableHead,
+  CircularProgress,
 } from "@mui/material";
 import { Helmet } from "react-helmet-async";
 import * as Yup from "yup";
@@ -652,7 +653,7 @@ export default function MyTransactions() {
             </Label>
           </Stack>
         </Scrollbar>
-        <Stack flexDirection={"row"} gap={1} >
+        <Stack flexDirection={"row"} gap={1}>
           <Button variant="contained" onClick={handleReset}>
             <Iconify icon="bx:reset" color={"common.white"} mr={1} />
             Reset
@@ -1317,13 +1318,33 @@ function TransactionRow({ row }: childProps) {
             )}
             {newRow.status !== "success" && newRow.status !== "failed" && (
               <Tooltip title="Check Status" placement="top">
-                <IconButton
-                  onClick={() => !loading && CheckTransactionStatus(newRow)}
-                  color="primary"
-                  aria-label="check transaction status"
-                >
-                  <CheckStatusIcon />
-                </IconButton>
+                <div style={{ position: "relative" }}>
+                  <IconButton
+                    disabled={loading}
+                    onClick={() => CheckTransactionStatus(newRow)}
+                    color="primary"
+                    aria-label="check transaction status"
+                  >
+                    {loading ? (
+                      <Grid
+                        style={{
+                          position: "absolute",
+                          top: "50%",
+                          left: "50%",
+                          transform: "translate(-50%, -50%)",
+                        }}
+                      >
+                        <CircularProgress
+                          size={20}
+                          thickness={4}
+                          color="primary"
+                        />
+                      </Grid>
+                    ) : (
+                      <CheckStatusIcon />
+                    )}
+                  </IconButton>
+                </div>
               </Tooltip>
             )}
             {user?.role === "agent" &&
