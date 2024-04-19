@@ -42,7 +42,7 @@ export function fIndianCurrency(number: InputValue) {
   const format = number ? number : "";
   return format.toLocaleString("en-IN", {
     maximumFractionDigits: 2,
-    style: "currency",
+    // style: "currency",
     currency: "INR",
   });
 }
