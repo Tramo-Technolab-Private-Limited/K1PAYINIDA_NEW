@@ -198,11 +198,11 @@ export default function DMT2pay({ clearPayout, remitter, beneficiary }: any) {
               setErrorMsg(Response.data.message);
               setTxn(false);
             }
-            clearPayout();
+            // clearPayout();
           } else {
             setCheckNPIN(false);
             enqueueSnackbar(Response, { variant: "error" });
-            clearPayout();
+            // clearPayout();
             setTxn(false);
           }
         });
@@ -254,6 +254,7 @@ export default function DMT2pay({ clearPayout, remitter, beneficiary }: any) {
                   display: "flex",
                   flexDirection: "row",
                   marginTop: "10px",
+                  marginLeft: "15px",
                 }}
               >
                 <FormControlLabel
@@ -447,8 +448,8 @@ export default function DMT2pay({ clearPayout, remitter, beneficiary }: any) {
                       variant="contained"
                       color="warning"
                       onClick={() => {
-                        handleClose();
-                        clearPayout();
+                        // handleClose();
+                        // clearPayout();
                         reset(defaultValues);
                       }}
                     >
@@ -491,57 +492,7 @@ export default function DMT2pay({ clearPayout, remitter, beneficiary }: any) {
           p={2}
           width={{ xs: "100%", sm: "fit-content" }}
         >
-          {/* <Stack
-              sx={{ border: "1.5px dashed #000000" }}
-              p={3}
-              borderRadius={2}
-            >
-              <Table
-                stickyHeader
-                aria-label="sticky table"
-                style={{ borderBottom: "1px solid #dadada" }}
-              >
-                <TableHead>
-                  <TableRow>
-                    <TableCell sx={{ fontWeight: 800, textAlign: "center" }}>
-                      Client ref Id
-                    </TableCell>
-                    <TableCell sx={{ fontWeight: 800, textAlign: "center" }}>
-                      Created At
-                    </TableCell>
-                    <TableCell sx={{ fontWeight: 800, textAlign: "center" }}>
-                      Amount
-                    </TableCell>
-                    <TableCell sx={{ fontWeight: 800, textAlign: "center" }}>
-                      status
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {transactionDetail.map((item: any) => (
-                    <TableRow key={item.data._id}>
-                      <TableCell sx={{ fontWeight: 800 }}>
-                        {item.data.clientRefId || "NA"}
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: 800 }}>
-                        {fDateTime(item?.data?.createdAt)}
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: 800 }}>
-                        {item.data.amount && "₹"} {item.data.amount || "NA"}
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: 800 }}>
-                        {item.data.status || "NA"}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Stack> */}
           <Stack flexDirection={"row"} gap={1} mt={1} justifyContent={"center"}>
-            {/* <Button variant="contained" onClick={handleClose1} size="small">
-                Download Receipt
-              </Button> */}
-
             <TransactionModal
               isTxnOpen={open1}
               handleTxnModal={() => {
@@ -552,8 +503,6 @@ export default function DMT2pay({ clearPayout, remitter, beneficiary }: any) {
               errorMsg={errorMsg}
               transactionDetail={transactionDetail}
             />
-
-            {/* <Button variant="contained">Close({count})</Button> */}
           </Stack>
         </Box>
       </Modal>
