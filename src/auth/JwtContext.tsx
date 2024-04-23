@@ -185,6 +185,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         type: Types.LOGOUT,
       });
     }
+
     navigator.geolocation.getCurrentPosition(
       ({ coords }: any) => {
         localStorage.setItem("lat", coords.latitude);
