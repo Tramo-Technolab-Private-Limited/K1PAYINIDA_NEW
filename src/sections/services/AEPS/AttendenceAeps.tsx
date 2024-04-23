@@ -26,6 +26,7 @@ import Lottie from "lottie-react";
 import fingerScan from "../../../components/JsonAnimations/fingerprint-scan.json";
 import { useAuthContext } from "src/auth/useAuthContext";
 import { Navigate, useNavigate } from "react-router";
+import { fDateTime } from "src/utils/formatTime";
 
 // ----------------------------------------------------------------------
 
@@ -65,7 +66,7 @@ export default function AttendenceAeps(props: any) {
 
   const defaultValues = {
     adhaar: "",
-    remark: "",
+    remark: `Daily Attendance`,
   };
 
   const methods = useForm<FormValuesProps>({
@@ -343,12 +344,12 @@ export default function AttendenceAeps(props: any) {
             <MenuItem value={"MANTRA"}>MANTRA</MenuItem>
             <MenuItem value={"SECUGEN"}>SECUGEN</MenuItem>
           </RHFSelect>
-          <RHFTextField
+          {/* <RHFTextField
             name="remark"
             label="Remark"
             placeholder="Remark"
             sx={{ width: "90%", margin: "auto" }}
-          />
+          /> */}
           <Stack>
             <Button
               variant="contained"
