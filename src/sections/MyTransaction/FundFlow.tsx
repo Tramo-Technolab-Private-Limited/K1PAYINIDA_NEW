@@ -198,6 +198,7 @@ export default function FundFlow() {
 
   const filterTransaction = (data: FormValuesProps) => {
     setCurrentPage(1);
+    handleClose();
     setLoading(true);
     let token = localStorage.getItem("token");
     let body = {
@@ -219,6 +220,7 @@ export default function FundFlow() {
             setSdata(Response.data.data.data);
             setPageCount(Response.data.data.totalNumberOfRecords);
             enqueueSnackbar(Response.data.message);
+            reset(defaultValues);
             setStats((prevState) => ({
               ...prevState,
               debit: Response.data.data.data.reduce(
@@ -274,15 +276,15 @@ export default function FundFlow() {
         <title> Transactions | {process.env.REACT_APP_COMPANY_NAME} </title>
       </Helmet>
       <Stack flexDirection={"row"} gap={1} justifyContent={"space-between"}>
-      <Stack flexDirection={"row"} gap={1}>
-        <Label variant="soft" color="error">
-          {`Total Debit: ${fCurrency(stats.debit)}`}
-        </Label>
-        <Label variant="soft" color="success">
-          {`Total Credit: ${fCurrency(stats.credit)}`}
-        </Label>
-      </Stack>
-      <Stack flexDirection={"row"} gap={1} mb={1}>
+        <Stack flexDirection={"row"} gap={1}>
+          <Label variant="soft" color="error">
+            {`Total Debit: ${fCurrency(stats.debit)}`}
+          </Label>
+          <Label variant="soft" color="success">
+            {`Total Credit: ${fCurrency(stats.credit)}`}
+          </Label>
+        </Stack>
+        <Stack flexDirection={"row"} gap={1} mb={1}>
           <Button variant="contained" onClick={handleReset}>
             <Iconify icon="bx:reset" color={"common.white"} mr={1} />
             Reset
@@ -296,74 +298,84 @@ export default function FundFlow() {
             Filter
           </Button>
         </Stack>
-        </Stack>
+      </Stack>
       <MotionModal
-          open={open}
-          onClose={handleClose}
-          width={{ xs: "95%", sm: 500 }}
-        >
-          {/* <Box> */}
-          <Stack mb={1}>
-        <FormProvider
-          methods={methods}
-          onSubmit={handleSubmit(filterTransaction)}
-        >
-          <Stack gap={1} m={1}>
-            <RHFSelect
-              name="transactionType"
-              label="Transaction Type"
-              placeholder="transaction Type"
-              SelectProps={{
-                native: false,
-                sx: { textTransform: "capitalize" },
-              }}
-            >
-              <MenuItem value={"credit"}>Credit</MenuItem>
-              <MenuItem value={"debit"}>Debit</MenuItem>
-            </RHFSelect>
-            <RHFSelect
-              name="status"
-              label="Status"
-              SelectProps={{
-                native: false,
-                sx: { textTransform: "capitalize" },
-              }}
-            >
-              <MenuItem value="">None</MenuItem>
-              <MenuItem value="success">Success</MenuItem>
-              <MenuItem value="failed">Failed</MenuItem>
-              <MenuItem value="pending">Pending</MenuItem>
-              <MenuItem value="in_process">In process</MenuItem>
-              <MenuItem value="hold">Hold</MenuItem>
-              <MenuItem value="initiated">Initiated</MenuItem>
-            </RHFSelect>
-            <RHFTextField name="clientRefId" label="Client Ref Id" />
-            <Stack flexDirection={"row"} gap={1}>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  label="Start date"
-                  inputFormat="DD/MM/YYYY"
-                  value={watch("startDate")}
-                  maxDate={new Date()}
-                  onChange={(newValue: any) => setValue("startDate", newValue)}
-                  renderInput={(params: any) => (
-                    <TextField {...params} size={"small"} sx={{ width: 150 }} />
-                  )}
-                />
-                <DatePicker
-                  label="End date"
-                  inputFormat="DD/MM/YYYY"
-                  value={watch("endDate")}
-                  minDate={watch("startDate")}
-                  maxDate={new Date()}
-                  onChange={(newValue: any) => setValue("endDate", newValue)}
-                  renderInput={(params: any) => (
-                    <TextField {...params} size={"small"} sx={{ width: 150 }} />
-                  )}
-                />
-              </LocalizationProvider>
-            </Stack>
-            <Stack flexDirection={"row"} gap={1}>
+        open={open}
+        onClose={handleClose}
+        width={{ xs: "95%", sm: 500 }}
+      >
+        {/* <Box> */}
+        <Stack mb={1}>
+          <FormProvider
+            methods={methods}
+            onSubmit={handleSubmit(filterTransaction)}
+          >
+            <Stack gap={1} m={1}>
+              <RHFSelect
+                name="transactionType"
+                label="Transaction Type"
+                placeholder="transaction Type"
+                SelectProps={{
+                  native: false,
+                  sx: { textTransform: "capitalize" },
+                }}
+              >
+                <MenuItem value={"credit"}>Credit</MenuItem>
+                <MenuItem value={"debit"}>Debit</MenuItem>
+              </RHFSelect>
+              <RHFSelect
+                name="status"
+                label="Status"
+                SelectProps={{
+                  native: false,
+                  sx: { textTransform: "capitalize" },
+                }}
+              >
+                <MenuItem value="">None</MenuItem>
+                <MenuItem value="success">Success</MenuItem>
+                <MenuItem value="failed">Failed</MenuItem>
+                <MenuItem value="pending">Pending</MenuItem>
+                <MenuItem value="in_process">In process</MenuItem>
+                <MenuItem value="hold">Hold</MenuItem>
+                <MenuItem value="initiated">Initiated</MenuItem>
+              </RHFSelect>
+              <RHFTextField name="clientRefId" label="Client Ref Id" />
+              <Stack flexDirection={"row"} gap={1}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    label="Start date"
+                    inputFormat="DD/MM/YYYY"
+                    value={watch("startDate")}
+                    maxDate={new Date()}
+                    onChange={(newValue: any) =>
+                      setValue("startDate", newValue)
+                    }
+                    renderInput={(params: any) => (
+                      <TextField
+                        {...params}
+                        size={"small"}
+                        sx={{ width: 150 }}
+                      />
+                    )}
+                  />
+                  <DatePicker
+                    label="End date"
+                    inputFormat="DD/MM/YYYY"
+                    value={watch("endDate")}
+                    minDate={watch("startDate")}
+                    maxDate={new Date()}
+                    onChange={(newValue: any) => setValue("endDate", newValue)}
+                    renderInput={(params: any) => (
+                      <TextField
+                        {...params}
+                        size={"small"}
+                        sx={{ width: 150 }}
+                      />
+                    )}
+                  />
+                </LocalizationProvider>
+              </Stack>
+              <Stack flexDirection={"row"} gap={1}>
                 <LoadingButton variant="contained" onClick={handleClose}>
                   Cancel
                 </LoadingButton>
@@ -379,11 +391,11 @@ export default function FundFlow() {
                   Apply
                 </LoadingButton>
               </Stack>
-          </Stack>
-        </FormProvider>
-      </Stack>
-          {/* </Box> */}
-        </MotionModal>
+            </Stack>
+          </FormProvider>
+        </Stack>
+        {/* </Box> */}
+      </MotionModal>
       <Grid item xs={12} md={6} lg={8}>
         {Loading ? (
           <ApiDataLoading />

@@ -444,6 +444,7 @@ export default function DMTbeneficiary() {
                   name="bank"
                   disabled={remitterVerify?.beneVerified}
                   onChange={setBankDetail}
+                  noOptionsText="No Bank Account"
                   options={getBank?.data}
                   getOptionLabel={(option: any) => option?.bankName}
                   renderOption={(props, option) => (

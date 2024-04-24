@@ -441,6 +441,7 @@ export default function DMT2BeneTable() {
               disabled={remitterVerify?.beneVerified}
               onChange={setBankDetail}
               options={getBank.data}
+              noOptionsText="No Bank Account"
               getOptionLabel={(option: any) => option.bankName}
               renderOption={(props, option) => (
                 <Box
