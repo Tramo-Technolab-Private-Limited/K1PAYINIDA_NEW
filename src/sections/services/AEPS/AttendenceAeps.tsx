@@ -26,11 +26,17 @@ import Lottie from "lottie-react";
 import fingerScan from "../../../components/JsonAnimations/fingerprint-scan.json";
 import { useAuthContext } from "src/auth/useAuthContext";
 import { Navigate, useNavigate } from "react-router";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
 
-// ----------------------------------------------------------------------
+import Startek from "../../../assets/images/StartekOne.svg";
+import Morpho from "../../../assets/images/MorphoOne.png";
+import Mantra from "../../../assets/images/Mantra.png";
+import Secugen from "../../../assets/images/SecugenOne.png";
+// ---------------------------------------------------
 
 type FormValuesProps = {
-  deviceName: string;
+  // deviceName: string;
   remark: string;
   AEPS: string;
   AP: string;
@@ -56,6 +62,12 @@ export default function AttendenceAeps(props: any) {
     setOpen(false);
     setarrofObj([]);
     setMessage("");
+  };
+
+  const [deviceName, setDeviceName] = React.useState("one");
+
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+    setDeviceName(newValue);
   };
 
   const AEPSSchema = Yup.object().shape({
@@ -168,13 +180,13 @@ export default function AttendenceAeps(props: any) {
   const capture = (data: FormValuesProps) => {
     handleOpen();
     var rdUrl = "";
-    if (getValues("deviceName") == "MANTRA") {
+    if (deviceName == "MANTRA") {
       rdUrl = "https://127.0.0.1:8005/rd/capture";
-    } else if (getValues("deviceName") == "MORPHO") {
+    } else if (deviceName == "MORPHO") {
       rdUrl = "http://127.0.0.1:11100/capture";
-    } else if (getValues("deviceName") == "STARTEK") {
+    } else if (deviceName == "STARTEK") {
       rdUrl = "http://127.0.0.1:11101/rd/capture";
-    } else if (getValues("deviceName") == "SECUGEN") {
+    } else if (deviceName == "SECUGEN") {
       rdUrl = "http://127.0.0.1:11100/rd/capture";
     }
     if (rdUrl == "") {
@@ -317,6 +329,7 @@ export default function AttendenceAeps(props: any) {
         <Stack
           width={{ xs: "100%", sm: 450 }}
           margin={"auto"}
+          minWidth="60%"
           bgcolor={"#fff"}
           border={"1px solid #dadada"}
           borderRadius={"10px"}
@@ -331,7 +344,7 @@ export default function AttendenceAeps(props: any) {
             Plaese mark the attendance to use{" "}
             {props.attendance == "AEPS" ? "AEPS" : "Aadhar Pay"}{" "}
           </Typography>
-          <RHFSelect
+          {/* <RHFSelect
             name="deviceName"
             label="Select Device"
             placeholder="Select Device"
@@ -342,7 +355,68 @@ export default function AttendenceAeps(props: any) {
             <MenuItem value={"STARTEK"}>STARTEK</MenuItem>
             <MenuItem value={"MANTRA"}>MANTRA</MenuItem>
             <MenuItem value={"SECUGEN"}>SECUGEN</MenuItem>
-          </RHFSelect>
+          </RHFSelect> */}
+          <Tabs
+            value={deviceName}
+            onChange={handleChange}
+            textColor="secondary"
+            indicatorColor="secondary"
+            aria-label="secondary tabs example"
+            sx={{ width: "90%", marginLeft: 20 }}
+          >
+            {/* <Tab
+              value={"STARTEK"}
+              label={
+                <Typography sx={{ height: "40px", width: "40px" }}>
+                  <img src={Startek} />
+                </Typography>
+              }
+            /> */}
+            <Tab
+              value={"STARTEK"}
+              iconPosition="top"
+              icon={
+                <Stack sx={{ height: "40px", width: "40px" }}>
+                  <img src={Startek} />
+                </Stack>
+              }
+              label="STARTEK"
+            />
+
+            <Tab
+              value={"MORPHO"}
+              iconPosition="top"
+              icon={
+                <Typography sx={{ height: "50px", width: "40px" }}>
+                  <img src={Morpho} />
+                </Typography>
+              }
+              label="MORPHO"
+            />
+
+            <Tab
+              value={"MANTRA"}
+              iconPosition="top"
+              icon={
+                <Typography sx={{ height: "40px", width: "40px" }}>
+                  <img src={Mantra} />
+                </Typography>
+              }
+              label="MANTRA"
+            />
+
+            <Tab
+              value={"SECUGEN"}
+              iconPosition="top"
+              icon={
+                <Typography sx={{ height: "40px", width: "40px" }}>
+                  <img src={Secugen} />
+                </Typography>
+              }
+              label="SECUGEN"
+            />
+          </Tabs>
+
           <RHFTextField
             name="remark"
             label="Remark"

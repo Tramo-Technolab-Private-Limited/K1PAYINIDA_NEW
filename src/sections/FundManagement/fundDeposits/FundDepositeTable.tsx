@@ -122,7 +122,7 @@ const FundRequestTable = ({ row, getRaisedRequest }: any) => {
         <Typography variant="body2">{row?.fund_request_Id}</Typography>
       </TableCell>
       <TableCell>
-        <div style={{ whiteSpace: "nowrap" }}>
+        <Stack style={{ whiteSpace: "nowrap" }}>
           <Stack direction={"row"} gap={1}>
             <Typography variant="subtitle2">Created :</Typography>
             <Typography variant="body1">{fDateTime(row?.createdAt)}</Typography>
@@ -133,7 +133,7 @@ const FundRequestTable = ({ row, getRaisedRequest }: any) => {
               {fDateTime(row?.actionDate)}
             </Typography>
           </Stack>
-        </div>
+        </Stack>
       </TableCell>
       <TableCell>
         <Typography variant="body2">

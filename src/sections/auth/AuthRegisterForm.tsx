@@ -695,7 +695,8 @@ export default function AuthRegisterForm(props: any) {
                 (value2 !== "m_distributor" && (
                   <Stack sx={{ position: "relative" }}>
                     <TextField
-                      disabled={gOTP}
+                      // disabled={gOTP}
+                      disabled={gOTP || refShow}
                       error={!!errors.refCode}
                       label="Referral Code"
                       size="small"
