@@ -160,29 +160,35 @@ function NewFundRequest({ getRaisedRequest }: props) {
     txnId: Yup.string()
       .when("modesDetail.modeName", {
         is: "RTGS",
-        then: Yup.string().required("Transaction ID is required"),
+        then: Yup.string().required("Transaction ID is required")
+        .matches(/^[A-Za-z0-9/]*$/, "Only letters, numbers, and forward slashes are allowed"),
       })
       .when("modesDetail.modeName", {
         is: "IMPS",
-        then: Yup.string().required("Transaction ID is required"),
+        then: Yup.string().required("Transaction ID is required")
+        .matches(/^[A-Za-z0-9/]*$/, "Only letters, numbers, and forward slashes are allowed"),
       })
       .when("modesDetail.modeName", {
         is: "NEFT",
-        then: Yup.string().required("Transaction ID is required"),
+        then: Yup.string().required("Transaction ID is required")
+        .matches(/^[A-Za-z0-9/]*$/, "Only letters, numbers, and forward slashes are allowed"),
       })
       .when("modesDetail.modeName", {
         is: "Fund Transfer",
-        then: Yup.string().required("Transaction ID is required"),
+        then: Yup.string().required("Transaction ID is required")
+        .matches(/^[A-Za-z0-9/]*$/, "Only letters, numbers, and forward slashes are allowed"),
       }),
 
     filePath: Yup.string()
       .when("modesDetail.modeName", {
         is: "Cash deposit at branch",
-        then: Yup.string().required("Please Select Slip"),
+        then: Yup.string().required("Please Select Slip")
+        .matches(/^[A-Za-z0-9/]*$/, "Only letters, numbers, and forward slashes are allowed"),
       })
       .when("modesDetail.modeName", {
         is: "Cash deposit at CDM",
-        then: Yup.string().required("Please Select Slip"),
+        then: Yup.string().required("Please Select Slip")
+        .matches(/^[A-Za-z0-9/]*$/, "Only letters, numbers, and forward slashes are allowed"),
       }),
     remarks: Yup.string().required("Remark Field is required"),
   });

@@ -42,7 +42,7 @@ import {
   ProfileFollowers,
 } from "../sections/profile";
 import { Api } from "src/webservices";
-import TramoCertificate from "../assets/icons/Tramo-Certificate-3.png";
+import TramoCertificate from "../assets/icons/K1Certificate.png";
 import { AwsDocSign } from "../components/customFunctions/AwsDocSign";
 import jsPDF from "jspdf";
 import { useAuthContext } from "src/auth/useAuthContext";
@@ -270,7 +270,7 @@ export default function UserProfilePage() {
             <Typography
               variant="caption"
               position={"absolute"}
-              top={"27%"}
+              top={"28%"}
               left={"42%"}
             >
               {user?.firstName + " " + user?.lastName}
@@ -278,7 +278,7 @@ export default function UserProfilePage() {
             <Typography
               variant="caption"
               position={"absolute"}
-              top={"75.5%"}
+              top={"74%"}
               left={"23%"}
             >
               {user?._id}
@@ -286,8 +286,8 @@ export default function UserProfilePage() {
             <Typography
               variant="caption"
               position={"absolute"}
-              top={"44%"}
-              left={"55%"}
+              top={"44.5%"}
+              left={"54%"}
             >
               {user?.contact_no}
             </Typography>
@@ -298,6 +298,14 @@ export default function UserProfilePage() {
               left={"57%"}
             >
               {user?.userCode}
+            </Typography>
+            <Typography
+              variant="caption"
+              position={"absolute"}
+              top={"51.5%"}
+              left={"35%"}
+            >
+              {user?.company_address || "No Shop Name"}
             </Typography>
             <Typography
               variant="caption"
