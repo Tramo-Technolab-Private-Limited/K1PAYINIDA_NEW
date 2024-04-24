@@ -130,6 +130,14 @@ function NewFundRequest({ getRaisedRequest }: props) {
     amount: Yup.number()
       .typeError("That doesn't look like an Amount")
       .positive("An Amount can't start with a minus")
+      .test((value: any, context: any) => {
+        return value &&
+          value >= 1 &&
+          context.originalValue &&
+          context.originalValue.startsWith("0")
+          ? false
+          : true;
+      })
       .min(
         +amountMinMaxValidation.min,
         `Please enter minimum ${fIndianCurrency(amountMinMaxValidation.min)}`
@@ -152,29 +160,35 @@ function NewFundRequest({ getRaisedRequest }: props) {
     txnId: Yup.string()
       .when("modesDetail.modeName", {
         is: "RTGS",
-        then: Yup.string().required("Transaction ID is required"),
+        then: Yup.string().required("Transaction ID is required")
+        .matches(/^[A-Za-z0-9/]*$/, "Only letters, numbers, and forward slashes are allowed"),
       })
       .when("modesDetail.modeName", {
         is: "IMPS",
-        then: Yup.string().required("Transaction ID is required"),
+        then: Yup.string().required("Transaction ID is required")
+        .matches(/^[A-Za-z0-9/]*$/, "Only letters, numbers, and forward slashes are allowed"),
       })
       .when("modesDetail.modeName", {
         is: "NEFT",
-        then: Yup.string().required("Transaction ID is required"),
+        then: Yup.string().required("Transaction ID is required")
+        .matches(/^[A-Za-z0-9/]*$/, "Only letters, numbers, and forward slashes are allowed"),
       })
       .when("modesDetail.modeName", {
         is: "Fund Transfer",
-        then: Yup.string().required("Transaction ID is required"),
+        then: Yup.string().required("Transaction ID is required")
+        .matches(/^[A-Za-z0-9/]*$/, "Only letters, numbers, and forward slashes are allowed"),
       }),
 
     filePath: Yup.string()
       .when("modesDetail.modeName", {
         is: "Cash deposit at branch",
-        then: Yup.string().required("Please Select Slip"),
+        then: Yup.string().required("Please Select Slip")
+        .matches(/^[A-Za-z0-9/]*$/, "Only letters, numbers, and forward slashes are allowed"),
       })
       .when("modesDetail.modeName", {
         is: "Cash deposit at CDM",
-        then: Yup.string().required("Please Select Slip"),
+        then: Yup.string().required("Please Select Slip")
+        .matches(/^[A-Za-z0-9/]*$/, "Only letters, numbers, and forward slashes are allowed"),
       }),
     remarks: Yup.string().required("Remark Field is required"),
   });
@@ -481,16 +495,20 @@ function NewFundRequest({ getRaisedRequest }: props) {
               onChange={(newValue: any) => setValue("date", newValue)}
               renderInput={(params: any) => (
                 <RHFTextField
-                  name="date"
-                  type="date"
-                  size="small"
-                  autoComplete="off"
-                  onPaste={(e: any) => {
-                    e.preventDefault();
-                    return false;
-                  }}
-                  {...params}
-                />
+                name="date"
+                type="date"
+                size="small"
+                autoComplete="off"
+                onKeyDown={(e: any) => {
+                  e.preventDefault();
+                  return false;
+                }}  
+                onPaste={(e: any) => {
+                  e.preventDefault();
+                  return false;
+                }}  
+                {...params}
+              />
               )}
             />
           </LocalizationProvider>

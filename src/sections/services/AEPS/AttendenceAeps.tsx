@@ -28,6 +28,7 @@ import { useAuthContext } from "src/auth/useAuthContext";
 import { Navigate, useNavigate } from "react-router";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
+import { fDateTime } from "src/utils/formatTime";
 
 import Startek from "../../../assets/images/StartekOne.svg";
 import Morpho from "../../../assets/images/MorphoOne.png";
@@ -77,7 +78,7 @@ export default function AttendenceAeps(props: any) {
 
   const defaultValues = {
     adhaar: "",
-    remark: "",
+    remark: `Daily Attendance`,
   };
 
   const methods = useForm<FormValuesProps>({
@@ -417,12 +418,12 @@ export default function AttendenceAeps(props: any) {
             />
           </Tabs>
 
-          <RHFTextField
+          {/* <RHFTextField
             name="remark"
             label="Remark"
             placeholder="Remark"
             sx={{ width: "90%", margin: "auto" }}
-          />
+          /> */}
           <Stack>
             <Button
               variant="contained"

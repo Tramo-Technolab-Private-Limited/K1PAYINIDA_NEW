@@ -176,7 +176,7 @@ export default function DMT2BeneTable() {
   const methods = useForm<FormValuesProps>({
     resolver: yupResolver(DMTSchema),
     defaultValues,
-    mode: "all",
+    mode: "onSubmit",
   });
 
   const {
@@ -441,6 +441,7 @@ export default function DMT2BeneTable() {
               disabled={remitterVerify?.beneVerified}
               onChange={setBankDetail}
               options={getBank.data}
+              noOptionsText="No Bank Account"
               getOptionLabel={(option: any) => option.bankName}
               renderOption={(props, option) => (
                 <Box
