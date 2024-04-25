@@ -1,53 +1,51 @@
-import { Card, CardContent, Stack, Typography } from "@mui/material";
-import React from "react";
-// import DMT2 from "../../assets/services/DMT1.svg";
+import {
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  Stack,
+  Typography,
+} from "@mui/material";
+
 function CustomCard(props: any) {
   return (
     <>
       <Card sx={{ background: props.color }}>
         <CardContent>
-          <Typography gutterBottom variant="h5" component="div" color="000000">
-            {props.icon} {props?.Status}
+          <Stack flexDirection="row" gap={1}>
+            <Stack>{props.icon}</Stack>
+            <Typography gutterBottom variant="h6" color="000000" mt={1}>
+              {props?.Status}
+            </Typography>
+          </Stack>
+          <Typography variant="caption">Transaction Vol.</Typography>
+          <Typography variant="h6" color="000000">
+            ₹{props.amount}
           </Typography>
-          <Typography
-            sx={{
-              width: "1440px",
-              top: "491px",
-              left: "2601px",
+          <Stack
+            style={{
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              width: "100%",
+              backgroundColor: props?.footerColor,
+              padding: "4px",
+              color: "white",
             }}
-            color="000000"
           >
-            Transaction Vol.
-          </Typography>
-          <Typography
-            sx={{
-              fontSize: "20px",
-              fontWeight: "700",
-              fontStyle: "Public Sans",
-              lineHeight: "23.5px",
-            }}
-            color="000000"
-          >
-            ₹ 1000000000
-          </Typography>
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              sx={{ paddingLeft: 2, paddingRight: 2 }}
+            >
+              <Typography variant="caption">Transaction Count</Typography>
+              <Typography variant="overline">
+                {props.noOfTransaction}
+              </Typography>
+            </Stack>
+          </Stack>
         </CardContent>
-        <Stack
-          style={{
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            width: "100%",
-            backgroundColor: "green",
-            padding: "4px",
-            textAlign: "center",
-            color: "white",
-          }}
-        >
-          Footer Content
-        </Stack>
       </Card>
-
-      {/* <DMT2 /> */}
     </>
   );
 }

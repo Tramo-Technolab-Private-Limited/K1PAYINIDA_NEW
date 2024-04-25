@@ -1,5 +1,3 @@
-//////////////////last...................
-
 import { Helmet } from "react-helmet-async";
 // @mui
 import { useTheme } from "@mui/material/styles";
@@ -14,8 +12,7 @@ import {
   Card,
   Divider,
 } from "@mui/material";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
+
 import { useNavigate } from "react-router-dom";
 
 import Recharge from "../../assets/services/Recharge.svg";
@@ -29,8 +26,6 @@ import AadharPay from "../../assets/services/AadharPay.svg";
 import IndoNepal from "../../assets/services/IndoNepal.svg";
 
 import { useAuthContext } from "src/auth/useAuthContext";
-import CustomCard from "./CustomCard";
-import { useState } from "react";
 
 // ----------------------------------------------------------------------
 
@@ -210,5 +205,3 @@ export default function AgentServices(props: any) {
     </>
   );
 }
-
-// export default AgentServices;
