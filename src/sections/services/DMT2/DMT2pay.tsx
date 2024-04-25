@@ -187,7 +187,9 @@ export default function DMT2pay({ clearPayout, remitter, beneficiary }: any) {
                 TextToSpeak(element.message);
                 initialize();
               });
-              setTransactionDetail(Response.data.response?.[0]?.data);
+              setTransactionDetail(
+                Response.data.response.map((item: any) => item.data)
+              );
               handleOpen1();
               handleClose();
               // setCount(5);
@@ -480,32 +482,20 @@ export default function DMT2pay({ clearPayout, remitter, beneficiary }: any) {
           </Box>
         )}
       </MotionModal>
-      <Modal
-        open={open1}
-        onClose={handleClose1}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box
-          sx={style}
-          style={{ borderRadius: "20px" }}
-          p={2}
-          width={{ xs: "100%", sm: "fit-content" }}
-        >
-          <Stack flexDirection={"row"} gap={1} mt={1} justifyContent={"center"}>
-            <TransactionModal
-              isTxnOpen={open1}
-              handleTxnModal={() => {
-                setOpen1(false);
-                setErrorMsg("");
-                setMode("");
-              }}
-              errorMsg={errorMsg}
-              transactionDetail={transactionDetail}
-            />
-          </Stack>
-        </Box>
-      </Modal>
+      <MotionModal open={open1} width={{ xs: "95%", md: 720 }}>
+        <Stack flexDirection={"row"} gap={1} mt={1} justifyContent={"center"}>
+          <TransactionModal
+            isTxnOpen={open1}
+            handleTxnModal={() => {
+              setOpen1(false);
+              setErrorMsg("");
+              setMode("");
+            }}
+            errorMsg={errorMsg}
+            transactionDetail={transactionDetail}
+          />
+        </Stack>
+      </MotionModal>
     </>
   );
 }

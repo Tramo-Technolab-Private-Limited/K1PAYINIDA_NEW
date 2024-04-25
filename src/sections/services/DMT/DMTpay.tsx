@@ -60,16 +60,18 @@ export default function DMTpay({
   const [mode, setMode] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
-  const [isTxnOpen, setIsTxnOpen] = useState(false);
-  const [transactionDetail, setTransactionDetail] = useState({
-    status: "",
-  });
+  const [transactionDetail, setTransactionDetail] = useState<any>([]);
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
     reset(defaultValues);
   };
+
+  //recipt modal
+  const [open1, setOpen1] = useState(false);
+  const handleOpen1 = () => setOpen1(true);
+  const handleClose1 = () => setOpen1(false);
 
   const style = {
     position: "absolute" as "absolute",
@@ -141,8 +143,7 @@ export default function DMTpay({
         if (Response.status == 200) {
           if (Response.data.code == 200) {
             enqueueSnackbar(Response.data.message);
-            setTransactionDetail(Response.data.data);
-
+            setTransactionDetail([{ ...Response.data.data }]);
             TextToSpeak(Response.data.message);
             initialize();
           } else {
@@ -150,7 +151,7 @@ export default function DMTpay({
             setErrorMsg(Response.data.message);
           }
           handleClose();
-          setIsTxnOpen(true);
+          handleOpen1();
         } else {
           enqueueSnackbar(Response, { variant: "error" });
         }
@@ -333,16 +334,20 @@ export default function DMTpay({
         </FormProvider>
       </MotionModal>
 
-      <TransactionModal
-        isTxnOpen={isTxnOpen}
-        handleTxnModal={() => {
-          setIsTxnOpen(false);
-          setErrorMsg("");
-          setMode("");
-        }}
-        errorMsg={errorMsg}
-        transactionDetail={transactionDetail}
-      />
+      <MotionModal open={open1} width={{ xs: "95%", md: 720 }}>
+        <Stack flexDirection={"row"} gap={1} mt={1} justifyContent={"center"}>
+          <TransactionModal
+            isTxnOpen={open1}
+            handleTxnModal={() => {
+              setOpen1(false);
+              setErrorMsg("");
+              setMode("");
+            }}
+            errorMsg={errorMsg}
+            transactionDetail={transactionDetail}
+          />
+        </Stack>
+      </MotionModal>
     </>
   );
 }

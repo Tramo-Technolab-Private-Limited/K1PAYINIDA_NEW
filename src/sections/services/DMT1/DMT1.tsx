@@ -231,9 +231,9 @@ export default function DMT1() {
         <Helmet>
           <title>DMT1 |{process.env.REACT_APP_COMPANY_NAME}</title>
         </Helmet>
-        <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-          <Grid container spacing={2}>
-            <Grid item sm={3}>
+        <Grid container spacing={2}>
+          <Grid item sm={3}>
+            <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
               <Box
                 rowGap={2}
                 columnGap={2}
@@ -281,14 +281,13 @@ export default function DMT1() {
                 mandatory for DMT1. Please ensure you provide a valid sender
                 mobile number to proceed with the transaction.
               </Typography>
-
-              {remitter.remitterfetch && <DMT1RemitterDetail />}
-            </Grid>
-            <Grid item xs={12} sm={9}>
-              {remitter.remitterfetch && <DMT1beneficiary />}
-            </Grid>
+            </FormProvider>
+            {remitter.remitterfetch && <DMT1RemitterDetail />}
           </Grid>
-        </FormProvider>
+          <Grid item xs={12} sm={9}>
+            {remitter.remitterfetch && <DMT1beneficiary />}
+          </Grid>
+        </Grid>
         <Modal
           open={open1}
           aria-labelledby="modal-modal-title"

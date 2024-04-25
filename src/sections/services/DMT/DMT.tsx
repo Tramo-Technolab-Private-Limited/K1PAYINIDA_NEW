@@ -237,9 +237,9 @@ export default function DMT() {
         <Helmet>
           <title>Money Transfer |{process.env.REACT_APP_COMPANY_NAME}</title>
         </Helmet>
-        <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-          <Grid container spacing={2}>
-            <Grid item sm={3}>
+        <Grid container spacing={2}>
+          <Grid item sm={3}>
+            <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
               <Box
                 rowGap={2}
                 columnGap={2}
@@ -287,14 +287,13 @@ export default function DMT() {
                 mandatory for money transfers. Please ensure you provide a valid
                 sender mobile number to proceed with the transaction.
               </Typography>
-
-              {remitter.remitterfetch && <DMTRemitterDetail />}
-            </Grid>
-            <Grid item xs={12} sm={9}>
-              {remitter.remitterfetch && <DMTbeneficiary />}
-            </Grid>
+            </FormProvider>
+            {remitter.remitterfetch && <DMTRemitterDetail />}
           </Grid>
-        </FormProvider>
+          <Grid item xs={12} sm={9}>
+            {remitter.remitterfetch && <DMTbeneficiary />}
+          </Grid>
+        </Grid>
         <Modal
           open={open1}
           aria-labelledby="modal-modal-title"

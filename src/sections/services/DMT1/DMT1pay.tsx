@@ -36,6 +36,7 @@ import { useAuthContext } from "src/auth/useAuthContext";
 import { fDateTime } from "src/utils/formatTime";
 import { TextToSpeak } from "src/components/customFunctions/TextToSpeak";
 import TransactionModal from "src/components/customFunctions/TrasactionModal";
+import MotionModal from "src/components/animate/MotionModal";
 
 // ----------------------------------------------------------------------
 
@@ -182,10 +183,12 @@ export default function DMT1pay({ clearPayout, remitter, beneficiary }: any) {
           if (Response.status == 200) {
             if (Response.data.code == 200) {
               Response.data.response.map((element: any) => {
-                enqueueSnackbar(element.message);
+                enqueueSnackbar(element.data.message);
                 initialize();
               });
-              setTransactionDetail(Response.data.response?.[0]?.data);
+              setTransactionDetail(
+                Response.data.response.map((item: any) => item.data)
+              );
 
               // setTransactionDetail(Response.data.data);
               TextToSpeak(Response.data.message);
@@ -517,16 +520,20 @@ export default function DMT1pay({ clearPayout, remitter, beneficiary }: any) {
         )}
       </Modal>
 
-      <TransactionModal
-        isTxnOpen={open1}
-        handleTxnModal={() => {
-          setOpen1(false);
-          setErrorMsg("");
-          setMode("");
-        }}
-        errorMsg={errorMsg}
-        transactionDetail={transactionDetail}
-      />
+      <MotionModal open={open1} width={{ xs: "95%", md: 720 }}>
+        <Stack flexDirection={"row"} gap={1} mt={1} justifyContent={"center"}>
+          <TransactionModal
+            isTxnOpen={open1}
+            handleTxnModal={() => {
+              setOpen1(false);
+              setErrorMsg("");
+              setMode("");
+            }}
+            errorMsg={errorMsg}
+            transactionDetail={transactionDetail}
+          />
+        </Stack>
+      </MotionModal>
     </>
   );
 }
