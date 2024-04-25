@@ -6,7 +6,17 @@ import Modal from "@mui/material/Modal";
 import Image from "src/components/image/Image";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import { Grid, IconButton, Stack, Tooltip } from "@mui/material";
+import {
+  Grid,
+  IconButton,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Tooltip,
+} from "@mui/material";
 import { Icon } from "@iconify/react";
 import { sentenceCase } from "change-case";
 import Failed from "src/assets/transactionIcons/Failed";
@@ -18,6 +28,10 @@ import Initiated from "src/assets/transactionIcons/Initiated";
 import CustomTransactionSlip from "./CustomTransactionSlip";
 import { Margin } from "@mui/icons-material";
 import Iconify from "../iconify";
+import { fDateTime } from "src/utils/formatTime";
+import Label from "../label/Label";
+import MotionModal from "../animate/MotionModal";
+import Scrollbar from "../scrollbar/Scrollbar";
 
 const style = {
   position: "absolute" as "absolute",
@@ -39,9 +53,11 @@ export default function TransactionModal({
   isTxnOpen,
   handleTxnModal,
 }: any) {
+  console.log("transactionDetail", transactionDetail);
   const [slip, setSlip] = React.useState(false);
 
   function handleCloseRecipt() {
+    console.log("parent dunction called");
     setSlip(false);
     handleCloseRecipt();
   }
@@ -86,40 +102,38 @@ export default function TransactionModal({
           aria-describedby="modal-modal-description"
           onClose={() => setSlip(false)}
         >
-          <>
-            <Grid
-              sx={{
-                position: "absolute" as "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                bgcolor: "#ffffff",
-                boxShadow: 4,
-                p: 2,
+          <Grid
+            sx={{
+              position: "absolute" as "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              bgcolor: "#ffffff",
+              boxShadow: 4,
+              p: 2,
 
-                borderRadius: "20px",
-              }}
-              width={{
-                sm: "95%",
-                md: "90%",
-                lg: "60%",
-                xl: "70%",
-              }}
-            >
-              <Box display="grid" gridTemplateColumns="repeat(12, 1fr)">
-                <>
-                  <CustomTransactionSlip newRow={transactionDetail} />
-                  <Stack mb={40} ml={85}>
-                    <Tooltip title="Close" onClick={handleCloseRecipt}>
-                      <IconButton>
-                        <Iconify icon="carbon:close-outline" />
-                      </IconButton>
-                    </Tooltip>
-                  </Stack>
-                </>
-              </Box>
-            </Grid>
-          </>
+              borderRadius: "20px",
+            }}
+            // width={{
+            //   sm: "95%",
+            //   md: "90%",
+            //   lg: "60%",
+            //   xl: "70%",
+            // }}
+          >
+            <Box display="grid" gridTemplateColumns="repeat(12, 1fr)">
+              <>
+                {/* <CustomTransactionSlip newRow={transactionDetail} /> */}
+                <Stack mb={40} ml={85}>
+                  <Tooltip title="Close" onClick={handleCloseRecipt}>
+                    <IconButton>
+                      <Iconify icon="carbon:close-outline" />
+                    </IconButton>
+                  </Tooltip>
+                </Stack>
+              </>
+            </Box>
+          </Grid>
         </Modal>
       </>
     );
@@ -127,45 +141,117 @@ export default function TransactionModal({
 
   return (
     <>
-      <Modal
-        open={isTxnOpen}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Stack flexDirection={"row"} justifyContent={"center"}>
-            {transactionDetail?.status == "success" ? (
-              <>
-                <Typography variant="h4" textAlign={"center"}>
-                  <Success />
-                  Transaction Successful
-                </Typography>
-              </>
-            ) : transactionDetail?.status == "pending" ? (
-              <>
-                <Typography variant="h4" textAlign={"center"}>
-                  <Pending />
-                  Transaction Pending
-                </Typography>
-              </>
-            ) : transactionDetail?.status == "hold" ? (
-              <>
-                <Typography variant="h4" textAlign={"center"}>
-                  <Hold />
-                  Transaction Hold
-                </Typography>
-              </>
-            ) : transactionDetail?.status == "in_process" ? (
-              <>
-                <Typography variant="h4" textAlign={"center"}>
-                  <Inprocess />
-                  Transaction Inprocess
-                </Typography>
-              </>
-            ) : (
-              <Initiated />
-            )}
-          </Stack>
+      <MotionModal open={isTxnOpen} width={{ xs: "95%", md: 720 }}>
+        <Scrollbar
+          sx={{
+            maxWidth: 720,
+            border: "1.5px dashed #000000",
+            borderRadius: 2,
+          }}
+        >
+          {transactionDetail?.length ? (
+            <Stack p={1}>
+              <Table
+                stickyHeader
+                aria-label="sticky table"
+                style={{ borderBottom: "1px solid #dadada" }}
+              >
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: 800, textAlign: "center" }}>
+                      Client ref Id
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 800, textAlign: "center" }}>
+                      UTR
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 800, textAlign: "center" }}>
+                      Created At
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 800, textAlign: "center" }}>
+                      Amount
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 800, textAlign: "center" }}>
+                      Mode
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 800, textAlign: "center" }}>
+                      status
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {transactionDetail.map((item: any) => (
+                    <TableRow key={item._id}>
+                      <TableCell sx={{ fontWeight: 800 }}>
+                        {item?.clientRefId || "NA"}
+                      </TableCell>
+                      <TableCell sx={{ fontWeight: 800 }}>
+                        <Typography noWrap>{item?.vendorUtrNumber}</Typography>
+                      </TableCell>
+                      <TableCell sx={{ fontWeight: 800 }}>
+                        <Typography width={100}>
+                          {fDateTime(item?.createdAt)}
+                        </Typography>
+                      </TableCell>
+                      <TableCell sx={{ fontWeight: 800 }}>
+                        {item?.amount && "₹"} {item?.amount || "NA"}
+                      </TableCell>
+                      <TableCell sx={{ fontWeight: 800 }}>
+                        {item?.modeOfPayment || "NA"}
+                      </TableCell>
+                      <TableCell sx={{ fontWeight: 800 }}>
+                        <Label
+                          color={
+                            (item?.status === "failed" && "error") ||
+                            ((item?.status === "pending" ||
+                              item?.status === "in_process" ||
+                              item?.status === "hold") &&
+                              "warning") ||
+                            "success"
+                          }
+                        >
+                          {item?.status || "NA"}
+                        </Label>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Stack>
+          ) : (
+            <Stack flexDirection={"row"} justifyContent={"center"}>
+              {transactionDetail?.status == "success" ? (
+                <>
+                  <Typography variant="h4" textAlign={"center"}>
+                    <Success />
+                    Transaction Successful
+                  </Typography>
+                </>
+              ) : transactionDetail?.status == "pending" ? (
+                <>
+                  <Typography variant="h4" textAlign={"center"}>
+                    <Pending />
+                    Transaction Pending
+                  </Typography>
+                </>
+              ) : transactionDetail?.status == "hold" ? (
+                <>
+                  <Typography variant="h4" textAlign={"center"}>
+                    <Hold />
+                    Transaction Hold
+                  </Typography>
+                </>
+              ) : transactionDetail?.status == "in_process" ? (
+                <>
+                  <Typography variant="h4" textAlign={"center"}>
+                    <Inprocess />
+                    Transaction Inprocess
+                  </Typography>
+                </>
+              ) : (
+                <Initiated />
+              )}
+            </Stack>
+          )}
           <Typography
             variant="h4"
             textAlign={"center"}
@@ -182,8 +268,8 @@ export default function TransactionModal({
               Receipt
             </Button>
           </Stack>
-        </Box>
-      </Modal>
+        </Scrollbar>
+      </MotionModal>
       <Modal
         open={slip}
         aria-labelledby="modal-modal-title"
@@ -200,28 +286,23 @@ export default function TransactionModal({
               bgcolor: "#ffffff",
               boxShadow: 4,
               p: 2,
-
               borderRadius: "20px",
             }}
-            width={{
-              sm: "95%",
-              md: "90%",
-              lg: "60%",
-              xl: "70%",
-            }}
+            // width={{
+            //   sm: "95%",
+            //   md: "90%",
+            //   lg: "60%",
+            //   xl: "70%",
+            // }}
           >
-            <Box display="grid" gridTemplateColumns="repeat(12, 1fr)">
-              <>
-                <CustomTransactionSlip newRow={transactionDetail} />
-                <Stack mb={52} ml={85}>
-                  <Tooltip title="Close" onClick={handleCloseRecipt}>
-                    <IconButton>
-                      <Iconify icon="carbon:close-outline" />
-                    </IconButton>
-                  </Tooltip>
-                </Stack>
-              </>
-            </Box>
+            {/* <Box display="grid" gridTemplateColumns="repeat(12, 1fr)"> */}
+            <Stack>
+              <CustomTransactionSlip
+                newRow={transactionDetail}
+                handleCloseRecipt={() => setSlip(false)}
+              />
+            </Stack>
+            {/* </Box> */}
           </Grid>
         </>
       </Modal>

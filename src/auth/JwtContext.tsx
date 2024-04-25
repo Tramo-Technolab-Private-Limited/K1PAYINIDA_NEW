@@ -135,11 +135,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
     navigator.geolocation.getCurrentPosition(
       ({ coords }: any) => {
         setLocation(true);
+        localStorage.setItem("lat", coords.latitude);
+        localStorage.setItem("long", coords.longitude);
       },
       (error) => {
         setLocation(false);
       }
     );
+    fetch("https://api.ipify.org?format=json")
+      .then((response) => response.json())
+      .then((data) => {
+        localStorage.setItem("ip", data.ip);
+      });
     try {
       const token =
         typeof window !== "undefined" ? localStorage.getItem("token") : "";
