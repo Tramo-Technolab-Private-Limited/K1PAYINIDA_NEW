@@ -221,7 +221,6 @@ export default function MyBankAccount() {
             if (Response.data.code == 200) {
               getUserBankList();
               enqueueSnackbar(Response.data.message);
-              handleClose();
             } else if (Response.data.code == 400) {
               enqueueSnackbar(Response.data.message, { variant: "error" });
             } else {
@@ -229,6 +228,7 @@ export default function MyBankAccount() {
                 variant: "error",
               });
             }
+            handleClose();
             setAddBankLoading(false);
           } else {
             setAddBankLoading(false);

@@ -40,8 +40,8 @@ import Iconify from "src/components/iconify/Iconify";
 import FileFilterButton from "../MyTransaction/FileFilterButton";
 import { fIndianCurrency } from "src/utils/formatNumber";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 // ----------------------------------------------------------------------
 
 export default function (props: any) {
@@ -55,7 +55,7 @@ export default function (props: any) {
   const tableLabels = [
     { id: "Date", label: "Date & Time" },
     { id: "amount", label: "Amount" },
-    { id: "modeType", label: "ModeType" },
+    { id: "modeType", label: "Mode Type" },
     { id: "Charge", label: "Charge" },
     { id: "Commission", label: "Commission" },
     { id: " deposit_type", label: " Deposit Type" },
@@ -83,6 +83,7 @@ export default function (props: any) {
 
   const defaultValues = {
     phoneNumber: "",
+
     amount: "",
     Paymentmode: "",
     status: "",
@@ -201,21 +202,6 @@ export default function (props: any) {
     },
   }));
 
-  const formattedStart = startDate
-    ? new Intl.DateTimeFormat("en-GB", {
-        year: "numeric",
-        day: "2-digit",
-        month: "2-digit",
-      }).format(startDate)
-    : "";
-  const formattedEndDate = endDate
-    ? new Intl.DateTimeFormat("en-GB", {
-        year: "numeric",
-        day: "2-digit",
-        month: "2-digit",
-      }).format(endDate)
-    : "";
-
   const SearchData = (data: FormValuesProps) => {
     setSdata([]);
     let token = localStorage.getItem("token");
@@ -273,6 +259,49 @@ export default function (props: any) {
         <Grid item xs={16} md={12} lg={12}>
           <FormProvider methods={methods} onSubmit={handleSubmit(SearchData)}>
             <Stack direction="row" gap={1} mt={2} mb={2}>
+              <Stack>
+                <Stack direction={"row"} gap={1}>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      label="Start date"
+                      inputFormat="DD/MM/YYYY"
+                      value={watch("startDate")}
+                      maxDate={new Date()}
+                      onChange={(newValue: any) =>
+                        setValue("startDate", newValue)
+                      }
+                      renderInput={(params: any) => (
+                        <TextField
+                          {...params}
+                          size={"small"}
+                          sx={{ width: 200 }}
+                        />
+                      )}
+                    />
+                    <DatePicker
+                      label="End date"
+                      inputFormat="DD/MM/YYYY"
+                      value={watch("endDate")}
+                      minDate={watch("startDate")}
+                      maxDate={
+                        watch("startDate")
+                          ? dayjs(watch("startDate")).add(31, "days").toDate()
+                          : null
+                      }
+                      onChange={(newValue: any) =>
+                        setValue("endDate", newValue)
+                      }
+                      renderInput={(params: any) => (
+                        <TextField
+                          {...params}
+                          size={"small"}
+                          sx={{ width: 200 }}
+                        />
+                      )}
+                    />
+                  </LocalizationProvider>
+                </Stack>
+              </Stack>
               <RHFSelect
                 name="Paymentmode"
                 label="Mode Of Payment"
@@ -320,45 +349,7 @@ export default function (props: any) {
                 placeholder="amount"
                 size="small"
               />
-              <Stack direction={"row"} gap={1}>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    label="Start date"
-                    inputFormat="DD/MM/YYYY"
-                    value={watch("startDate")}
-                    maxDate={new Date()}
-                    onChange={(newValue: any) =>
-                      setValue("startDate", newValue)
-                    }
-                    renderInput={(params: any) => (
-                      <TextField
-                        {...params}
-                        size={"small"}
-                        sx={{ width: 150 }}
-                      />
-                    )}
-                  />
-                  <DatePicker
-                    label="End date"
-                    inputFormat="DD/MM/YYYY"
-                    value={watch("endDate")}
-                    minDate={watch("startDate")}
-                    maxDate={
-                      watch("startDate")
-                        ? dayjs(watch("startDate")).add(31, "days").toDate()
-                        : null
-                    }
-                    onChange={(newValue: any) => setValue("endDate", newValue)}
-                    renderInput={(params: any) => (
-                      <TextField
-                        {...params}
-                        size={"small"}
-                        sx={{ width: 150 }}
-                      />
-                    )}
-                  />
-                </LocalizationProvider>
-              </Stack>
+
               <Button variant="contained" type="submit">
                 Search
               </Button>
@@ -387,37 +378,51 @@ export default function (props: any) {
                     <StyledTableCell>
                       <Stack direction={"row"} gap={1}>
                         <Typography variant="subtitle1">
-                          Created At :
+                          Deposit At :
                         </Typography>
-                        <Typography variant="body1">
-                          {fDateTime(row?.createdAt)}
+                        <Typography noWrap variant="body2">
+                          {fDate(row?.date_of_deposit)}
+                        </Typography>
+                      </Stack>
+                      <Stack direction={"row"} gap={1}>
+                        <Typography variant="subtitle1">Created At:</Typography>
+                        <Typography variant="body2">
+                          {fDateTime(row?.actionDate)}
                         </Typography>
                       </Stack>
                       <Stack direction={"row"} gap={1}>
                         <Typography variant="subtitle1">Updated At:</Typography>
-                        <Typography variant="body1">
+                        <Typography variant="body2">
                           {fDateTime(row?.actionDate)}
                         </Typography>
                       </Stack>
                     </StyledTableCell>
 
                     <StyledTableCell>
-                      <Typography variant="body1">Rs. {row?.amount}</Typography>
+                      <Typography variant="body2">
+                        {`${
+                          row?.bankId?.bank_details?.bank_name
+                        } (Ending with ${row?.bankId?.bank_details?.account_number.slice(
+                          row?.bankId?.bank_details?.account_number.length - 4
+                        )})`}
+                      </Typography>
+
+                      <Typography variant="body2">Rs. {row?.amount}</Typography>
                     </StyledTableCell>
                     <StyledTableCell>
-                      <Typography variant="body1">
+                      <Typography variant="body2">
                         {row?.modeId?.transfer_mode_name}
                       </Typography>
                     </StyledTableCell>
 
                     <StyledTableCell>
-                      <Typography variant="body1" textAlign={"center"}>
+                      <Typography variant="body2" textAlign={"center"}>
                         {!isNaN(row?.Charge) ? "Rs. " + row?.Charge : "-"}
                       </Typography>
                     </StyledTableCell>
 
                     <StyledTableCell>
-                      <Typography variant="body1" textAlign={"center"}>
+                      <Typography variant="body2" textAlign={"center"}>
                         {!isNaN(row?.Commission)
                           ? "Rs. " + fIndianCurrency(row?.Commission || "0")
                           : "-"}
@@ -425,19 +430,19 @@ export default function (props: any) {
                     </StyledTableCell>
 
                     <StyledTableCell>
-                      <Typography variant="body1">
+                      <Typography variant="body2">
                         {row?.deposit_type}
                       </Typography>
                     </StyledTableCell>
 
                     <StyledTableCell>
-                      <Typography variant="body1">
+                      <Typography variant="body2">
                         {row?.transactional_details?.mobile}
                       </Typography>
                     </StyledTableCell>
 
                     <StyledTableCell>
-                      <Typography variant="body1">
+                      <Typography variant="body2">
                         {row?.transactional_details?.branch}
                       </Typography>
                     </StyledTableCell>

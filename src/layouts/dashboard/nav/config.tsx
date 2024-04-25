@@ -26,7 +26,7 @@ const NavConfig = [
     subheader: "My Stats",
     items: [
       {
-        title: "My Stats",
+        title: "Home",
         path: PATH_DASHBOARD.mystats,
         icon: ICONS.dashboard,
       },
@@ -108,7 +108,7 @@ const NavConfig = [
             path: PATH_DASHBOARD.transaction.walletladger,
           },
           {
-            title: "Reports",
+            title: "Download Reports",
             path: PATH_DASHBOARD.transaction.historicalreports,
           },
         ],
