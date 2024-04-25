@@ -12,7 +12,6 @@ import {
 } from "@mui/material";
 import CustomCard from "../CustomCard";
 import AmountCustomCard from "../AmountCustomCard";
-import { useAuthContext } from "src/auth/useAuthContext";
 import SuccessNew from "../../../assets/dashboardIcon/Success.svg";
 import FailedNew from "../../../assets/dashboardIcon/Failed.svg";
 import PendingNew from "../../../assets/dashboardIcon/Pending.svg";
