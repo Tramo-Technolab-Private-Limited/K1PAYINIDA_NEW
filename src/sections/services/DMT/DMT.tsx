@@ -159,7 +159,6 @@ export default function DMT() {
               SendOTP(data.mobileNumber);
               openEditModal2();
             }
-            enqueueSnackbar(Response.data.message, { variant: "warning" });
           } else {
             enqueueSnackbar(Response.data.message, { variant: "error" });
           }
@@ -212,7 +211,6 @@ export default function DMT() {
               SendOTP(val);
               openEditModal2();
             }
-            enqueueSnackbar(Response.data.message, { variant: "warning" });
           } else {
             enqueueSnackbar(Response.data.message, { variant: "error" });
           }
