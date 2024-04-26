@@ -122,18 +122,26 @@ const FundRequestTable = ({ row, getRaisedRequest }: any) => {
         <Typography variant="body2">{row?.fund_request_Id}</Typography>
       </TableCell>
       <TableCell>
-        <Stack style={{ whiteSpace: "nowrap" }}>
+        <div style={{ whiteSpace: "nowrap" }}>
           <Stack direction={"row"} gap={1}>
-            <Typography variant="subtitle2">Created :</Typography>
+            <Typography variant="subtitle2">Created Date:</Typography>
             <Typography variant="body1">{fDateTime(row?.createdAt)}</Typography>
           </Stack>
           <Stack direction={"row"} gap={1}>
-            <Typography variant="subtitle2">Updated :</Typography>
+            <Typography variant="subtitle2">Deposit Date:</Typography>
             <Typography variant="body1">
-              {fDateTime(row?.actionDate)}
+              {fDate(row?.date_of_deposit)}
             </Typography>
           </Stack>
-        </Stack>
+          {row?.status?.toLowerCase() !== "pending" && (
+            <Stack direction={"row"} gap={1}>
+              <Typography variant="subtitle2">Updated Date :</Typography>
+              <Typography variant="body1">
+                {fDateTime(row?.actionDate)}
+              </Typography>
+            </Stack>
+          )}
+        </div>
       </TableCell>
       <TableCell>
         <Typography variant="body2">
