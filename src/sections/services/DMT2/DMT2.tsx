@@ -230,9 +230,9 @@ export default function DMT2() {
         <Helmet>
           <title>Money Transfer | {process.env.REACT_APP_COMPANY_NAME}</title>
         </Helmet>
-        <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-          <Grid container spacing={2}>
-            <Grid item sm={4}>
+        <Grid container spacing={2}>
+          <Grid item sm={4}>
+            <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
               <Box
                 rowGap={2}
                 columnGap={2}
@@ -289,13 +289,13 @@ export default function DMT2() {
                 Back
               </Button>
             </Stack> */}
-              {remitter.remitterfetch && <DMT2RemitterDetail />}
-            </Grid>
-            <Grid item sm={8} sx={{ width: "100%" }}>
-              {remitter.remitterfetch && <DMT2BeneTable />}
-            </Grid>
+            </FormProvider>
+            {remitter.remitterfetch && <DMT2RemitterDetail />}
           </Grid>
-        </FormProvider>
+          <Grid item sm={8} sx={{ width: "100%" }}>
+            {remitter.remitterfetch && <DMT2BeneTable />}
+          </Grid>
+        </Grid>
         <Modal
           open={open1}
           aria-labelledby="modal-modal-title"
@@ -416,7 +416,14 @@ const OtpSubmissionForRegistrantion = ({
           <LoadingButton variant="contained" type="submit" loading={isLoading}>
             Confirm
           </LoadingButton>
-          <Button variant="contained" color="warning" onClick={handleClose2}>
+          <Button
+            variant="contained"
+            color="warning"
+            onClick={() => {
+              handleClose2();
+              reset(defaultValues);
+            }}
+          >
             Close
           </Button>
         </Stack>

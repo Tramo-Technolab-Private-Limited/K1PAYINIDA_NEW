@@ -28,13 +28,8 @@ import Logo from "../logo/Logo";
 import Label from "../label/Label";
 import { convertToWords } from "./ToWords";
 // import HandleClose from "./TrasactionModal";
-interface CustomTransactionSlipProps {
-  onClose: () => void;
-}
-function CustomTransactionSlip(
-  newRow: any,
-  { onClose }: CustomTransactionSlipProps
-) {
+
+function CustomTransactionSlip({ newRow, handleCloseRecipt }: any) {
   const { user } = useAuthContext();
   const [modalOpen, setModalOpen] = useState(true);
   const [convienienceFee, setConvienienceFee] = useState(0);
@@ -43,6 +38,8 @@ function CustomTransactionSlip(
     setTextFieldValue(event.target.value);
   };
   const closeModal = () => setModalOpen(false);
+
+  console.log("newrow", newRow);
 
   // const HandleSlip = () => {
   //   handleClose();
@@ -53,7 +50,7 @@ function CustomTransactionSlip(
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: { xs: "90%", sm: 720 },
+    minWidth: { xs: "100%" },
     bgcolor: "#ffffff",
     borderRadius: 2,
   };
@@ -73,6 +70,12 @@ function CustomTransactionSlip(
     <>
       <Grid sx={style}>
         <Stack flexDirection={"row"} justifyContent={"flex-end"} mx={1}>
+          <Tooltip title="Close" onClick={handleCloseRecipt}>
+            <IconButton>
+              <Iconify icon="carbon:close-outline" />
+            </IconButton>
+          </Tooltip>
+
           <ReactToPrint
             trigger={() => (
               <Tooltip title="Print">
@@ -85,11 +88,8 @@ function CustomTransactionSlip(
             onAfterPrint={closeModal}
           />
         </Stack>
-        <Scrollbar>
-          <Grid
-            ref={componentRef}
-            sx={{ p: 3, width: { xs: 800, md: "100%" } }}
-          >
+        <Scrollbar sx={{ maxHeight: 500, minWidth: 720 }}>
+          <Grid ref={componentRef} sx={{ p: 3, width: { xs: "100%" } }}>
             <Grid container>
               <Grid item xs={4}>
                 <Typography variant="h5" sx={{ lineHeight: 1.1 }}>
@@ -120,7 +120,7 @@ function CustomTransactionSlip(
                 <Stack alignItems="end">
                   <Logo />
                   <Typography variant="body2">
-                    TRX Date: {fDateTime(newRow?.newRow?.createdAt)}
+                    TRX Date: {fDateTime(newRow?.createdAt)}
                   </Typography>
                 </Stack>
               </Grid>
@@ -134,47 +134,45 @@ function CustomTransactionSlip(
                 flexDirection="column"
                 justifyContent="end"
               >
-                {(newRow?.newRow?.categoryName?.toLowerCase() ==
-                  "money transfer" ||
-                  newRow?.newRow?.categoryName?.toLowerCase() == "dmt1" ||
-                  newRow?.newRow?.categoryName?.toLowerCase() == "dmt2") && (
+                {(newRow[0]?.categoryName?.toLowerCase() == "money transfer" ||
+                  newRow[0]?.categoryName?.toLowerCase() == "dmt1" ||
+                  newRow[0]?.categoryName?.toLowerCase() == "dmt2") && (
                   <React.Fragment>
                     <Typography variant="subtitle1">Sender Details</Typography>
                     <Typography variant="body2" sx={{ lineHeight: 1.2 }}>
                       Sender Name :{" "}
                       <span style={{ fontWeight: 500 }}>
                         {" "}
-                        {newRow?.newRow?.moneyTransferSenderId?.remitterFN}
-                        {newRow?.newRow?.moneyTransferSenderId?.remitterLN}{" "}
+                        {newRow[0]?.moneyTransferSenderId?.remitterFN}
+                        {newRow[0]?.moneyTransferSenderId?.remitterLN}{" "}
                       </span>
                     </Typography>
                     <Typography variant="body2" sx={{ lineHeight: 1.2 }}>
                       Mobile Number :{" "}
                       <span style={{ fontWeight: 500 }}>
-                        {newRow?.newRow?.moneyTransferSenderId?.remitterMobile}
+                        {newRow[0]?.moneyTransferSenderId?.remitterMobile}
                       </span>
                     </Typography>
                   </React.Fragment>
                 )}
-                {newRow?.newRow?.categoryName?.toLowerCase() ==
-                  "bill payment" && (
+                {newRow?.categoryName?.toLowerCase() == "bill payment" && (
                   <React.Fragment>
                     <Typography variant="body2" sx={{ lineHeight: 1.2 }}>
                       Payer Mobile Number :{" "}
                       <span style={{ fontWeight: 500 }}>
                         {" "}
-                        {newRow?.newRow?.mobileNumber}
+                        {newRow?.mobileNumber}
                       </span>
                     </Typography>
                   </React.Fragment>
                 )}
-                {newRow?.newRow?.categoryName?.toLowerCase() == "aeps" && (
+                {newRow?.categoryName?.toLowerCase() == "aeps" && (
                   <React.Fragment>
                     <Typography variant="body2" sx={{ lineHeight: 1.2 }}>
                       Withdrawal Customer Mobile Number :{" "}
                       <span style={{ fontWeight: 500 }}>
                         {" "}
-                        {newRow?.newRow?.mobileNumber}
+                        {newRow?.mobileNumber}
                       </span>
                     </Typography>
                   </React.Fragment>
@@ -189,10 +187,10 @@ function CustomTransactionSlip(
                 alignItems="start"
               >
                 <Stack alignItems="end">
-                  {(newRow?.newRow?.categoryName?.toLowerCase() ==
+                  {(newRow[0]?.categoryName?.toLowerCase() ==
                     "money transfer" ||
-                    newRow?.newRow?.categoryName?.toLowerCase() == "dmt1" ||
-                    newRow?.newRow?.categoryName?.toLowerCase() == "dmt2") && (
+                    newRow[0]?.categoryName?.toLowerCase() == "dmt1" ||
+                    newRow[0]?.categoryName?.toLowerCase() == "dmt2") && (
                     <React.Fragment>
                       <Typography variant="subtitle1">
                         Benificary Details
@@ -202,20 +200,14 @@ function CustomTransactionSlip(
                         {" "}
                         Account Holder Name:{" "}
                         <span style={{ fontWeight: 500 }}>
-                          {
-                            newRow?.newRow?.moneyTransferBeneficiaryDetails
-                              ?.beneName
-                          }
+                          {newRow[0]?.moneyTransferBeneficiaryDetails?.beneName}
                         </span>
                       </Typography>
                       <Typography variant="body2" sx={{ lineHeight: 1.2 }}>
                         {" "}
                         Bank Name:{" "}
                         <span style={{ fontWeight: 500 }}>
-                          {
-                            newRow?.newRow?.moneyTransferBeneficiaryDetails
-                              ?.bankName
-                          }
+                          {newRow[0]?.moneyTransferBeneficiaryDetails?.bankName}
                         </span>
                       </Typography>
                       <Typography variant="body2" sx={{ lineHeight: 1.2 }}>
@@ -223,7 +215,7 @@ function CustomTransactionSlip(
                         Account Number:{" "}
                         <span style={{ fontWeight: 500 }}>
                           {
-                            newRow?.newRow?.moneyTransferBeneficiaryDetails
+                            newRow[0]?.moneyTransferBeneficiaryDetails
                               ?.accountNumber
                           }
                         </span>
@@ -232,16 +224,12 @@ function CustomTransactionSlip(
                         {" "}
                         IFSC:{" "}
                         <span style={{ fontWeight: 500 }}>
-                          {
-                            newRow?.newRow?.moneyTransferBeneficiaryDetails
-                              ?.ifsc
-                          }
+                          {newRow[0]?.moneyTransferBeneficiaryDetails?.ifsc}
                         </span>
                       </Typography>
                     </React.Fragment>
                   )}
-                  {newRow?.newRow?.categoryName?.toLowerCase() ==
-                    "bill payment" && (
+                  {newRow?.categoryName?.toLowerCase() == "bill payment" && (
                     <React.Fragment>
                       <Typography variant="subtitle1">
                         Operator Detail
@@ -257,12 +245,12 @@ function CustomTransactionSlip(
                         CA Number :{" "}
                         <span style={{ fontWeight: 500 }}>
                           {" "}
-                          {newRow?.newRow?.operator?.key2}
+                          {newRow?.operator?.key2}
                         </span>
                       </Typography>
                     </React.Fragment>
                   )}
-                  {newRow?.newRow?.categoryName?.toLowerCase() == "aeps" && (
+                  {newRow?.categoryName?.toLowerCase() == "aeps" && (
                     <React.Fragment>
                       <Typography variant="subtitle1">
                         Customer Detail
@@ -271,20 +259,19 @@ function CustomTransactionSlip(
                         Bank Name :{" "}
                         <span style={{ fontWeight: 500 }}>
                           {" "}
-                          {newRow?.newRow?.operator?.key1}
+                          {newRow?.operator?.key1}
                         </span>
                       </Typography>
                       <Typography variant="body2" sx={{ lineHeight: 1.2 }}>
                         Account Number :{" "}
                         <span style={{ fontWeight: 500 }}>
                           {" "}
-                          {newRow?.newRow?.operator?.key2}
+                          {newRow?.operator?.key2}
                         </span>
                       </Typography>
                     </React.Fragment>
                   )}
-                  {newRow?.newRow?.categoryName?.toLowerCase() ==
-                    "recharges" && (
+                  {newRow?.categoryName?.toLowerCase() == "recharges" && (
                     <React.Fragment>
                       <Typography variant="subtitle1">
                         Operator Detail
@@ -293,14 +280,14 @@ function CustomTransactionSlip(
                         Operator :{" "}
                         <span style={{ fontWeight: 500 }}>
                           {" "}
-                          {newRow?.newRow?.operator?.key1}
+                          {newRow?.operator?.key1}
                         </span>
                       </Typography>
                       <Typography variant="body2" sx={{ lineHeight: 1.2 }}>
                         Mobile Number :{" "}
                         <span style={{ fontWeight: 500 }}>
                           {" "}
-                          {newRow?.newRow?.operator?.key2}
+                          {newRow?.operator?.key2}
                         </span>
                       </Typography>
                     </React.Fragment>
@@ -321,11 +308,10 @@ function CustomTransactionSlip(
                     <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
                       Transaction Id
                     </TableCell>
-                    {(newRow?.newRow?.categoryName?.toLowerCase() ==
+                    {(newRow[0]?.categoryName?.toLowerCase() ==
                       "money transfer" ||
-                      newRow?.newRow?.categoryName?.toLowerCase() == "dmt1" ||
-                      newRow?.newRow?.categoryName?.toLowerCase() ==
-                        "dmt2") && (
+                      newRow[0]?.categoryName?.toLowerCase() == "dmt1" ||
+                      newRow[0]?.categoryName?.toLowerCase() == "dmt2") && (
                       <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
                         Mode
                       </TableCell>
@@ -337,41 +323,94 @@ function CustomTransactionSlip(
                       UTR
                     </TableCell>
                     <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
+                      Amount
+                    </TableCell>
+                    <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
                       Status
                     </TableCell>
                     {/* <TableCell>Amount</TableCell> */}
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  <TableRow
-                    sx={{
-                      borderTop: "1px solid #c5c4c4",
-                      borderCollapse: "collapse",
-                    }}
-                  >
-                    <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
-                      {newRow?.clientRefId}
-                    </TableCell>
-                    {(newRow?.newRow?.categoryName?.toLowerCase() ==
-                      "money transfer" ||
-                      newRow?.newRow?.categoryName?.toLowerCase() == "dmt1" ||
-                      newRow?.newRow?.categoryName?.toLowerCase() ==
-                        "dmt2") && (
+                  {newRow?.length ? (
+                    newRow.map((item: any) => {
+                      return (
+                        <TableRow
+                          sx={{
+                            borderTop: "1px solid #c5c4c4",
+                            borderCollapse: "collapse",
+                          }}
+                        >
+                          <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
+                            {item?.clientRefId}
+                          </TableCell>
+                          {(item?.categoryName?.toLowerCase() ==
+                            "money transfer" ||
+                            item?.categoryName?.toLowerCase() == "dmt1" ||
+                            item?.categoryName?.toLowerCase() == "dmt2") && (
+                            <TableCell
+                              sx={{ borderRight: "1px solid #c5c4c4" }}
+                            >
+                              {item?.modeOfPayment}
+                            </TableCell>
+                          )}
+                          <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
+                            {item?.productName}
+                          </TableCell>
+                          <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
+                            {item?.vendorUtrNumber}
+                          </TableCell>
+                          <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
+                            {fIndianCurrency(Number(item?.amount))}
+                          </TableCell>
+                          <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
+                            <Label
+                              color={
+                                (item.status === "failed" && "error") ||
+                                ((item.status === "pending" ||
+                                  item.status === "in_process" ||
+                                  item.status === "hold") &&
+                                  "warning") ||
+                                "success"
+                              }
+                            >
+                              {item.status || "NA"}
+                            </Label>
+                          </TableCell>
+                          {/* <TableCell>{fIndianCurrency(newRow?.amount)}</TableCell> */}
+                        </TableRow>
+                      );
+                    })
+                  ) : (
+                    <TableRow
+                      sx={{
+                        borderTop: "1px solid #c5c4c4",
+                        borderCollapse: "collapse",
+                      }}
+                    >
                       <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
-                        {newRow?.newRow?.modeOfPayment}
+                        {newRow?.clientRefId}
                       </TableCell>
-                    )}
-                    <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
-                      {newRow?.newRow?.productName}
-                    </TableCell>
-                    <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
-                      {newRow?.newRow?.vendorUtrNumber}
-                    </TableCell>
-                    <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
-                      {newRow?.newRow?.status}
-                    </TableCell>
-                    {/* <TableCell>{fIndianCurrency(newRow?.amount)}</TableCell> */}
-                  </TableRow>
+                      {(newRow?.categoryName?.toLowerCase() ==
+                        "money transfer" ||
+                        newRow?.categoryName?.toLowerCase() == "dmt1" ||
+                        newRow?.categoryName?.toLowerCase() == "dmt2") && (
+                        <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
+                          {newRow?.modeOfPayment}
+                        </TableCell>
+                      )}
+                      <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
+                        {newRow?.productName}
+                      </TableCell>
+                      <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
+                        {newRow?.vendorUtrNumber}
+                      </TableCell>
+                      <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
+                        {newRow?.status}
+                      </TableCell>
+                      {/* <TableCell>{fIndianCurrency(newRow?.amount)}</TableCell> */}
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
               <Stack
@@ -384,10 +423,18 @@ function CustomTransactionSlip(
                 }}
               >
                 <Typography>Transaction Amount : </Typography>
-                <Typography>
-                  {" "}
-                  {fIndianCurrency(newRow?.newRow?.amount)}
-                </Typography>
+                {newRow?.length ? (
+                  <Typography>
+                    {" "}
+                    {fIndianCurrency(
+                      newRow.reduce((acc: any, item: any) => {
+                        return acc + Number(item.amount);
+                      }, 0)
+                    )}
+                  </Typography>
+                ) : (
+                  <Typography> {fIndianCurrency(newRow?.amount)}</Typography>
+                )}
               </Stack>
               <Stack
                 sx={{
@@ -431,12 +478,20 @@ function CustomTransactionSlip(
                 <Typography>
                   {" "}
                   {fIndianCurrency(
-                    Number(newRow?.newRow?.amount) + Number(convienienceFee)
+                    (newRow?.length
+                      ? newRow.reduce((acc: any, item: any) => {
+                          return acc + Number(item.amount);
+                        }, 0)
+                      : Number(newRow?.amount)) + Number(convienienceFee)
                   )}
                 </Typography>
                 <Typography>
                   {convertToWords(
-                    Number(newRow?.newRow?.amount) + Number(convienienceFee)
+                    (newRow?.length
+                      ? newRow.reduce((acc: any, item: any) => {
+                          return acc + Number(item.amount);
+                        }, 0)
+                      : Number(newRow?.amount)) + Number(convienienceFee)
                   )}
                 </Typography>
               </Stack>
@@ -481,4 +536,4 @@ function CustomTransactionSlip(
   );
 }
 
-export default CustomTransactionSlip;
+export default React.memo(CustomTransactionSlip);
