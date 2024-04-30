@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AgentServices from "../AgentServices";
 import {
   Box,
@@ -20,12 +20,29 @@ import Earned from "../../../assets/dashboardIcon/Earned.svg";
 import Incurred from "../../../assets/dashboardIcon/Incurred.svg";
 import DonutView from "../Charts/DonutView";
 import LineView from "../Charts/LineView";
-
+import { Api } from "src/webservices";
 function AgentDashboard() {
-  const [value, setValue] = useState(1);
-
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const [value, setValue] = useState("daily");
+  const [transaction, setTransactions] = useState<any>([]);
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
+  };
+  useEffect(() => {
+    getTransactionList();
+  }, [value]);
+
+  const getTransactionList = () => {
+    let token = localStorage.getItem("token");
+    Api(`user/dashboard/transactionVolume/${value}`, "GET", "", token).then(
+      (Response: any) => {
+        if (Response.status == 200) {
+          if (Response.data.code == 200) {
+            setTransactions(Response.data);
+            console.log("..............................", Response);
+          }
+        }
+      }
+    );
   };
 
   return (
@@ -35,7 +52,6 @@ function AgentDashboard() {
           <AgentServices />
 
           <Card
-            variant="outlined"
             sx={{
               width: "100%",
               background: "#F8FAFC",
@@ -52,9 +68,9 @@ function AgentDashboard() {
                   onChange={handleChange}
                   aria-label="disabled tabs example"
                 >
-                  <Tab label="Today" />
-                  <Tab label="7 Days" />
-                  <Tab label="30 Days" />
+                  <Tab value="daily" label="Today" />
+                  <Tab value="weekly" label="Weekly" />
+                  <Tab value="monthly" label="Monthly" />
                 </Tabs>
               </Stack>
             </Box>
@@ -73,15 +89,13 @@ function AgentDashboard() {
                   <Stack>
                     <CustomCard
                       color="FFFFFF"
-                      Status="Success"
-                      icon={<img src={SuccessNew} />}
-                      footerColor="#36B37E"
-                      amount="1000000"
-                      noOfTransaction="2033"
+                      Status={transaction?.status}
+                      amount={transaction?.count}
+                      noOfTransaction={transaction?.totalAmount}
                     />
                   </Stack>
                 </Grid>
-                <Grid item xs={12} sm={6} md={4}>
+                {/* <Grid item xs={12} sm={6} md={4}>
                   <CustomCard
                     Status="Failed"
                     icon={<img src={FailedNew} />}
@@ -89,8 +103,8 @@ function AgentDashboard() {
                     amount="1000000"
                     noOfTransaction="2033"
                   />
-                </Grid>
-                <Grid item xs={12} sm={6} md={4}>
+                </Grid> */}
+                {/* <Grid item xs={12} sm={6} md={4}>
                   <CustomCard
                     Status="Pending"
                     icon={<img src={PendingNew} />}
@@ -98,7 +112,7 @@ function AgentDashboard() {
                     amount="1000000"
                     noOfTransaction="2033"
                   />
-                </Grid>
+                </Grid> */}
               </Grid>
             </Box>
             <Box

@@ -15,15 +15,15 @@ import {
 
 import { useNavigate } from "react-router-dom";
 
-import Recharge from "../../assets/services/Recharge.svg";
-import MoneyTransfer from "../../assets/services/MoneyTransfer.svg";
-import DMT1 from "../../assets/services/DMT1.svg";
-import DMT2 from "../../assets/services/DMT2.svg";
-import BillPayment from "../../assets/services/BillPayment.svg";
-import AEPS from "../../assets/services/AEPS.svg";
-import MATM from "../../assets/services/MATM.svg";
-import AadharPay from "../../assets/services/AadharPay.svg";
-import IndoNepal from "../../assets/services/IndoNepal.svg";
+import Recharge from "../../assets/services/RechargeNew.svg";
+import MoneyTransfer from "../../assets/services/MoneyTransferNew.svg";
+import DMT1 from "../../assets/services/DMT1New.svg";
+import DMT2 from "../../assets/services/DMT2New.svg";
+import BillPayment from "../../assets/services/BillPaymentNew.svg";
+import AEPS from "../../assets/services/AEPSNew.svg";
+import MATM from "../../assets/services/MATMNew.svg";
+import AadharPay from "../../assets/services/AadharPayNew.svg";
+import IndoNepal from "../../assets/services/IndoNepalNew.svg";
 
 import { useAuthContext } from "src/auth/useAuthContext";
 
@@ -42,7 +42,6 @@ export default function AgentServices(props: any) {
       <Grid width={"100%"}>
         {user?.role == "agent" && (
           <Card
-            variant="outlined"
             sx={{
               width: "100%",
               background: "#F8FAFC",
@@ -62,142 +61,222 @@ export default function AgentServices(props: any) {
             <Divider />
             <Box
               sx={{
-                p: 4,
-                display: "flex",
-
-                justifyContent: "center",
-
-                transform: "scale(1)",
+                p: 3,
               }}
-              gap={6}
             >
-              <Stack
-                sx={{
-                  cursor: "pointer",
-                  transition: "300ms ease ",
-                  transform: "scale(1)",
-                  "& : hover": {
-                    transform: "scale(1.2)",
-                    transition: "300ms ease ",
-                  },
-                }}
-              >
-                <img
-                  src={Recharge}
-                  onClick={() => navigate("/auth/service/recharge")}
-                />
-              </Stack>
-              <Stack
-                sx={{
-                  cursor: "pointer",
-                  transition: "300ms ease transform",
-                  "& : hover": {
-                    transform: "scale(1.2)",
-                    transition: "300ms ease transform",
-                  },
-                }}
-              >
-                <img
-                  src={MoneyTransfer}
-                  onClick={() => navigate("/auth/service/dmt")}
-                />
-              </Stack>
-              <Stack
-                sx={{
-                  cursor: "pointer",
-                  transition: "300ms ease ",
-                  transform: "scale(1)",
-                  "& : hover": {
-                    transform: "scale(1.2)",
-                    transition: "300ms ease ",
-                  },
-                }}
-              >
-                <img
-                  src={DMT1}
-                  onClick={() => navigate("/auth/service/dmt1")}
-                />
-              </Stack>
-              <Stack
-                sx={{
-                  cursor: "pointer",
-                  transition: "300ms ease ",
-                  transform: "scale(1)",
-                  "& : hover": {
-                    transform: "scale(1.2)",
-                    transition: "300ms ease ",
-                  },
-                }}
-              >
-                <img
-                  src={DMT2}
-                  onClick={() => navigate("/auth/service/dmt2")}
-                />
-              </Stack>
-              <Stack
-                sx={{
-                  cursor: "pointer",
-                  transition: "300ms ease ",
-                  transform: "scale(1)",
-                  "& : hover": {
-                    transform: "scale(1.2)",
-                    transition: "300ms ease ",
-                  },
-                }}
-              >
-                <img
-                  src={BillPayment}
-                  onClick={() => navigate("/auth/service/billpayment")}
-                />
-              </Stack>
-              <Stack
-                sx={{
-                  cursor: "pointer",
-                  transition: "300ms ease ",
-                  transform: "scale(1)",
-                  "& : hover": {
-                    transform: "scale(1.2)",
-                    transition: "300ms ease ",
-                  },
-                }}
-              >
-                <img
-                  src={AEPS}
-                  onClick={() => navigate("/auth/service/aeps")}
-                />
-              </Stack>
-              <Stack>
-                <img src={MATM} style={{ width: "60px", height: "60px" }} />
-                <Typography style={{ fontSize: "8px" }} color="error">
-                  Comming soon
-                </Typography>
-              </Stack>
-              <Stack
-                sx={{
-                  cursor: "pointer",
-                  transition: "300ms ease ",
-                  transform: "scale(1)",
-                  "& : hover": {
-                    transform: "scale(1.2)",
-                    transition: "300ms ease ",
-                  },
-                }}
-              >
-                <img
-                  src={AadharPay}
-                  onClick={() => navigate("/auth/service/aadhaarpay")}
-                />
-              </Stack>
+              <Grid container spacing={3} justifyContent="center">
+                <Grid item xs={4} sm={3} md={1.2}>
+                  <Stack
+                    sx={{
+                      cursor: "pointer",
+                      transition: "300ms ease ",
+                      transform: "scale(1)",
+                      "&:hover": {
+                        transform: "scale(1.2)",
+                        transition: "300ms ease ",
+                      },
+                    }}
+                  >
+                    <Stack alignItems="center">
+                      <img
+                        src={Recharge}
+                        onClick={() => navigate("/auth/service/recharge")}
+                      />
+                      <Typography variant="body2" sx={{ color: "#3333CC" }}>
+                        Recharge
+                      </Typography>
+                    </Stack>
+                  </Stack>
+                </Grid>
 
-              <Stack>
-                <img
-                  src={IndoNepal}
-                  style={{ width: "60px", height: "60px" }}
-                />
-                <Typography style={{ fontSize: "8px" }} color="error">
-                  Comming soon
-                </Typography>
-              </Stack>
+                <Grid item xs={4} sm={3} md={1.2}>
+                  <Stack
+                    sx={{
+                      cursor: "pointer",
+                      transition: "300ms ease ",
+                      transform: "scale(1)",
+                      "&:hover": {
+                        transform: "scale(1.2)",
+                        transition: "300ms ease ",
+                      },
+                    }}
+                  >
+                    <Stack alignItems="center">
+                      <img
+                        src={MoneyTransfer}
+                        onClick={() => navigate("/auth/service/dmt")}
+                      />
+                      <Typography
+                        variant="body2"
+                        sx={{ color: "#3498DB" }}
+                        noWrap
+                      >
+                        Money Transfer
+                      </Typography>
+                    </Stack>
+                  </Stack>
+                </Grid>
+                <Grid item xs={4} sm={3} md={1.2}>
+                  <Stack
+                    sx={{
+                      cursor: "pointer",
+                      transition: "300ms ease ",
+                      transform: "scale(1)",
+                      "&:hover": {
+                        transform: "scale(1.2)",
+                        transition: "300ms ease ",
+                      },
+                    }}
+                  >
+                    <Stack alignItems="center">
+                      <img
+                        src={DMT1}
+                        onClick={() => navigate("/auth/service/dmt1")}
+                      />
+                      <Typography variant="body2" sx={{ color: "#2ECC71" }}>
+                        DMT1
+                      </Typography>
+                    </Stack>
+                  </Stack>
+                </Grid>
+
+                <Grid item xs={4} sm={3} md={1.2}>
+                  <Stack
+                    sx={{
+                      cursor: "pointer",
+                      transition: "300ms ease ",
+                      transform: "scale(1)",
+                      "&:hover": {
+                        transform: "scale(1.2)",
+                        transition: "300ms ease ",
+                      },
+                    }}
+                  >
+                    <Stack alignItems="center">
+                      <img
+                        src={DMT2}
+                        onClick={() => navigate("/auth/service/dmt2")}
+                      />
+                      <Typography variant="body2" sx={{ color: "#9B59B6" }}>
+                        DMT2
+                      </Typography>
+                    </Stack>
+                  </Stack>
+                </Grid>
+
+                <Grid item xs={4} sm={3} md={1.2}>
+                  <Stack
+                    sx={{
+                      cursor: "pointer",
+                      transition: "300ms ease ",
+                      transform: "scale(1)",
+                      "&:hover": {
+                        transform: "scale(1.2)",
+                        transition: "300ms ease ",
+                      },
+                    }}
+                  >
+                    <Stack alignItems="center">
+                      <img
+                        src={BillPayment}
+                        onClick={() => navigate("/auth/service/billpayment")}
+                      />
+                      <Typography
+                        variant="body2"
+                        sx={{ color: "#F1C40F" }}
+                        noWrap
+                      >
+                        Bill Payment
+                      </Typography>
+                    </Stack>
+                  </Stack>
+                </Grid>
+                <Grid item xs={4} sm={3} md={1.2}>
+                  <Stack
+                    sx={{
+                      cursor: "pointer",
+                      transition: "300ms ease ",
+                      transform: "scale(1)",
+                      "&:hover": {
+                        transform: "scale(1.2)",
+                        transition: "300ms ease ",
+                      },
+                    }}
+                  >
+                    <Stack alignItems="center">
+                      <img
+                        src={AEPS}
+                        onClick={() => navigate("/auth/service/aeps")}
+                      />
+                      <Typography variant="body2" sx={{ color: "#F39C12" }}>
+                        AEPS
+                      </Typography>
+                    </Stack>
+                  </Stack>
+                </Grid>
+                <Grid item xs={4} sm={3} md={1.2}>
+                  <Stack>
+                    <Stack alignItems="center">
+                      <img src={MATM} />
+                      <Typography variant="caption" sx={{ color: "#E74C3C" }}>
+                        MATM
+                      </Typography>
+                      <Typography
+                        variant="caption"
+                        sx={{ color: "#E74C3C" }}
+                        noWrap
+                      >
+                        comming soon
+                      </Typography>
+                    </Stack>
+                  </Stack>
+                </Grid>
+                <Grid item xs={4} sm={3} md={1.2}>
+                  <Stack
+                    sx={{
+                      cursor: "pointer",
+                      transition: "300ms ease ",
+                      transform: "scale(1)",
+                      "&:hover": {
+                        transform: "scale(1.2)",
+                        transition: "300ms ease ",
+                      },
+                    }}
+                  >
+                    <Stack alignItems="center">
+                      <img
+                        src={AadharPay}
+                        onClick={() => navigate("/auth/service/aadhaarpay")}
+                      />
+                      <Typography variant="body2" sx={{ color: "#1ABC9C" }}>
+                        AadharPay
+                      </Typography>
+                    </Stack>
+                  </Stack>
+                </Grid>
+
+                <Grid item xs={4} sm={3} md={1.2}>
+                  <Stack>
+                    <Stack alignItems="center">
+                      <img src={IndoNepal} />
+                      <Typography
+                        variant="caption"
+                        sx={{ color: "#FF6B81" }}
+                        noWrap
+                      >
+                        Indo Nepal
+                      </Typography>
+                      <Typography
+                        variant="caption"
+                        sx={{ color: "#FF6B81" }}
+                        noWrap
+                      >
+                        comming soon
+                      </Typography>
+                    </Stack>
+                  </Stack>
+                </Grid>
+              </Grid>
             </Box>
           </Card>
         )}

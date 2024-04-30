@@ -7,15 +7,31 @@ import {
   Typography,
 } from "@mui/material";
 
+import SuccessNew from "../../assets/dashboardIcon/Success.svg";
+import FailedNew from "../../assets/dashboardIcon/Failed.svg";
+import PendingNew from "../../assets/dashboardIcon/Pending.svg";
+
 function CustomCard(props: any) {
   return (
     <>
       <Card sx={{ background: props.color }}>
         <CardContent>
           <Stack flexDirection="row" gap={1}>
-            <Stack>{props.icon}</Stack>
+            <Stack>
+              <img
+                src={
+                  props?.Status == "success"
+                    ? SuccessNew
+                    : props?.Status == "failed"
+                    ? FailedNew
+                    : props?.Status == "pending"
+                    ? PendingNew
+                    : ""
+                }
+              />
+            </Stack>
             <Typography gutterBottom variant="h6" color="000000" mt={1}>
-              {props?.Status}
+              {props?.status}
             </Typography>
           </Stack>
           <Typography variant="caption">Transaction Vol.</Typography>
@@ -28,7 +44,14 @@ function CustomCard(props: any) {
               bottom: 0,
               left: 0,
               width: "100%",
-              backgroundColor: props?.footerColor,
+              backgroundColor:
+                props?.Status == "success"
+                  ? "#36B37E"
+                  : props?.Status == "failed"
+                  ? "#FF5630"
+                  : props?.Status == "pending"
+                  ? "#FFAB00"
+                  : "",
               padding: "4px",
               color: "white",
             }}
