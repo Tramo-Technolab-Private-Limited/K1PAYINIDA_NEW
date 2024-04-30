@@ -15,7 +15,7 @@ import EditIcon from "src/assets/icons/EditIcon";
 import Label from "src/components/label/Label";
 import { TableHeadCustom, TableNoData } from "src/components/table";
 import { fIndianCurrency } from "src/utils/formatNumber";
-import { fDate } from "src/utils/formatTime";
+import { fDate, fDateTime } from "src/utils/formatTime";
 import { fundRequestProps } from "./types";
 import { format } from "date-fns";
 import MotionModal from "src/components/animate/MotionModal";
@@ -37,6 +37,7 @@ function FundDepositeTable({ tableData, getRaisedRequest }: props) {
   const navigate = useNavigate();
   const tableLabels = [
     { id: "frid", label: "FRID" },
+    { id: "date", label: " Date" },
     { id: "depositor", label: "Deposited To" },
     { id: "Ref", label: "UTR/Payment Reference Number" },
     { id: "RequestType", label: "Request Mode" },
@@ -119,6 +120,28 @@ const FundRequestTable = ({ row, getRaisedRequest }: any) => {
     <TableRow key={row?._id} hover>
       <TableCell>
         <Typography variant="body2">{row?.fund_request_Id}</Typography>
+      </TableCell>
+      <TableCell>
+        <div style={{ whiteSpace: "nowrap" }}>
+          <Stack direction={"row"} gap={1}>
+            <Typography variant="subtitle2">Created Date:</Typography>
+            <Typography variant="body1">{fDateTime(row?.createdAt)}</Typography>
+          </Stack>
+          <Stack direction={"row"} gap={1}>
+            <Typography variant="subtitle2">Deposit Date:</Typography>
+            <Typography variant="body1">
+              {fDate(row?.date_of_deposit)}
+            </Typography>
+          </Stack>
+          {row?.status?.toLowerCase() !== "pending" && (
+            <Stack direction={"row"} gap={1}>
+              <Typography variant="subtitle2">Updated Date :</Typography>
+              <Typography variant="body1">
+                {fDateTime(row?.actionDate)}
+              </Typography>
+            </Stack>
+          )}
+        </div>
       </TableCell>
       <TableCell>
         <Typography variant="body2">

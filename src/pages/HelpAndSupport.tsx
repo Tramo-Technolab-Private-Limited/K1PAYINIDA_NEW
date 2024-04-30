@@ -9,7 +9,7 @@ function HelpAndSupport() {
         sx={{ display: "flex", justifyItems: "center", alignItems: "center" }}
       >
         <Typography variant="h4" sx={{ color: "#FF3131", marginTop: "6vw" }}>
-          Need Help? Contact us at
+          Need Help ? Contact us at sss
         </Typography>
       </Stack>
       <Card

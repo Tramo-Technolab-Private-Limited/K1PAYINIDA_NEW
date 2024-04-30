@@ -1,12 +1,12 @@
 // @mui
-import { Grid, Stack, Typography } from "@mui/material";
+import { Grid, Stack } from "@mui/material";
 //
 import ProfileAbout from "./ProfileAbout";
 import ProfileFollowInfo from "./ProfileFollowInfo";
 import { useAuthContext } from "src/auth/useAuthContext";
-import ProfileDocuments from "./ProfileDocuments";
 import Scrollbar from "src/components/scrollbar/Scrollbar";
 import useResponsive from "src/hooks/useResponsive";
+import ProfileDocuments from "./ProfileDocuments";
 
 // ----------------------------------------------------------------------
 
@@ -30,7 +30,7 @@ export default function Profile({ info, posts }: Props) {
           <Scrollbar
             sx={
               isMobile
-                ? { maxHeight: window.innerHeight - 390, pb: 1 }
+                ? { maxHeight: window.innerHeight - 440, pb: 1 }
                 : { maxHeight: window.innerHeight - 390, pb: 1 }
             }
           >

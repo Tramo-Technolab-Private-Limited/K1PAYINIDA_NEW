@@ -310,6 +310,10 @@ function PersonalIdentification(props: any) {
   };
 
   const aadharFrontupload = (e: any) => {
+    if (e.target.files[0]?.size > Math.pow(1024, 5))
+      return enqueueSnackbar("File size should be less than 5MB", {
+        variant: "error",
+      });
     let token = localStorage.getItem("token");
     setAadharFlie1(true);
     console.log("aadhar file", e.target.files[0]);
@@ -331,10 +335,13 @@ function PersonalIdentification(props: any) {
                 setAdhaarFpath(Response.data.filePath);
               } else {
                 enqueueSnackbar("Server didn`t response", { variant: "error" });
+                setAadharFile1BtnDis(true);
               }
               setAadharFlie1(false);
+              setAadharFile1BtnDis(true);
             } else {
               setAadharFlie1(false);
+              setAadharFile1BtnDis(true);
               enqueueSnackbar("file must be less then 1mb", {
                 variant: "error",
               });
@@ -356,6 +363,10 @@ function PersonalIdentification(props: any) {
   });
 
   const aadharBackupload = (e: any) => {
+    if (e.target.files[0]?.size > Math.pow(1024, 5))
+      return enqueueSnackbar("File size should be less than 5MB", {
+        variant: "error",
+      });
     setAadharFlieBack(true);
     let token = localStorage.getItem("token");
     new Compressor(e.target.files[0], {
@@ -374,10 +385,12 @@ function PersonalIdentification(props: any) {
                 setbtnDisabledForGstDocsBack(false);
               } else {
                 enqueueSnackbar("Server didn`t response", { variant: "error" });
+                setAadharFileBackBtnDis(true);
               }
               setAadharFlieBack(false);
             } else {
               setAadharFlieBack(false);
+              setAadharFileBackBtnDis(true);
               enqueueSnackbar("file must be less then 1mb", {
                 variant: "error",
               });
@@ -399,6 +412,10 @@ function PersonalIdentification(props: any) {
   });
 
   const panUpload = (e: any) => {
+    if (e.target.files[0]?.size > Math.pow(1024, 5))
+      return enqueueSnackbar("File size should be less than 5MB", {
+        variant: "error",
+      });
     let token = localStorage.getItem("token");
     setAadharFliePan(true);
     new Compressor(e.target.files[0], {
@@ -417,10 +434,13 @@ function PersonalIdentification(props: any) {
                 setbtnDisabledForGstDocsPan(false);
               } else {
                 enqueueSnackbar("Server didn`t response", { variant: "error" });
+                setAadharFilePanBtnDis(true);
               }
               setAadharFliePan(false);
+              setAadharFilePanBtnDis(true);
             } else {
               setAadharFliePan(false);
+              setAadharFilePanBtnDis(true);
               enqueueSnackbar("file must be less then 1mb", {
                 variant: "error",
               });
@@ -442,6 +462,10 @@ function PersonalIdentification(props: any) {
   });
 
   const uploadCheque = (e: any) => {
+    if (e.target.files[0]?.size > Math.pow(1024, 5))
+      return enqueueSnackbar("File size should be less than 5MB", {
+        variant: "error",
+      });
     setAadharFlieCheque(true);
     let token = localStorage.getItem("token");
     new Compressor(e.target.files[0], {
@@ -463,10 +487,13 @@ function PersonalIdentification(props: any) {
                 setbtnDisabledForGstDocsCheque(false);
               } else {
                 enqueueSnackbar("Server didn`t response", { variant: "error" });
+                setAadharFileChequeBtnDis(true);
               }
               setAadharFlieCheque(false);
+              setAadharFileChequeBtnDis(true);
             } else {
               setAadharFlieCheque(false);
+              setAadharFileChequeBtnDis(true);
               enqueueSnackbar("file must be less then 1mb", {
                 variant: "error",
               });
@@ -488,6 +515,10 @@ function PersonalIdentification(props: any) {
   });
 
   const selfieUpload = (e: any) => {
+    if (e.target.files[0]?.size > Math.pow(1024, 5))
+      return enqueueSnackbar("File size should be less than 5MB", {
+        variant: "error",
+      });
     setAadharFlieSelfie(true);
     let token = localStorage.getItem("token");
     new Compressor(e.target.files[0], {
@@ -507,10 +538,12 @@ function PersonalIdentification(props: any) {
                 setbtnDisabledForGstDocsSelfie(false);
               } else {
                 enqueueSnackbar("Server didn`t response", { variant: "error" });
+                setAadharFileSelfieBtnDis(true);
               }
               setAadharFlieSelfie(false);
             } else {
               setAadharFlieSelfie(false);
+              setAadharFileSelfieBtnDis(true);
               enqueueSnackbar("file must be less then 1mb", {
                 variant: "error",
               });
@@ -532,6 +565,10 @@ function PersonalIdentification(props: any) {
   });
 
   const uploadshop = (e: any) => {
+    if (e.target.files[0]?.size > Math.pow(1024, 5))
+      return enqueueSnackbar("File size should be less than 5MB", {
+        variant: "error",
+      });
     setAadharFlieShop(true);
 
     let token = localStorage.getItem("token");
@@ -554,10 +591,6 @@ function PersonalIdentification(props: any) {
                   setShoppath((shoppath) => [...shoppath, path]);
                   setAadharFileShopBtnDis(true);
                   setbtnDisabledForGstDocsShop(false);
-                  console.log(
-                    "///////////////////////////////////////////////////////////////////////",
-                    "jjjjjjjjjjjjjjjjjj"
-                  );
                 } else {
                   enqueueSnackbar("Only 3 images you can select!");
                 }
@@ -1712,6 +1745,10 @@ function ConstitutionIdentification() {
   }, []);
 
   const gstCertificateUpload = (e: any) => {
+    if (e.target.files[0]?.size > Math.pow(1024, 5))
+      return enqueueSnackbar("File size should be less than 5MB", {
+        variant: "error",
+      });
     console.log("gst");
 
     setAadharFlieMSME(true);
@@ -1782,6 +1819,10 @@ function ConstitutionIdentification() {
   };
 
   const businessProofUpload = (e: any) => {
+    if (e.target.files[0]?.size > Math.pow(1024, 5))
+      return enqueueSnackbar("File size should be less than 5MB", {
+        variant: "error",
+      });
     setAadharFlieBusPrf(true);
     let token = localStorage.getItem("token");
     new Compressor(e.target.files[0], {
@@ -1814,6 +1855,10 @@ function ConstitutionIdentification() {
   };
 
   const businessPanUpload = (e: any) => {
+    if (e.target.files[0]?.size > Math.pow(1024, 5))
+      return enqueueSnackbar("File size should be less than 5MB", {
+        variant: "error",
+      });
     console.log("bpan");
     setAadharFlieBusPan(true);
     let token = localStorage.getItem("token");
@@ -1857,6 +1902,10 @@ function ConstitutionIdentification() {
   });
 
   const partnershipDeedUpload = (e: any) => {
+    if (e.target.files[0]?.size > Math.pow(1024, 5))
+      return enqueueSnackbar("File size should be less than 5MB", {
+        variant: "error",
+      });
     setAadharFliepDeed(true);
     let token = localStorage.getItem("token");
     new Compressor(e.target.files[0], {
@@ -1874,16 +1923,19 @@ function ConstitutionIdentification() {
                   "===200=partnershipDeed====",
                   Response.data.filePath
                 );
+                setAadharFilepDeedBtnDis(true);
                 setPartnershipDeedpath(Response.data.filePath);
 
                 setAadharFliepDeed(false);
               } else {
                 enqueueSnackbar("Server didn`t response", { variant: "error" });
+                setAadharFilepDeedBtnDis(true);
               }
             } else {
               enqueueSnackbar("file must be less then 1mb", {
                 variant: "error",
               });
+              setAadharFilepDeedBtnDis(true);
             }
           }
         );
@@ -1902,6 +1954,10 @@ function ConstitutionIdentification() {
   });
 
   const boardResolutionUpload = (e: any) => {
+    if (e.target.files[0]?.size > Math.pow(1024, 5))
+      return enqueueSnackbar("File size should be less than 5MB", {
+        variant: "error",
+      });
     console.log("brdr");
     setAadharFlieBrdRes(true);
     let token = localStorage.getItem("token");
@@ -1948,6 +2004,10 @@ function ConstitutionIdentification() {
   });
 
   const COIUpload = (e: any) => {
+    if (e.target.files[0]?.size > Math.pow(1024, 5))
+      return enqueueSnackbar("File size should be less than 5MB", {
+        variant: "error",
+      });
     setAadharFlieCOI(false);
     console.log("coi");
     let token = localStorage.getItem("token");
@@ -1991,6 +2051,10 @@ function ConstitutionIdentification() {
   });
 
   const MOAUpload = (e: any) => {
+    if (e.target.files[0]?.size > Math.pow(1024, 5))
+      return enqueueSnackbar("File size should be less than 5MB", {
+        variant: "error",
+      });
     console.log("moa");
     setAadharFlieMOA(false);
     let token = localStorage.getItem("token");
@@ -2034,6 +2098,10 @@ function ConstitutionIdentification() {
   });
 
   const AOAUpload = (e: any) => {
+    if (e.target.files[0]?.size > Math.pow(1024, 5))
+      return enqueueSnackbar("File size should be less than 5MB", {
+        variant: "error",
+      });
     setAadharFlieAOA(false);
     console.log("aoa");
     let token = localStorage.getItem("token");
@@ -2079,6 +2147,10 @@ function ConstitutionIdentification() {
   });
 
   const consentLetterUpload = (e: any) => {
+    if (e.target.files[0]?.size > Math.pow(1024, 5))
+      return enqueueSnackbar("File size should be less than 5MB", {
+        variant: "error",
+      });
     setAadharFlieNominatedPartner(false);
     let token = localStorage.getItem("token");
     new Compressor(e.target.files[0], {
@@ -2124,6 +2196,10 @@ function ConstitutionIdentification() {
   });
 
   const DPINUpload = (e: any) => {
+    if (e.target.files[0]?.size > Math.pow(1024, 5))
+      return enqueueSnackbar("File size should be less than 5MB", {
+        variant: "error",
+      });
     setAadharFliePartnerIdentity(false);
     let token = localStorage.getItem("token");
     new Compressor(e.target.files[0], {
@@ -2204,7 +2280,7 @@ function ConstitutionIdentification() {
   //upload validation
   const onSubmit = (data: FormValuesProps) => {
     if (user?.constitutionType.toLowerCase() == "proprietorship") {
-      if (user?.isGST) {
+      if (!user?.isGST) {
         gstCertificatePath == ""
           ? enqueueSnackbar("Please uplaod GST certificate")
           : submitDocs();
@@ -2215,7 +2291,7 @@ function ConstitutionIdentification() {
       }
     }
     if (user?.constitutionType.toLowerCase() == "partnership") {
-      if (user?.isGST) {
+      if (!user?.isGST) {
         businessPanPath == "" ||
         partnershipDeedPath == "" ||
         gstCertificatePath == "" ||
@@ -2310,7 +2386,7 @@ function ConstitutionIdentification() {
           enqueueSnackbar(Response.data.message);
           UpdateUserDetail({
             is_CID_Docs: true,
-            GSTFile: gstCertificatePath,
+            // GSTFile: gstCertificatePath,
             PANFile_Company: businessPanPath,
           });
           initialize();
@@ -2330,8 +2406,8 @@ function ConstitutionIdentification() {
         <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
           {user?.constitutionType.toLowerCase() !== "individual" ? (
             <Grid>
-              {/* gst certificate */}
-              {!user?.isGST &&
+              {/* gst MSME */}
+              {user?.isGST &&
               (user?.constitutionType.toLowerCase() ==
                 "private limited company" ||
                 user?.constitutionType.toLowerCase() == "one person company" ||
@@ -2401,9 +2477,7 @@ function ConstitutionIdentification() {
                                       size="small"
                                       sx={{
                                         border: "1px solid",
-
                                         color: "black",
-
                                         fontFamily: "Public Sans",
                                         fontSize: "14px",
                                         textTransform: "none",
@@ -2471,7 +2545,7 @@ function ConstitutionIdentification() {
                   </Container>
                 </Box>
               ) : null}
-              {user?.isGST &&
+              {!user?.isGST &&
               (user?.constitutionType.toLowerCase() ==
                 "private limited company" ||
                 user?.constitutionType.toLowerCase() == "one person company" ||

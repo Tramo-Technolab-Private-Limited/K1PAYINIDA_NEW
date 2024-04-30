@@ -34,6 +34,7 @@ import {
   Setting,
   HelpAndSupport,
   Network,
+  Historicalreports,
   ManageFundFlow,
   MyNetwrokFunds,
   UserProfilePage,
@@ -153,6 +154,7 @@ export default function Router() {
             { path: "mytransaction", element: <MyTransaction /> },
             { path: "fundflow", element: <FundFlow /> },
             { path: "walletladger", element: <WalletLadger /> },
+            { path: "reports", element: <Historicalreports /> },
           ],
         },
         {

@@ -11,6 +11,7 @@ import {
   Typography,
   Grid,
   useTheme,
+  TextField,
 } from "@mui/material";
 import FormProvider, {
   RHFTextField,
@@ -74,6 +75,7 @@ export default function GovernanceForm(props: any) {
   const [saveGst, setGSTSave] = React.useState(false);
   const [radioVal, setRadioVal] = React.useState("");
   const [loading, setLoading] = React.useState(false);
+  const [companyName, setCompanyName] = React.useState("");
   const [remainingAttempt, setRemainingAttempt] = React.useState(null);
   const [valueTabs, setvalueTabs] = React.useState(0);
   const [verifyDetail, setVerifyDetail] = React.useState(false);
@@ -203,11 +205,8 @@ export default function GovernanceForm(props: any) {
           if (Response.status == 200) {
             if (Response.data.code == 200) {
               enqueueSnackbar(Response.data.message);
-
-              console.log("GST MESSAGE ....................", Response);
               setGstDetail(Response.data.resData);
               setRemainingAttempt(Response.data.remaining_Attempts);
-
               setRadioVal(Response.data.resData.constitution_type);
               // localStorage.setItem('legalname', Response.data.KYCStatus.body.kycResult.legalName);
 
@@ -235,7 +234,7 @@ export default function GovernanceForm(props: any) {
               setVerifyDetail(true);
               setLoading(false);
             } else {
-              enqueueSnackbar(Response.data.message);
+              enqueueSnackbar(Response.data.message, { variant: "error" });
               setLoading(false);
             }
           }
@@ -262,12 +261,13 @@ export default function GovernanceForm(props: any) {
         business_pincode: data.pinCode,
         vtc: data.village,
         gst_number: data.gstNumber,
+        address: data.address,
         // company_name: data.village,
         status: data.Status,
         userId: user?._id,
         constitution_type: radioVal,
         last_gst_filing_status: "",
-        isGST: !valueTabs,
+        isGST: valueTabs == 0 ? true : false,
       };
       Api("user/KYC/save_data", "POST", body, token).then((Response: any) => {
         if (Response.status == 200) {
@@ -289,11 +289,11 @@ export default function GovernanceForm(props: any) {
               company_name: data.BusinessName,
               GSTNumber: data.gstNumber,
               isGSTVerified: true,
-              isGST: !valueTabs,
+              isGST: valueTabs == 0 ? true : false,
               constitutionType: radioVal,
             });
           } else {
-            enqueueSnackbar(Response.data.message);
+            enqueueSnackbar(Response.data.message, { variant: "error" });
           }
         }
       });
@@ -310,15 +310,17 @@ export default function GovernanceForm(props: any) {
         // business_name: gstDeatil.legalName,
         state_jurisdiction: gstDeatil.state_jurisdiction,
         // taxpayer_type: gstDeatil.constitution_type,
-        // address: gstDeatil.address,
+        address: gstDeatil.address,
         // pan_number: gstDeatil.pan_number,
-        company_name: gstDeatil.company_name,
+        business_name: gstDeatil.company_name
+          ? gstDeatil.company_name
+          : companyName,
         gst_number: gstDeatil.gst_number,
         status: gstDeatil.status,
         userId: user?._id,
         constitution_type: gstDeatil.constitution_type,
         last_gst_filing_status: "",
-        isGST: !valueTabs,
+        isGST: valueTabs == 0 ? true : false,
       };
       Api("user/KYC/save_data", "POST", body, token).then((Response: any) => {
         if (Response.status == 200) {
@@ -328,16 +330,20 @@ export default function GovernanceForm(props: any) {
             UpdateUserDetail({
               isGSTVerified: true,
               GSTNumber: gstDeatil.gst_number,
-              isGST: !valueTabs,
+              isGST: valueTabs == 0 ? true : false,
             });
           } else {
-            enqueueSnackbar(Response.data.message);
+            enqueueSnackbar(Response.data.message, { variant: "error" });
           }
         }
       });
     } else {
       props.callBack(3);
     }
+  };
+
+  const HandleCompanyName = (e: any) => {
+    setCompanyName(e.target.value);
   };
 
   const handleChangePanel2 = (
@@ -856,6 +862,14 @@ export default function GovernanceForm(props: any) {
                     </Typography>
                   </Stack>
                 </Stack>
+                {gstDeatil.company_name == "" && (
+                  <Stack>
+                    <TextField
+                      placeholder="Update Uncomplete Details"
+                      onChange={HandleCompanyName}
+                    ></TextField>
+                  </Stack>
+                )}
                 <Stack my={5}>
                   <Button
                     variant="contained"

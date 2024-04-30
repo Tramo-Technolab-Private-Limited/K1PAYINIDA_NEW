@@ -38,6 +38,7 @@ import Iconify from "src/components/iconify";
 import Label from "src/components/label/Label";
 import { sentenceCase } from "change-case";
 import { useNavigate } from "react-router";
+import { fCurrency } from "src/utils/formatNumber";
 
 type FormValuesProps = {
   transactionType: string;
@@ -64,12 +65,13 @@ type FormValuesProps = {
 
 function FundFlow() {
   const { enqueueSnackbar } = useSnackbar();
-  const { user, UpdateUserDetail } = useAuthContext();
+  const { user, initialize } = useAuthContext();
   const [isLoading, setIsLoading] = useState(false);
   const [filteredUser, setFilteredUser] = useState([]);
   const [users, setUsers] = useState([]);
   const [isTxnOpen, setIsTxnOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
   const [sdata, setSdata] = useState([]);
   const [pageSize, setPageSize] = useState<any>(10000);
   const [currentPage, setCurrentPage] = useState<any>(1);
@@ -281,13 +283,10 @@ function FundFlow() {
           if (Response.status == 200) {
             if (Response.data.code == 200) {
               enqueueSnackbar(Response.data.message);
-              getValues("transactionType") === "debit"
-                ? UpdateUserDetail({
-                    main_wallet_amount: user?.main_wallet_amount + +body.amount,
-                  })
-                : UpdateUserDetail({
-                    main_wallet_amount: user?.main_wallet_amount - +body.amount,
-                  });
+              initialize();
+
+              setSuccessMsg(Response.data.message);
+
               setTransactionDetail(Response.data.data);
             } else {
               enqueueSnackbar(Response.data.message, { variant: "error" });
@@ -399,6 +398,12 @@ function FundFlow() {
                                 <Typography variant="body2">
                                   {item.email}
                                 </Typography>{" "}
+                                <Typography variant="body2">
+                                 Main Balance : {fCurrency(item.main_wallet_amount)}
+                                </Typography>{" "}
+                                <Typography variant="body2">
+                                 AEPS Balance : {fCurrency(item.AEPS_wallet_amount)}
+                                </Typography>{" "}
                               </Stack>
                             </Stack>
                           );
@@ -466,8 +471,10 @@ function FundFlow() {
           handleTxnModal={() => {
             setIsTxnOpen(false);
             setErrorMsg("");
+            setSuccessMsg("");
           }}
           errorMsg={errorMsg}
+          successMsg={successMsg}
           transactionDetail={transactionDetail}
         />
       </RoleBasedGuard>

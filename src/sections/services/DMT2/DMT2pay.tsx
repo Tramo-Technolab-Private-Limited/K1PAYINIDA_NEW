@@ -27,6 +27,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import FormProvider, {
   RHFTextField,
   RHFCodes,
+  RHFSecureCodes,
 } from "../../../components/hook-form";
 import { useSnackbar } from "notistack";
 import { Icon } from "@iconify/react";
@@ -35,6 +36,7 @@ import { useAuthContext } from "src/auth/useAuthContext";
 import { fDateTime } from "src/utils/formatTime";
 import { TextToSpeak } from "src/components/customFunctions/TextToSpeak";
 import MotionModal from "src/components/animate/MotionModal";
+import TransactionModal from "src/components/customFunctions/TrasactionModal";
 
 // ----------------------------------------------------------------------
 
@@ -54,7 +56,7 @@ export default function DMT2pay({ clearPayout, remitter, beneficiary }: any) {
   const { dmt2RemitterAvailableLimit } = remitter;
   const { bankName, accountNumber, mobileNumber, beneName, ifsc } = beneficiary;
   const { enqueueSnackbar } = useSnackbar();
-  const { UpdateUserDetail } = useAuthContext();
+  const { initialize } = useAuthContext();
   const [txn, setTxn] = useState(true);
   const [mode, setMode] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
@@ -143,18 +145,18 @@ export default function DMT2pay({ clearPayout, remitter, beneficiary }: any) {
     formState: { errors, isSubmitting },
   } = methods;
 
-  useEffect(() => {
-    if (count !== null) {
-      if (count > 0) {
-        const timer = setInterval(() => {
-          setCount((prevCount: any) => prevCount - 1);
-        }, 1000);
-        return () => clearInterval(timer);
-      } else {
-        window.location.reload();
-      }
-    }
-  }, [count]);
+  // useEffect(() => {
+  //   if (count !== null) {
+  //     if (count > 0) {
+  //       const timer = setInterval(() => {
+  //         setCount((prevCount: any) => prevCount - 1);
+  //       }, 1000);
+  //       return () => clearInterval(timer);
+  //     } else {
+  //       window.location.reload();
+  //     }
+  //   }
+  // }, [count]);
 
   const transaction = (data: FormValuesProps) => {
     let token = localStorage.getItem("token");
@@ -182,27 +184,28 @@ export default function DMT2pay({ clearPayout, remitter, beneficiary }: any) {
             if (Response.data.code == 200) {
               Response.data.response.map((element: any) => {
                 enqueueSnackbar(element.message);
-                UpdateUserDetail({
-                  main_wallet_amount:
-                    element?.data?.agentDetails?.newMainWalletBalance,
-                });
+                TextToSpeak(element.message);
+                initialize();
               });
-              setTransactionDetail(Response.data.response);
-              TextToSpeak(Response.data.message);
-              handleClose();
+              setTransactionDetail(
+                Response.data.response.map((item: any) => item.data)
+              );
               handleOpen1();
-              setCount(5);
+              handleClose();
+              // setCount(5);
               setTxn(false);
               setErrorMsg("");
             } else {
               enqueueSnackbar(Response.data.message, { variant: "error" });
               setErrorMsg(Response.data.message);
+              setTxn(false);
             }
-            clearPayout();
+            // clearPayout();
           } else {
             setCheckNPIN(false);
             enqueueSnackbar(Response, { variant: "error" });
-            clearPayout();
+            // clearPayout();
+            setTxn(false);
           }
         });
     }
@@ -253,6 +256,7 @@ export default function DMT2pay({ clearPayout, remitter, beneficiary }: any) {
                   display: "flex",
                   flexDirection: "row",
                   marginTop: "10px",
+                  marginLeft: "15px",
                 }}
               >
                 <FormControlLabel
@@ -311,7 +315,7 @@ export default function DMT2pay({ clearPayout, remitter, beneficiary }: any) {
           </Typography>
         </FormProvider>
       </MotionModal>
-      <MotionModal open={open} width={{ xs: "95%", sm: 400 }}>
+      <MotionModal open={open} width={{ xs: "95%", sm: 500 }}>
         {checkNPIN ? (
           txn ? (
             <Icon
@@ -423,10 +427,9 @@ export default function DMT2pay({ clearPayout, remitter, beneficiary }: any) {
                   gap={2}
                 >
                   <Typography variant="h4">Confirm NPIN</Typography>
-                  <RHFCodes
+                  <RHFSecureCodes
                     keyName="otp"
                     inputs={["otp1", "otp2", "otp3", "otp4", "otp5", "otp6"]}
-                    type="password"
                   />
 
                   {(!!errors.otp1 ||
@@ -447,8 +450,8 @@ export default function DMT2pay({ clearPayout, remitter, beneficiary }: any) {
                       variant="contained"
                       color="warning"
                       onClick={() => {
-                        handleClose();
-                        clearPayout();
+                        // handleClose();
+                        // clearPayout();
                         reset(defaultValues);
                       }}
                     >
@@ -479,58 +482,18 @@ export default function DMT2pay({ clearPayout, remitter, beneficiary }: any) {
           </Box>
         )}
       </MotionModal>
-      <MotionModal
-        open={open1}
-        onClose={handleClose1}
-        width={{ xs: "95%", sm: 500 }}
-      >
-        <Stack sx={{ border: "1.5px dashed #000000" }} p={3} borderRadius={2}>
-          <Table
-            stickyHeader
-            aria-label="sticky table"
-            style={{ borderBottom: "1px solid #dadada" }}
-          >
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{ fontWeight: 800, textAlign: "center" }}>
-                  Client ref Id
-                </TableCell>
-                <TableCell sx={{ fontWeight: 800, textAlign: "center" }}>
-                  Created At
-                </TableCell>
-                <TableCell sx={{ fontWeight: 800, textAlign: "center" }}>
-                  Amount
-                </TableCell>
-                <TableCell sx={{ fontWeight: 800, textAlign: "center" }}>
-                  status
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {transactionDetail.map((item: any) => (
-                <TableRow key={item.data._id}>
-                  <TableCell sx={{ fontWeight: 800 }}>
-                    {item.data.clientRefId || "NA"}
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: 800 }}>
-                    {fDateTime(item?.data?.createdAt)}
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: 800 }}>
-                    {item.data.amount && "₹"} {item.data.amount || "NA"}
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: 800 }}>
-                    {item.data.status || "NA"}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Stack>
+      <MotionModal open={open1} width={{ xs: "95%", md: 720 }}>
         <Stack flexDirection={"row"} gap={1} mt={1} justifyContent={"center"}>
-          {/* <Button variant="contained" onClick={handleClose1} size="small">
-                Download Receipt
-              </Button> */}
-          <Button variant="contained">Close({count})</Button>
+          <TransactionModal
+            isTxnOpen={open1}
+            handleTxnModal={() => {
+              setOpen1(false);
+              setErrorMsg("");
+              setMode("");
+            }}
+            errorMsg={errorMsg}
+            transactionDetail={transactionDetail}
+          />
         </Stack>
       </MotionModal>
     </>

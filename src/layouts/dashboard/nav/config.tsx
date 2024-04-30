@@ -26,7 +26,7 @@ const NavConfig = [
     subheader: "My Stats",
     items: [
       {
-        title: "My Stats",
+        title: "Home",
         path: PATH_DASHBOARD.mystats,
         icon: ICONS.dashboard,
       },
@@ -49,6 +49,11 @@ const NavConfig = [
           {
             title: "Money Transfer",
             path: PATH_DASHBOARD.service.dmt,
+            roles: ["agent"],
+          },
+          {
+            title: "DMT1",
+            path: PATH_DASHBOARD.service.dmt1,
             roles: ["agent"],
           },
           {
@@ -99,8 +104,12 @@ const NavConfig = [
             path: PATH_DASHBOARD.transaction.fundflow,
           },
           {
-            title: "Wallet Ladger",
+            title: "Account Statement",
             path: PATH_DASHBOARD.transaction.walletladger,
+          },
+          {
+            title: "Download Reports",
+            path: PATH_DASHBOARD.transaction.historicalreports,
           },
         ],
       },
@@ -117,10 +126,10 @@ const NavConfig = [
             title: "BBPS Scheme",
             path: PATH_DASHBOARD.scheme.bbpsscheme,
           },
-          {
-            title: "Loan Scheme",
-            path: PATH_DASHBOARD.scheme.loanscheme,
-          },
+          // {
+          //   title: "Loan Scheme",
+          //   path: PATH_DASHBOARD.scheme.loanscheme,
+          // },
         ],
       },
       {

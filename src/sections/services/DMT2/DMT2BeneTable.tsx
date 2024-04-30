@@ -97,7 +97,7 @@ const Reducer = (state: any, action: any) => {
         beneVerified: true,
       };
     case "VERIFY_FETCH_FAILURE":
-      return { ...state, isLoading: false, data: {} };
+      return { ...state, isLoading: false, data: {}, beneVerified: false };
     case "GET_BENE_REQUEST":
       return { ...state, isLoading: true };
     case "GET_BENE_SUCCESS":
@@ -176,7 +176,7 @@ export default function DMT2BeneTable() {
   const methods = useForm<FormValuesProps>({
     resolver: yupResolver(DMTSchema),
     defaultValues,
-    mode: "all",
+    mode: "onSubmit",
   });
 
   const {
@@ -207,7 +207,7 @@ export default function DMT2BeneTable() {
           });
         } else {
           getbeneDispatch({ type: "GET_BENE_FAILURE" });
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "error" });
         }
       }
     });
@@ -229,7 +229,7 @@ export default function DMT2BeneTable() {
             }),
           });
           openEditModal();
-          enqueueSnackbar(Response.data.message, { variant: "error" });
+          // enqueueSnackbar(Response.data.message, { variant: "error" });
         } else {
           getbeneDispatch({ type: "GET_BANK_FAILURE" });
         }
@@ -244,37 +244,42 @@ export default function DMT2BeneTable() {
       ifsc: getValues("ifsc"),
       accountNumber: getValues("accountNumber"),
       bankName: getValues("bankName"),
+      remitterMobile: remitterContext.remitterMobile,
     };
-    (await trigger(["ifsc", "accountNumber", "bankName"])) &&
-      Api("dmt2/beneficiary/verify", "POST", body, token).then(
-        (Response: any) => {
-          console.log(
-            "==============>>> verify beneficiary Response",
-            Response
-          );
-          if (Response.status == 200) {
-            if (Response.data.code == 200) {
-              remitterVerifyDispatch({
-                type: "VERIFY_FETCH_SUCCESS",
-                payload: Response.data.data,
-              });
-              enqueueSnackbar(Response.data.message);
-              setValue("beneName", Response.data.name);
-              setValue("isBeneVerified", true);
-              UpdateUserDetail({
-                main_wallet_amount: user?.main_wallet_amount - 3,
-              });
+    (await trigger(["ifsc", "accountNumber", "bankName"]))
+      ? Api("dmt2/beneficiary/verify", "POST", body, token).then(
+          (Response: any) => {
+            console.log(
+              "==============>>> verify beneficiary Response",
+              Response
+            );
+            if (Response.status == 200) {
+              if (Response.data.code == 200) {
+                remitterVerifyDispatch({
+                  type: "VERIFY_FETCH_SUCCESS",
+                  payload: Response.data.data,
+                });
+                enqueueSnackbar(Response.data.message);
+                setValue("beneName", Response.data.name);
+                setValue("isBeneVerified", true);
+                UpdateUserDetail({
+                  main_wallet_amount: user?.main_wallet_amount - 3,
+                });
+              } else {
+                remitterVerifyDispatch({ type: "VERIFY_FETCH_FAILURE" });
+                enqueueSnackbar(Response.data.message, { variant: "error" });
+                console.log(
+                  "==============>>> verify beneficiary msg",
+                  Response.data.message
+                );
+              }
             } else {
               remitterVerifyDispatch({ type: "VERIFY_FETCH_FAILURE" });
-              enqueueSnackbar(Response.data.message, { variant: "error" });
-              console.log(
-                "==============>>> verify beneficiary msg",
-                Response.data.message
-              );
+              enqueueSnackbar("Failed", { variant: "error" });
             }
           }
-        }
-      );
+        )
+      : remitterVerifyDispatch({ type: "VERIFY_FETCH_FAILURE" });
   };
 
   const addBeneficiary = (data: FormValuesProps) => {
@@ -296,6 +301,7 @@ export default function DMT2BeneTable() {
       console.log("==============>>> verify beneficiary Response", Response);
       if (Response.status == 200) {
         if (Response.data.code == 200) {
+          enqueueSnackbar(Response.data.message);
           getbeneDispatch({
             type: "GET_BENE_SUCCESS",
             payload: [...getBene.data, Response.data.data],
@@ -304,18 +310,21 @@ export default function DMT2BeneTable() {
             type: "ADD_BENE_SUCCESS",
             payload: Response.data.data,
           });
+          remitterVerifyDispatch({
+            type: "VERIFY_FETCH_FAILURE",
+          });
           enqueueSnackbar(Response.data.message);
           handleClose();
         } else {
           addbeneDispatch({ type: "ADD_BENE_FAILURE" });
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "error" });
           console.log(
             "==============>>> verify beneficiary msg",
             Response.data.message
           );
         }
       } else {
-        enqueueSnackbar("Internal server error");
+        enqueueSnackbar("Internal server error", { variant: "error" });
         addbeneDispatch({ type: "ADD_BENE_FAILURE" });
       }
     });
@@ -360,7 +369,7 @@ export default function DMT2BeneTable() {
               <Scrollbar
                 sx={
                   isMobile
-                    ? { maxHeight: window.innerHeight - 110 }
+                    ? { maxHeight: window.innerHeight - 170 }
                     : { maxHeight: window.innerHeight - 470 }
                 }
               >
@@ -432,6 +441,7 @@ export default function DMT2BeneTable() {
               disabled={remitterVerify?.beneVerified}
               onChange={setBankDetail}
               options={getBank.data}
+              noOptionsText="No Bank Account"
               getOptionLabel={(option: any) => option.bankName}
               renderOption={(props, option) => (
                 <Box
@@ -563,6 +573,7 @@ function BeneList({ row, callback, remitterNumber, deleteBene }: any) {
     let token = localStorage.getItem("token");
     let body = {
       beneficiaryId: val,
+      remitterMobile: remitterNumber,
     };
     Api("dmt2/beneficiary/verify", "POST", body, token).then(
       (Response: any) => {
@@ -579,11 +590,11 @@ function BeneList({ row, callback, remitterNumber, deleteBene }: any) {
               main_wallet_amount: user?.main_wallet_amount - 3,
             });
           } else {
-            enqueueSnackbar(Response.data.message);
+            enqueueSnackbar(Response.data.message, { variant: "error" });
           }
           setVarifyStatus(true);
         } else {
-          enqueueSnackbar("Internal server error");
+          enqueueSnackbar("Internal server error", { variant: "error" });
           setVarifyStatus(true);
         }
       }
@@ -598,7 +609,7 @@ function BeneList({ row, callback, remitterNumber, deleteBene }: any) {
           if (Response.data.code == 200) {
             enqueueSnackbar(Response.data.message);
           } else {
-            enqueueSnackbar(Response.data.message);
+            enqueueSnackbar(Response.data.message, { variant: "error" });
           }
         }
       }
@@ -622,7 +633,7 @@ function BeneList({ row, callback, remitterNumber, deleteBene }: any) {
             setDeleteOtp("");
             deleteBene(row._id);
           } else {
-            enqueueSnackbar(Response.data.message);
+            enqueueSnackbar(Response.data.message, { variant: "error" });
           }
           setIsLoading(false);
         } else {
@@ -675,11 +686,11 @@ function BeneList({ row, callback, remitterNumber, deleteBene }: any) {
               enqueueSnackbar(Response.data.message);
               setCell({ ...cell, isTxnAllowed: true });
             } else {
-              enqueueSnackbar(Response.data.message);
+              enqueueSnackbar(Response.data.message, { variant: "error" });
             }
             setAddNnowLoading(false);
           } else {
-            enqueueSnackbar("Internal server error");
+            enqueueSnackbar("Internal server error", { variant: "error" });
             setAddNnowLoading(false);
           }
         }

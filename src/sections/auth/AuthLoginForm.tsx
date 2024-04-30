@@ -69,7 +69,7 @@ export default function AuthLoginForm() {
   const onSubmit = async (data: FormValuesProps) => {
     let body = {
       username: data.email.toLocaleLowerCase(),
-      password: data.password, 
+      password: data.password,
     };
     try {
       await Api(`auth/login_in`, "POST", body, "").then((Response: any) => {
@@ -86,10 +86,10 @@ export default function AuthLoginForm() {
             );
             enqueueSnackbar(Response.data.message);
           } else {
-            enqueueSnackbar(Response.data.message);
+            enqueueSnackbar(Response.data.message, { variant: "error" });
           }
         } else {
-          enqueueSnackbar("Server Error");
+          enqueueSnackbar("Server Error", { variant: "error" });
         }
       });
     } catch (error) {

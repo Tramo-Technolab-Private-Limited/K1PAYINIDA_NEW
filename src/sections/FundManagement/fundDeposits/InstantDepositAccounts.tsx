@@ -219,7 +219,7 @@ function InstantDepositAccounts() {
         if (Response.status == 200) {
           enqueueSnackbar(Response.data.message);
         } else {
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "error" });
         }
         setRegisterVAloading(false);
       }

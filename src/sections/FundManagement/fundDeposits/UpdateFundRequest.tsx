@@ -237,6 +237,10 @@ function UpdateFundRequest({ preData, handleClose, getRaisedRequest }: props) {
 
   //upload file
   const handleFile = (e: any) => {
+    if (e.target.files[0]?.size > Math.pow(1024, 5))
+      return enqueueSnackbar("File size should be less than 5MB", {
+        variant: "error",
+      });
     setIsSubmitLoading(true);
     let token = localStorage.getItem("token");
     new Compressor(e.target.files[0], {
@@ -310,7 +314,7 @@ function UpdateFundRequest({ preData, handleClose, getRaisedRequest }: props) {
           getRaisedRequest();
           enqueueSnackbar(Response.data.message);
         } else {
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "error" });
         }
         handleClose();
       }
@@ -403,7 +407,41 @@ function UpdateFundRequest({ preData, handleClose, getRaisedRequest }: props) {
                     setValue("amount", 0);
                   }}
                 >
-                  {item.modeName}
+                  {item.modeName} (
+                  {item.transactionFeeType +
+                    " " +
+                    (item.transactionFeeOption?.[
+                      user?.role == "agent"
+                        ? "for_Agent"
+                        : user?.role == "distributor"
+                        ? "for_Distributor"
+                        : user?.role == "m_distributor"
+                        ? "for_M_Distributor"
+                        : "for_API_user"
+                    ] == "flat"
+                      ? "Rs."
+                      : "") +
+                    item.transactionFeeValue?.[
+                      user?.role == "agent"
+                        ? "for_Agent"
+                        : user?.role == "distributor"
+                        ? "for_Distributor"
+                        : user?.role == "m_distributor"
+                        ? "for_M_Distributor"
+                        : "for_API_user"
+                    ] +
+                    (item.transactionFeeOption?.[
+                      user?.role == "agent"
+                        ? "for_Agent"
+                        : user?.role == "distributor"
+                        ? "for_Distributor"
+                        : user?.role == "m_distributor"
+                        ? "for_M_Distributor"
+                        : "for_API_user"
+                    ] == "flat"
+                      ? ""
+                      : "%")}
+                  )
                 </MenuItem>
               );
             })}

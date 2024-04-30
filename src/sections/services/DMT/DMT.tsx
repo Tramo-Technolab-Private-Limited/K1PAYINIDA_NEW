@@ -44,6 +44,9 @@ type FormValuesProps = {
   otp1: string;
   otp2: string;
   otp3: string;
+  otp4: string;
+  otp5: string;
+  otp6: string;
 };
 
 //--------------------------------------------------------------------
@@ -126,6 +129,7 @@ export default function DMT() {
     bgcolor: "#ffffff",
     boxShadow: 24,
     borderRadius: 2,
+    width: { xs: "95%", md: 500 },
     p: 4,
   };
 
@@ -155,9 +159,8 @@ export default function DMT() {
               SendOTP(data.mobileNumber);
               openEditModal2();
             }
-            enqueueSnackbar(Response.data.message);
           } else {
-            enqueueSnackbar(Response.data.message);
+            enqueueSnackbar(Response.data.message, { variant: "error" });
           }
         } else {
           remitterDispatch({ type: "REMITTER_NOT_FOUND" });
@@ -177,7 +180,7 @@ export default function DMT() {
           enqueueSnackbar(Response.data.message);
           console.log("==============>>> sendOtp data 200", Response.data.data);
         } else {
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "error" });
           console.log(
             "==============>>> sendOtp message",
             Response.data.message
@@ -208,9 +211,8 @@ export default function DMT() {
               SendOTP(val);
               openEditModal2();
             }
-            enqueueSnackbar(Response.data.message);
           } else {
-            enqueueSnackbar(Response.data.message);
+            enqueueSnackbar(Response.data.message, { variant: "error" });
           }
         } else {
           remitterDispatch({ type: "SERVER_ERROR" });
@@ -235,13 +237,9 @@ export default function DMT() {
         <Helmet>
           <title>Money Transfer |{process.env.REACT_APP_COMPANY_NAME}</title>
         </Helmet>
-        <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-          <Grid
-            container
-            spacing={2}
-            sx={{ maxHeight: window.innerHeight - 250 }}
-          >
-            <Grid item sm={3}>
+        <Grid container spacing={2}>
+          <Grid item sm={3}>
+            <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
               <Box
                 rowGap={2}
                 columnGap={2}
@@ -289,14 +287,13 @@ export default function DMT() {
                 mandatory for money transfers. Please ensure you provide a valid
                 sender mobile number to proceed with the transaction.
               </Typography>
-
-              {remitter.remitterfetch && <DMTRemitterDetail />}
-            </Grid>
-            <Grid item xs={12} sm={9}>
-              {remitter.remitterfetch && <DMTbeneficiary />}
-            </Grid>
+            </FormProvider>
+            {remitter.remitterfetch && <DMTRemitterDetail />}
           </Grid>
-        </FormProvider>
+          <Grid item xs={12} sm={9}>
+            {remitter.remitterfetch && <DMTbeneficiary />}
+          </Grid>
+        </Grid>
         <Modal
           open={open1}
           aria-labelledby="modal-modal-title"
@@ -339,11 +336,17 @@ const OtpSubmissionForRegistrantion = ({
     otp1: Yup.string().required(),
     otp2: Yup.string().required(),
     otp3: Yup.string().required(),
+    otp4: Yup.string().required(),
+    otp5: Yup.string().required(),
+    otp6: Yup.string().required(),
   });
   const defaultValues = {
     otp1: "",
     otp2: "",
     otp3: "",
+    otp4: "",
+    otp5: "",
+    otp6: "",
   };
   const methods = useForm<FormValuesProps>({
     resolver: yupResolver(DMTSchema),
@@ -361,7 +364,8 @@ const OtpSubmissionForRegistrantion = ({
     let token = localStorage.getItem("token");
     let body = {
       remitterMobile: mobilenumber,
-      otp: data.otp1 + data.otp2 + data.otp3,
+      otp:
+        data.otp1 + data.otp2 + data.otp3 + data.otp4 + data.otp5 + data.otp6,
     };
     Api("moneyTransfer/remitter/verifyOTP", "POST", body, token).then(
       (Response: any) => {
@@ -376,7 +380,7 @@ const OtpSubmissionForRegistrantion = ({
               Response.data.data.message
             );
           } else {
-            enqueueSnackbar(Response.data.message);
+            enqueueSnackbar(Response.data.message, { variant: "error" });
             setIsLoading(false);
             console.log(
               "==============>>> register remmiter message",
@@ -399,14 +403,18 @@ const OtpSubmissionForRegistrantion = ({
       >
         <Typography variant="h4">Please verify OTP</Typography>
         <Stack>
-          <RHFCodes keyName="otp" inputs={["otp1", "otp2", "otp3"]} />
+          <RHFCodes
+            keyName="otp"
+            inputs={["otp1", "otp2", "otp3", "otp4", "otp5", "otp6"]}
+          />
         </Stack>
 
-        {(!!errors.otp1 || !!errors.otp2 || !!errors.otp3) && (
-          // !!errors.otp4 ||
-          // !!errors.otp5 ||
-          // !!errors.otp6
-
+        {(!!errors.otp1 ||
+          !!errors.otp2 ||
+          !!errors.otp3 ||
+          !!errors.otp4 ||
+          !!errors.otp5 ||
+          !!errors.otp6) && (
           <FormHelperText error sx={{ px: 2 }}>
             Code is required
           </FormHelperText>
@@ -415,7 +423,14 @@ const OtpSubmissionForRegistrantion = ({
           <LoadingButton variant="contained" type="submit" loading={isLoading}>
             Confirm
           </LoadingButton>
-          <Button variant="contained" color="warning" onClick={handleClose2}>
+          <Button
+            variant="contained"
+            color="warning"
+            onClick={() => {
+              handleClose2();
+              reset(defaultValues);
+            }}
+          >
             Close
           </Button>
         </Stack>
@@ -478,7 +493,7 @@ const NewRegistration = ({ mobilenumber, handleNewRegistaion }: any) => {
           setIsLoading(false);
           handleNewRegistaion("SUCCESS");
         } else {
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "error" });
           setIsLoading(false);
           handleNewRegistaion("FAIL");
         }

@@ -174,7 +174,7 @@ export default function DMTbeneficiary() {
   const methods = useForm<FormValuesProps>({
     resolver: yupResolver(DMTSchema),
     defaultValues,
-    mode: "all",
+    mode: "onSubmit",
   });
 
   const {
@@ -204,7 +204,7 @@ export default function DMTbeneficiary() {
           });
         } else {
           getbeneDispatch({ type: "GET_BENE_FAILURE" });
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "error" });
         }
       }
     });
@@ -225,7 +225,7 @@ export default function DMTbeneficiary() {
             }),
           });
           openEditModal();
-          enqueueSnackbar(Response.data.message);
+          // enqueueSnackbar(Response.data.message);
         } else {
           getbeneDispatch({ type: "GET_BANK_FAILURE" });
         }
@@ -240,29 +240,34 @@ export default function DMTbeneficiary() {
       ifsc: getValues("ifsc"),
       accountNumber: getValues("accountNumber"),
       bankName: getValues("bankName"),
+      remitterMobile: remitterContext.remitterMobile,
     };
-    (await trigger(["ifsc", "accountNumber", "bankName"])) &&
-      Api("dmt1/beneficiary/verify", "POST", body, token).then(
-        (Response: any) => {
-          if (Response.status == 200) {
-            if (Response.data.code == 200) {
-              remitterVerifyDispatch({
-                type: "VERIFY_FETCH_SUCCESS",
-                payload: Response.data.data,
-              });
-              enqueueSnackbar(Response.data.message);
-              setValue("beneName", Response.data.name);
-              setValue("isBeneVerified", true);
-              UpdateUserDetail({
-                main_wallet_amount: user?.main_wallet_amount - 3,
-              });
+    (await trigger(["ifsc", "accountNumber", "bankName"]))
+      ? Api("DMT1/beneficiary/verify", "POST", body, token).then(
+          (Response: any) => {
+            if (Response.status == 200) {
+              if (Response.data.code == 200) {
+                remitterVerifyDispatch({
+                  type: "VERIFY_FETCH_SUCCESS",
+                  payload: Response.data.data,
+                });
+                enqueueSnackbar(Response.data.message);
+                setValue("beneName", Response.data.name);
+                setValue("isBeneVerified", true);
+                UpdateUserDetail({
+                  main_wallet_amount: user?.main_wallet_amount - 3,
+                });
+              } else {
+                remitterVerifyDispatch({ type: "VERIFY_FETCH_FAILURE" });
+                enqueueSnackbar(Response.data.message, { variant: "error" });
+              }
             } else {
               remitterVerifyDispatch({ type: "VERIFY_FETCH_FAILURE" });
-              enqueueSnackbar(Response.data.message);
+              enqueueSnackbar("Failed", { variant: "error" });
             }
           }
-        }
-      );
+        )
+      : remitterVerifyDispatch({ type: "VERIFY_FETCH_FAILURE" });
   };
 
   const addBeneficiary = (data: FormValuesProps) => {
@@ -283,6 +288,7 @@ export default function DMTbeneficiary() {
     Api("dmt1/beneficiary", "POST", body, token).then((Response: any) => {
       if (Response.status == 200) {
         if (Response.data.code == 200) {
+          enqueueSnackbar(Response.data.message);
           getbeneDispatch({
             type: "GET_BENE_SUCCESS",
             payload: [...getBene.data, Response.data.data],
@@ -291,14 +297,17 @@ export default function DMTbeneficiary() {
             type: "ADD_BENE_SUCCESS",
             payload: Response.data.data,
           });
+          remitterVerifyDispatch({
+            type: "VERIFY_FETCH_FAILURE",
+          });
           enqueueSnackbar(Response.data.message);
           handleClose();
         } else {
           addbeneDispatch({ type: "ADD_BENE_FAILURE" });
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "error" });
         }
       } else {
-        enqueueSnackbar("Internal server error");
+        enqueueSnackbar("Internal server error", { variant: "error" });
         addbeneDispatch({ type: "ADD_BENE_FAILURE" });
       }
     });
@@ -320,25 +329,30 @@ export default function DMTbeneficiary() {
   }
   return (
     <>
-      <Grid sx={{ maxHeight: window.innerHeight - 170 }}>
+      <Grid>
         {getBene.isLoading ? (
           <ApiDataLoading />
         ) : (
           <Paper sx={{ width: "100%", overflow: "hidden" }}>
             <Stack justifyContent={"end"} flexDirection={"row"} mb={1}>
-              <Button variant="contained" size="medium" onClick={getBankList}>
+              <LoadingButton
+                variant="contained"
+                size="medium"
+                onClick={getBankList}
+                loading={getBank.isLoading}
+              >
                 <span style={{ paddingRight: "5px", fontSize: "14px" }}>
                   +{" "}
                 </span>{" "}
                 Add New Beneficiary
-              </Button>
+              </LoadingButton>
             </Stack>
             <TableContainer component={Paper}>
               <Scrollbar
                 sx={
                   isMobile
-                    ? { maxHeight: window.innerHeight - 250 }
-                    : { maxHeight: window.innerHeight - 440 }
+                    ? { maxHeight: window.innerHeight - 170 }
+                    : { maxHeight: window.innerHeight - 470 }
                 }
               >
                 <Table
@@ -427,6 +441,7 @@ export default function DMTbeneficiary() {
                   disabled={remitterVerify?.beneVerified}
                   onChange={setBankDetail}
                   options={getBank?.data}
+                  noOptionsText="No Bank Account"
                   getOptionLabel={(option: any) => option?.bankName}
                   renderOption={(props, option) => (
                     <Box
@@ -572,8 +587,9 @@ const BeneList = React.memo(
       let token = localStorage.getItem("token");
       let body = {
         beneficiaryId: val,
+        remitterMobile: remitterNumber,
       };
-      Api("dmt1/beneficiary/verify", "POST", body, token).then(
+      Api("DMT1/beneficiary/verify", "POST", body, token).then(
         (Response: any) => {
           if (Response.status == 200) {
             if (Response.data.code == 200) {
@@ -587,11 +603,11 @@ const BeneList = React.memo(
                 main_wallet_amount: user?.main_wallet_amount - 3,
               });
             } else {
-              enqueueSnackbar(Response.data.message);
+              enqueueSnackbar(Response.data.message, { variant: "error" });
             }
             setVarifyStatus(true);
           } else {
-            enqueueSnackbar("Internal server error");
+            enqueueSnackbar("Internal server error", { variant: "error" });
             setVarifyStatus(true);
           }
         }
@@ -606,7 +622,7 @@ const BeneList = React.memo(
             if (Response.data.code == 200) {
               enqueueSnackbar(Response.data.message);
             } else {
-              enqueueSnackbar(Response.data.message);
+              enqueueSnackbar(Response.data.message, { variant: "error" });
             }
           }
         }
@@ -629,7 +645,7 @@ const BeneList = React.memo(
               setDeleteOtp("");
               deleteBene(row._id);
             } else {
-              enqueueSnackbar(Response.data.message);
+              enqueueSnackbar(Response.data.message, { variant: "error" });
             }
             setIsLoading(false);
           } else {

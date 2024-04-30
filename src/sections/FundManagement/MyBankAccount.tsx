@@ -37,6 +37,7 @@ import {
   varSlide,
 } from "../../components/animate";
 import MotionModal from "src/components/animate/MotionModal";
+import NoBankAccount from "src/assets/icons/NoBankAccount";
 
 // ----------------------------------------------------------------------
 type FormValuesProps = {
@@ -220,7 +221,6 @@ export default function MyBankAccount() {
             if (Response.data.code == 200) {
               getUserBankList();
               enqueueSnackbar(Response.data.message);
-              handleClose();
             } else if (Response.data.code == 400) {
               enqueueSnackbar(Response.data.message, { variant: "error" });
             } else {
@@ -228,6 +228,7 @@ export default function MyBankAccount() {
                 variant: "error",
               });
             }
+            handleClose();
             setAddBankLoading(false);
           } else {
             setAddBankLoading(false);
@@ -283,6 +284,116 @@ export default function MyBankAccount() {
       }
     });
   };
+  if (!userBankList.length) {
+    return (
+      <>
+        <Helmet>
+          <title>
+            View Update Bank Detail | {process.env.REACT_APP_COMPANY_NAME}
+          </title>
+        </Helmet>
+        <Box>
+          <Stack flexDirection={"row"} justifyContent={"space-between"} m={1}>
+            <Typography variant="h4">Bank Accounts</Typography>
+            <LoadingButton
+              variant="contained"
+              onClick={getBankList}
+              loading={Loading}
+              disabled={userBankList.length === 5}
+            >
+              Add New Bank Account
+            </LoadingButton>
+          </Stack>
+        </Box>
+
+        <Stack justifyContent={"center"} alignItems={"center"}>
+          <NoBankAccount />
+          <Typography variant="h5">No Bank Account Found</Typography>
+        </Stack>
+        <MotionModal
+          open={open}
+          onClose={handleClose}
+          width={{ xs: "100%", sm: 500 }}
+        >
+          <FormProvider methods={methods} onSubmit={handleSubmit(addBank)}>
+            <Grid
+              rowGap={3}
+              columnGap={2}
+              display="grid"
+              gridTemplateColumns={{
+                xs: "repeat(1, 1fr)",
+              }}
+            >
+              <RHFAutocomplete
+                name="bank"
+                onChange={(event, value) => {
+                  setValue("bankName", value?.bankName);
+                  setValue("ifsc", value?.masterIFSC);
+                }}
+                options={bankList.map((option: any) => option)}
+                getOptionLabel={(option: any) => option.bankName}
+                renderOption={(props, option) => (
+                  <Box
+                    component="li"
+                    sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                    {...props}
+                  >
+                    {option.bankName}
+                  </Box>
+                )}
+                renderInput={(params) => (
+                  <RHFTextField name="bankName" label="Bank Name" {...params} />
+                )}
+              />
+
+              <RHFTextField
+                name="ifsc"
+                label="IFSC code"
+                placeholder="IFSC code"
+                InputLabelProps={{
+                  shrink: watch("ifsc") ? true : false,
+                }}
+              />
+              <RHFTextField
+                type="number"
+                name="accountNumber"
+                label="Account Number"
+                placeholder="Account Number"
+                autoComplete="off"
+              />
+              <RHFTextField
+                type="password"
+                name="confirmAccountNumber"
+                label="Confirm Account Number"
+                onPaste={(e) => e.preventDefault()}
+                placeholder="Confirm Account Number"
+              />
+            </Grid>
+            <Stack flexDirection={"row"} gap={1} justifyContent={"end"} mt={2}>
+              <LoadingButton
+                size="medium"
+                type="submit"
+                variant="contained"
+                loading={addBankLoading}
+                disabled={!isValid}
+              >
+                Submit
+              </LoadingButton>
+              <LoadingButton
+                loading={addBankLoading}
+                size="medium"
+                onClick={handleClose}
+                variant="contained"
+              >
+                Close
+              </LoadingButton>
+            </Stack>
+          </FormProvider>
+        </MotionModal>
+      </>
+    );
+  }
+
   return (
     <>
       <Helmet>

@@ -54,6 +54,7 @@ import FormProvider, {
 } from "src/components/hook-form";
 import useCopyToClipboard from "src/hooks/useCopyToClipboard";
 import useResponsive from "src/hooks/useResponsive";
+import MotionModal from "src/components/animate/MotionModal";
 
 // ----------------------------------------------------------------------
 
@@ -61,6 +62,7 @@ type FormValuesProps = {
   startDate: Date | null;
   endDate: Date | null;
   clientRefId: string;
+  walletId: string;
   walletType: string;
 };
 
@@ -89,10 +91,15 @@ export default function WalletLadger() {
   const [currentPage, setCurrentPage] = useState<any>(1);
   const [sendLoding, setSendLoading] = useState(false);
   const [WalletCount, setWalletCount] = useState(0);
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const agenttableLabels = [
     { id: "date", label: "Date/Time  " },
+    { id: "walletId", label: "Wallet ID" },
     { id: "Remark/TransactionType", label: "Remark/TransactionType" },
+
     { id: "productName", label: "Product " },
     { id: "amount", label: "Transaction Amount" },
     { id: "Charge/Commission", label: "Debit/Credit" },
@@ -102,6 +109,7 @@ export default function WalletLadger() {
   ];
   const distributortableLabels = [
     { id: "date", label: "Date/Time  " },
+    { id: "walletId", label: "Wallet ID" },
     { id: "Remark/TransactionType", label: "Remark/TransactionType" },
     { id: "productName", label: "Product " },
     { id: "amount", label: "Transaction Amount" },
@@ -112,6 +120,7 @@ export default function WalletLadger() {
   ];
   const MDtableLabels = [
     { id: "date", label: "Date/Time " },
+    { id: "walletId", label: "Wallet ID" },
     { id: "Remark/TransactionType", label: "Remark/TransactionType" },
     { id: "productName", label: "Product " },
     { id: "amount", label: "Transaction Amount" },
@@ -138,6 +147,7 @@ export default function WalletLadger() {
     startDate: null,
     endDate: null,
     clientRefId: "",
+    walletId: "",
     walletType: "",
   };
   const methods = useForm<FormValuesProps>({
@@ -160,13 +170,14 @@ export default function WalletLadger() {
   const getTransactional = () => {
     let token = localStorage.getItem("token");
     setSendLoading(true);
-
+    handleClose();
     let body = {
       pageInitData: {
         pageSize: pageSize,
         currentPage: currentPage,
       },
       clientRefId: getValues("clientRefId") || "",
+      walletId: getValues("walletId") || "",
       startDate: fDateFormatForApi(getValues("startDate")),
       endDate: fDateFormatForApi(getValues("endDate")),
     };
@@ -178,12 +189,19 @@ export default function WalletLadger() {
           setWalletCount(Response.data.data.totalNumberOfRecords);
           enqueueSnackbar(Response.data.message);
           setSendLoading(false);
+          reset(defaultValues);
         } else {
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "error" });
           setSendLoading(false);
         }
       }
     });
+  };
+
+  const handleReset = () => {
+    reset(defaultValues);
+    setLadgerData([]);
+    getTransactional();
   };
 
   return (
@@ -191,67 +209,101 @@ export default function WalletLadger() {
       <Helmet>
         <title>Wallet Ladger | {process.env.REACT_APP_COMPANY_NAME}</title>
       </Helmet>
-
+      <Stack flexDirection={"row"} gap={1} mb={1} justifyContent={"right"}>
+        <Button variant="contained" onClick={handleReset}>
+          <Iconify icon="bx:reset" color={"common.white"} mr={1} />
+          Reset
+        </Button>
+        <Button variant="contained" onClick={handleOpen}>
+          <Iconify
+            icon="icon-park-outline:filter"
+            color={"common.white"}
+            mr={1}
+          />{" "}
+          Filter
+        </Button>
+      </Stack>
       <Stack>
-        <FormProvider
-          methods={methods}
-          onSubmit={handleSubmit(getTransactional)}
+        <MotionModal
+          open={open}
+          onClose={handleClose}
+          width={{ xs: "95%", sm: 500 }}
         >
-          <Stack flexDirection={"row"} m={1} gap={1} justifyContent={"start"}>
-            <RHFTextField name="clientRefId" placeholder={"Client Ref Id"} />
-            <Stack flexDirection={"row"} gap={1}>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  label="Start date"
-                  inputFormat="DD/MM/YYYY"
-                  value={watch("startDate")}
-                  maxDate={new Date()}
-                  onChange={(newValue: any) => setValue("startDate", newValue)}
-                  renderInput={(params: any) => (
-                    <TextField
-                      {...params}
-                      size={"small"}
-                      sx={{ minWidth: 100 }}
-                    />
-                  )}
-                />
-                <DatePicker
-                  label="End date"
-                  inputFormat="DD/MM/YYYY"
-                  value={watch("endDate")}
-                  minDate={watch("startDate")}
-                  maxDate={new Date()}
-                  onChange={(newValue: any) => setValue("endDate", newValue)}
-                  renderInput={(params: any) => (
-                    <TextField
-                      {...params}
-                      size={"small"}
-                      sx={{ minWidth: 100 }}
-                    />
-                  )}
-                />
-              </LocalizationProvider>
-            </Stack>
-            <LoadingButton
-              variant="contained"
-              type="submit"
-              loading={isSubmitting}
+          {/* <Box> */}
+          <Stack mb={1}>
+            <FormProvider
+              methods={methods}
+              onSubmit={handleSubmit(getTransactional)}
             >
-              Search
-            </LoadingButton>
-            <LoadingButton
-              variant="contained"
-              onClick={() => {
-                reset(defaultValues);
-                getTransactional();
-                onChangeEndDate(null);
-                onChangeStartDate(null);
-              }}
-            >
-              Clear
-            </LoadingButton>
+              <Stack m={1} gap={1}>
+                <RHFTextField
+                  name="clientRefId"
+                  placeholder={"Client Ref Id"}
+                  fullWidth
+                />
+                <RHFTextField
+                  name="walletId"
+                  placeholder={"Wallet ID"}
+                  fullWidth
+                />
+                <Stack flexDirection={"row"} gap={1}>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      label="Start date"
+                      inputFormat="DD/MM/YYYY"
+                      value={watch("startDate")}
+                      maxDate={new Date()}
+                      onChange={(newValue: any) =>
+                        setValue("startDate", newValue)
+                      }
+                      renderInput={(params: any) => (
+                        <TextField
+                          {...params}
+                          size={"small"}
+                          sx={{ width: 250 }}
+                        />
+                      )}
+                    />
+                    <DatePicker
+                      label="End date"
+                      inputFormat="DD/MM/YYYY"
+                      value={watch("endDate")}
+                      minDate={watch("startDate")}
+                      maxDate={new Date()}
+                      onChange={(newValue: any) =>
+                        setValue("endDate", newValue)
+                      }
+                      renderInput={(params: any) => (
+                        <TextField
+                          {...params}
+                          size={"small"}
+                          sx={{ width: 250 }}
+                        />
+                      )}
+                    />
+                  </LocalizationProvider>
+                </Stack>
+                <Stack flexDirection={"row"} gap={1}>
+                  <LoadingButton variant="contained" onClick={handleClose}>
+                    Cancel
+                  </LoadingButton>
+                  <LoadingButton variant="contained" onClick={handleReset}>
+                    <Iconify icon="bx:reset" color={"common.white"} mr={1} />{" "}
+                    Reset
+                  </LoadingButton>
+                  <LoadingButton
+                    variant="contained"
+                    type="submit"
+                    loading={isSubmitting}
+                  >
+                    Apply
+                  </LoadingButton>
+                </Stack>
+              </Stack>
+            </FormProvider>
           </Stack>
-        </FormProvider>
+          {/* </Box> */}
+        </MotionModal>
 
         {sendLoding ? (
           <ApiDataLoading />
@@ -421,6 +473,11 @@ const LadgerRow = ({ row }: any) => {
               : fDateTime(row?.createdAt)}
           </Typography>
         </StyledTableCell>
+
+        <StyledTableCell>
+          <Typography variant="body2">{row?.walletId}</Typography>
+        </StyledTableCell>
+
         <StyledTableCell>
           {row?.transaction?.productName && (
             <Stack direction="row" gap={0.5}>

@@ -153,9 +153,8 @@ export default function DMT2() {
                 reSendOTP(data.mobileNumber);
                 openEditModal2();
               }
-              enqueueSnackbar(Response.data.message);
             } else {
-              enqueueSnackbar(Response.data.message);
+              enqueueSnackbar(Response.data.message, { variant: "error" });
             }
           } else {
             remitterDispatch({ type: "REMITTER_NOT_FOUND" });
@@ -176,7 +175,7 @@ export default function DMT2() {
           enqueueSnackbar(Response.data.message);
           console.log("==============>>> sendOtp data 200", Response.data.data);
         } else {
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "error" });
           console.log(
             "==============>>> sendOtp message",
             Response.data.message
@@ -206,9 +205,8 @@ export default function DMT2() {
             reSendOTP(val);
             openEditModal2();
           }
-          enqueueSnackbar(Response.data.message);
         } else {
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "error" });
         }
       } else {
         remitterDispatch({ type: "SERVER_ERROR" });
@@ -232,13 +230,9 @@ export default function DMT2() {
         <Helmet>
           <title>Money Transfer | {process.env.REACT_APP_COMPANY_NAME}</title>
         </Helmet>
-        <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-          <Grid
-            container
-            spacing={2}
-            sx={{ maxHeight: window.innerHeight - 250 }}
-          >
-            <Grid item sm={4}>
+        <Grid container spacing={2}>
+          <Grid item sm={4}>
+            <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
               <Box
                 rowGap={2}
                 columnGap={2}
@@ -295,13 +289,13 @@ export default function DMT2() {
                 Back
               </Button>
             </Stack> */}
-              {remitter.remitterfetch && <DMT2RemitterDetail />}
-            </Grid>
-            <Grid item sm={8} sx={{ width: "100%" }}>
-              {remitter.remitterfetch && <DMT2BeneTable />}
-            </Grid>
+            </FormProvider>
+            {remitter.remitterfetch && <DMT2RemitterDetail />}
           </Grid>
-        </FormProvider>
+          <Grid item sm={8} sx={{ width: "100%" }}>
+            {remitter.remitterfetch && <DMT2BeneTable />}
+          </Grid>
+        </Grid>
         <Modal
           open={open1}
           aria-labelledby="modal-modal-title"
@@ -387,7 +381,7 @@ const OtpSubmissionForRegistrantion = ({
               Response.data.data.message
             );
           } else {
-            enqueueSnackbar(Response.data.message);
+            enqueueSnackbar(Response.data.message, { variant: "error" });
             setIsLoading(false);
             console.log(
               "==============>>> register remmiter message",
@@ -422,7 +416,14 @@ const OtpSubmissionForRegistrantion = ({
           <LoadingButton variant="contained" type="submit" loading={isLoading}>
             Confirm
           </LoadingButton>
-          <Button variant="contained" color="warning" onClick={handleClose2}>
+          <Button
+            variant="contained"
+            color="warning"
+            onClick={() => {
+              handleClose2();
+              reset(defaultValues);
+            }}
+          >
             Close
           </Button>
         </Stack>
@@ -485,7 +486,7 @@ const NewRegistration = ({ mobilenumber, handleNewRegistaion }: any) => {
           setIsLoading(false);
           handleNewRegistaion("SUCCESS");
         } else {
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "error" });
           setIsLoading(false);
           handleNewRegistaion("FAIL");
         }

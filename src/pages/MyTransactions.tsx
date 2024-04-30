@@ -24,6 +24,10 @@ import {
   Divider,
   MenuItem,
   Chip,
+  FormHelperText,
+  Link,
+  TableHead,
+  CircularProgress,
 } from "@mui/material";
 import { Helmet } from "react-helmet-async";
 import * as Yup from "yup";
@@ -44,7 +48,11 @@ import Label from "src/components/label/Label";
 import { sentenceCase } from "change-case";
 import { useAuthContext } from "src/auth/useAuthContext";
 import CustomPagination from "src/components/customFunctions/CustomPagination";
-import FormProvider, { RHFSelect, RHFTextField } from "../components/hook-form";
+import FormProvider, {
+  RHFCodes,
+  RHFSelect,
+  RHFTextField,
+} from "../components/hook-form";
 import { LoadingButton } from "@mui/lab";
 import Logo from "src/components/logo/Logo";
 import { fCurrency, fIndianCurrency } from "src/utils/formatNumber";
@@ -60,6 +68,8 @@ import MotionModal from "src/components/animate/MotionModal";
 import OrderIcon from "src/assets/icons/transaction/OrderIcon";
 import CheckStatusIcon from "src/assets/icons/transaction/CheckStatusIcon";
 import RecieptListIcon from "src/assets/icons/transaction/ReceiptListIcon";
+import { convertToWords } from "src/components/customFunctions/ToWords";
+import DownloadIcon from "@mui/icons-material/Download";
 
 // ----------------------------------------------------------------------
 
@@ -74,12 +84,23 @@ type FormValuesProps = {
   endDate: Date | null;
   sDate: Date | null;
   eDate: Date | null;
+  code1: string;
+  code2: string;
+  code3: string;
+  code4: string;
+  code5: string;
+  code6: string;
+  code7: string;
+  code8: string;
+  code9: string;
+  code10: string;
 };
 
 export default function MyTransactions() {
   let token = localStorage.getItem("token");
   const isMobile = useResponsive("up", "sm");
   const isDesktop = useResponsive("up", "sm");
+  const [handleReclaim, setHanfleReClaim] = useState(false);
   const { user } = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
   const [Loading, setLoading] = useState(false);
@@ -93,6 +114,15 @@ export default function MyTransactions() {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const [sumOfTransactions, setSumOfTransactions] = useState({
+    success: 0,
+    failed: 0,
+    pending: 0,
+    in_process: 0,
+    hold: 0,
+    initiated: 0,
+  });
 
   const txnSchema = Yup.object().shape({
     status: Yup.string(),
@@ -180,11 +210,78 @@ export default function MyTransactions() {
         if (Response.status == 200) {
           if (Response.data.code == 200) {
             setFilterdValue(Response.data.data.data);
+
             setTotalCount(Response.data.data.totalNumberOfRecords);
             setCurrentTab("");
+
+            setSumOfTransactions((prevState) => ({
+              ...prevState,
+              success: Response.data.data.data.reduce(
+                (accumulator: number, currentValue: any) => {
+                  if (currentValue.status == "success") {
+                    return accumulator + currentValue.amount;
+                  } else {
+                    return accumulator + 0;
+                  }
+                },
+                0
+              ),
+
+              failed: Response.data.data.data.reduce(
+                (accumulator: number, currentValue: any) => {
+                  if (currentValue.status == "failed") {
+                    return accumulator + currentValue.amount;
+                  } else {
+                    return accumulator + 0;
+                  }
+                },
+                0
+              ),
+              pending: Response.data.data.data.reduce(
+                (accumulator: number, currentValue: any) => {
+                  if (currentValue.status == "pending") {
+                    return accumulator + currentValue.amount;
+                  } else {
+                    return accumulator + 0;
+                  }
+                },
+                0
+              ),
+              in_process: Response.data.data.data.reduce(
+                (accumulator: number, currentValue: any) => {
+                  if (currentValue.status == "in_process") {
+                    return accumulator + currentValue.amount;
+                  } else {
+                    return accumulator + 0;
+                  }
+                },
+                0
+              ),
+              hold: Response.data.data.data.reduce(
+                (accumulator: number, currentValue: any) => {
+                  if (currentValue.status == "hold") {
+                    return accumulator + currentValue.amount;
+                  } else {
+                    return accumulator + 0;
+                  }
+                },
+                0
+              ),
+              initiated: Response.data.data.data.reduce(
+                (accumulator: number, currentValue: any) => {
+                  if (currentValue.status == "initiated") {
+                    return accumulator + currentValue.amount;
+                  } else {
+                    return accumulator + 0;
+                  }
+                },
+                0
+              ),
+            }));
           } else {
-            enqueueSnackbar(Response.data.message);
+            enqueueSnackbar(Response.data.message, { variant: "error" });
           }
+
           setLoading(false);
         } else {
           enqueueSnackbar("Failed", { variant: "error" });
@@ -223,6 +320,70 @@ export default function MyTransactions() {
               setTotalCount(Response.data.data.totalNumberOfRecords);
               handleClose();
               enqueueSnackbar(Response.data.message);
+              setSumOfTransactions((prevState) => ({
+                ...prevState,
+                success: Response.data.data.data.reduce(
+                  (accumulator: number, currentValue: any) => {
+                    if (currentValue.status == "success") {
+                      return accumulator + currentValue.amount;
+                    } else {
+                      return accumulator + 0;
+                    }
+                  },
+                  0
+                ),
+
+                failed: Response.data.data.data.reduce(
+                  (accumulator: number, currentValue: any) => {
+                    if (currentValue.status == "failed") {
+                      return accumulator + currentValue.amount;
+                    } else {
+                      return accumulator + 0;
+                    }
+                  },
+                  0
+                ),
+                pending: Response.data.data.data.reduce(
+                  (accumulator: number, currentValue: any) => {
+                    if (currentValue.status == "pending") {
+                      return accumulator + currentValue.amount;
+                    } else {
+                      return accumulator + 0;
+                    }
+                  },
+                  0
+                ),
+                in_process: Response.data.data.data.reduce(
+                  (accumulator: number, currentValue: any) => {
+                    if (currentValue.status == "in_process") {
+                      return accumulator + currentValue.amount;
+                    } else {
+                      return accumulator + 0;
+                    }
+                  },
+                  0
+                ),
+                hold: Response.data.data.data.reduce(
+                  (accumulator: number, currentValue: any) => {
+                    if (currentValue.status == "hold") {
+                      return accumulator + currentValue.amount;
+                    } else {
+                      return accumulator + 0;
+                    }
+                  },
+                  0
+                ),
+                initiated: Response.data.data.data.reduce(
+                  (accumulator: number, currentValue: any) => {
+                    if (currentValue.status == "initiated") {
+                      return accumulator + currentValue.amount;
+                    } else {
+                      return accumulator + 0;
+                    }
+                  },
+                  0
+                ),
+              }));
             } else {
               enqueueSnackbar(Response.data.message, { variant: "error" });
             }
@@ -430,7 +591,7 @@ export default function MyTransactions() {
         justifyContent={isDesktop ? "space-between" : "end"}
         gap={1}
       >
-        <Stack flexDirection={"row"} m={1} gap={1}>
+        {/* <Stack flexDirection={"row"} m={1} gap={1}>
           {filterdValue.length > 0 &&
             filterdValue.map((item: any) => {
               return (
@@ -443,8 +604,55 @@ export default function MyTransactions() {
                 )
               );
             })}
-        </Stack>
-
+        </Stack> */}
+        <Scrollbar>
+          <Stack flexDirection={"row"} gap={2} sx={{ minWidth: 720 }}>
+            <Label
+              variant="soft"
+              color={"success"}
+              sx={{ textTransform: "capitalize" }}
+            >
+              Success : {fIndianCurrency(sumOfTransactions?.success) || "₹" + 0}
+            </Label>
+            <Label
+              variant="soft"
+              color={"error"}
+              sx={{ textTransform: "capitalize" }}
+            >
+              Failed : {fIndianCurrency(sumOfTransactions?.failed) || "₹" + 0}
+            </Label>
+            <Label
+              variant="soft"
+              color={"warning"}
+              sx={{ textTransform: "capitalize" }}
+            >
+              Pending : {fIndianCurrency(sumOfTransactions?.pending) || "₹" + 0}
+            </Label>
+            <Label
+              variant="soft"
+              color={"info"}
+              sx={{ textTransform: "capitalize" }}
+            >
+              In Process :{" "}
+              {fIndianCurrency(sumOfTransactions?.in_process) || "₹" + 0}
+            </Label>
+            <Label
+              variant="soft"
+              color={"warning"}
+              sx={{ textTransform: "capitalize" }}
+            >
+              Hold : {fIndianCurrency(sumOfTransactions?.hold) || "₹" + 0}
+            </Label>
+            <Label
+              variant="soft"
+              color={"info"}
+              sx={{ textTransform: "capitalize" }}
+            >
+              Initiated :{" "}
+              {fIndianCurrency(sumOfTransactions?.initiated) || "₹" + 0}
+            </Label>
+          </Stack>
+        </Scrollbar>
         <Stack flexDirection={"row"} gap={1}>
           <Button variant="contained" onClick={handleReset}>
             <Iconify icon="bx:reset" color={"common.white"} mr={1} />
@@ -459,6 +667,7 @@ export default function MyTransactions() {
             Filter
           </Button>
         </Stack>
+        {/* </Stack> */}
       </Stack>
       <Stack>
         <MotionModal
@@ -581,8 +790,12 @@ export default function MyTransactions() {
                 >
                   Apply
                 </LoadingButton>
-                <Button variant="contained" onClick={ExportData}>
-                  Export
+                <Button
+                  variant="contained"
+                  onClick={ExportData}
+                  startIcon={<DownloadIcon />}
+                >
+                  Download
                 </Button>
               </Stack>
             </Stack>
@@ -668,12 +881,65 @@ function TransactionRow({ row }: childProps) {
   const [newRow, setNewRow] = useState(row);
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const [textFieldValue, setTextFieldValue] = useState("");
+  const [convienienceFee, setConvienienceFee] = useState(0);
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
-  const handleTextFieldChange = (event: any) => {
-    setTextFieldValue(event.target.value);
+
+  const [resendotpMobile, setResendOtp] = useState(false);
+  const [timer, setTimer] = useState(0);
+
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const DMTSchema = Yup.object().shape({
+    code1: Yup.string().required(),
+    code2: Yup.string().required(),
+    code3: Yup.string().required(),
+    code4: Yup.string().required(),
+    code5: Yup.string().required(),
+    code6: Yup.string().required(),
+    code7: Yup.string().required(),
+    code8: Yup.string().required(),
+    code9: Yup.string().required(),
+    code10: Yup.string().required(),
+  });
+  const defaultValues = {
+    code1: "",
+    code2: "",
+    code3: "",
+    code4: "",
+    code5: "",
+    code6: "",
+    code7: "",
+    code8: "",
+    code9: "",
+    code10: "",
   };
+  const methods = useForm<FormValuesProps>({
+    resolver: yupResolver(DMTSchema),
+    defaultValues,
+  });
+  const {
+    reset,
+    resetField,
+    setError,
+    trigger,
+    getValues,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = methods;
+
+  useEffect(() => {
+    let time = setTimeout(() => {
+      setTimer(timer - 1);
+    }, 1000);
+    if (timer == 0) {
+      clearTimeout(time);
+      // setOtpSend(false);
+      setResendOtp(false);
+    }
+  }, [timer]);
 
   const CheckTransactionStatus = (row: TransactionProps) => {
     setLoading(true);
@@ -686,7 +952,7 @@ function TransactionRow({ row }: childProps) {
         ? `agents/v1/checkStatus/` + rowFor._id
         : rowFor.categoryName.toLowerCase() == "dmt2"
         ? `dmt2/transaction/status/` + rowFor._id
-        : rowFor.categoryName.toLowerCase() == "bbps"
+        : rowFor.categoryName.toLowerCase() == "bill payment"
         ? `bbps/checkStatus/` + rowFor._id
         : rowFor.transactionType == "Wallet To Bank Account Settlement" &&
           `settlement/checkStatus/` + rowFor._id,
@@ -745,6 +1011,71 @@ function TransactionRow({ row }: childProps) {
       border: 0,
     },
   }));
+
+  const getotp = (val: string) => {
+    let token = localStorage.getItem("token");
+    Api("dmt2/transaction/refund/otp/" + val, "GET", "", token).then(
+      (Response: any) => {
+        if (Response.status == 200) {
+          if (Response.data.code == 200) {
+            setTimer(60);
+            setResendOtp(true);
+            enqueueSnackbar(Response.data.message);
+          } else {
+            enqueueSnackbar(Response.data.message, { variant: "error" });
+          }
+        }
+      }
+    );
+  };
+
+  const onSubmit = async (val: string) => {
+    try {
+      let body = {
+        otp:
+          getValues("code1") +
+          getValues("code2") +
+          getValues("code3") +
+          getValues("code4") +
+          getValues("code5") +
+          getValues("code6") +
+          getValues("code7") +
+          getValues("code8") +
+          getValues("code9") +
+          getValues("code10"),
+        transactionId: val,
+      };
+      let token = localStorage.getItem("token");
+      (await trigger([
+        "code1",
+        "code2",
+        "code3",
+        "code4",
+        "code5",
+        "code6",
+        "code7",
+        "code8",
+        "code9",
+        "code10",
+      ])) &&
+        (await Api("dmt2/transaction/refund", "POST", body, token).then(
+          (Response: any) => {
+            if (Response.status == 200) {
+              if (Response.data.code == 200) {
+                setNewRow({ ...newRow, ...Response.data.data });
+                enqueueSnackbar(Response.data.message);
+              } else {
+                enqueueSnackbar(Response.data.message, { variant: "error" });
+              }
+            }
+            handleClose();
+            reset(defaultValues);
+          }
+        ));
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <>
@@ -808,6 +1139,9 @@ function TransactionRow({ row }: childProps) {
                     {newRow?.agentDetails?.id?.lastName}
                   </Typography>
                   <Typography variant="body2">
+                    {newRow?.agentDetails?.id?.company_name}
+                  </Typography>
+                  <Typography variant="body2">
                     {newRow?.agentDetails?.id?.userCode}
                   </Typography>
                 </Stack>
@@ -867,7 +1201,7 @@ function TransactionRow({ row }: childProps) {
         {/* Operator Txn Id */}
         <StyledTableCell>
           <Typography>
-          {newRow?.vendorUtrNumber || "-"}
+            {newRow?.vendorUtrNumber || "-"}
             {newRow?.vendorUtrNumber && (
               <Tooltip title="Copy" placement="top">
                 <IconButton onClick={() => onCopy(newRow?.vendorUtrNumber)}>
@@ -936,9 +1270,7 @@ function TransactionRow({ row }: childProps) {
           <StyledTableCell sx={{ whiteSpace: "nowrap" }}>
             <Typography variant="body2">
               GST :{" "}
-              {fIndianCurrency(
-                (user?.role == "agent" && newRow?.agentDetails?.GST) || "0"
-              )}
+              {fIndianCurrency((user?.role == "agent" && newRow?.GST) || "0")}
             </Typography>
             <Typography variant="body2">
               TDS :{" "}
@@ -974,23 +1306,47 @@ function TransactionRow({ row }: childProps) {
 
         <StyledTableCell>
           <Stack flexDirection={"row"} flexWrap={"nowrap"}>
-            <IconButton>
+            {/* <IconButton>
               <OrderIcon />
-            </IconButton>
+            </IconButton> */}
+            {newRow?.categoryName == "DMT2" && newRow.status == "hold" && (
+              <Button variant="contained" onClick={handleOpen}>
+                Re-Claim
+              </Button>
+            )}
             {newRow.status !== "success" && newRow.status !== "failed" && (
               <Tooltip title="Check Status" placement="top">
-                <IconButton
-                  onClick={() => !loading && CheckTransactionStatus(newRow)}
-                  color="primary"
-                  aria-label="check transaction status"
-                >
-                  <CheckStatusIcon />
-                </IconButton>
+                <div style={{ position: "relative" }}>
+                  <IconButton
+                    disabled={loading}
+                    onClick={() => CheckTransactionStatus(newRow)}
+                    color="primary"
+                    aria-label="check transaction status"
+                  >
+                    {loading ? (
+                      <Grid
+                        style={{
+                          position: "absolute",
+                          top: "50%",
+                          left: "50%",
+                          transform: "translate(-50%, -50%)",
+                        }}
+                      >
+                        <CircularProgress
+                          size={20}
+                          thickness={4}
+                          color="primary"
+                        />
+                      </Grid>
+                    ) : (
+                      <CheckStatusIcon />
+                    )}
+                  </IconButton>
+                </div>
               </Tooltip>
             )}
             {user?.role === "agent" &&
-              (newRow?.categoryName == "MONEY TRANSFER" ||
-                newRow?.categoryName == "DMT2") && (
+              newRow?.transactionType == "Product/Service" && (
                 <Tooltip title="View Receipt" placement="top">
                   <IconButton onClick={openModal}>
                     <RecieptListIcon />
@@ -999,7 +1355,89 @@ function TransactionRow({ row }: childProps) {
               )}
           </Stack>
         </StyledTableCell>
+        <Modal open={open} onClose={handleClose}>
+          <Grid sx={style} p={4}>
+            <FormProvider methods={methods}>
+              <Typography variant="h3" paragraph textAlign={"center"}>
+                Verify OTP
+              </Typography>
+
+              <Scrollbar>
+                <Stack spacing={3}>
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ my: 3 }}
+                    style={{ textAlign: "left", marginBottom: "0" }}
+                  >
+                    Mobile Verification Code &nbsp;
+                  </Typography>
+                  <RHFCodes
+                    keyName="code"
+                    inputs={[
+                      "code1",
+                      "code2",
+                      "code3",
+                      "code4",
+                      "code5",
+                      "code6",
+                      "code7",
+                      "code8",
+                      "code9",
+                      "code10",
+                    ]}
+                  />
+
+                  {(!!errors.code1 ||
+                    !!errors.code2 ||
+                    !!errors.code3 ||
+                    !!errors.code4 ||
+                    !!errors.code5 ||
+                    !!errors.code6 ||
+                    !!errors.code7 ||
+                    !!errors.code8 ||
+                    !!errors.code9 ||
+                    !!errors.code10) && (
+                    <FormHelperText error sx={{ px: 2 }}>
+                      Code is required
+                    </FormHelperText>
+                  )}
+
+                  <Button
+                    onClick={() => getotp(newRow._id)}
+                    size="small"
+                    disabled={resendotpMobile}
+                    sx={{ alignSelf: "end" }}
+                  >
+                    <Typography sx={{ whiteSpace: "nowrap" }} variant="caption">
+                      {" "}
+                      Resend code {timer !== 0 && `(${timer})`}{" "}
+                    </Typography>
+                  </Button>
+                  <Stack flexDirection="row" justifyContent={"center"} gap={2}>
+                    <LoadingButton
+                      variant="contained"
+                      loading={isSubmitting}
+                      sx={{ mt: 3 }}
+                      onClick={() => onSubmit(newRow._id)}
+                    >
+                      Verify
+                    </LoadingButton>
+
+                    <LoadingButton
+                      variant="contained"
+                      sx={{ mt: 3 }}
+                      onClick={handleClose}
+                    >
+                      Close
+                    </LoadingButton>
+                  </Stack>
+                </Stack>
+              </Scrollbar>
+            </FormProvider>
+          </Grid>
+        </Modal>
       </StyledTableRow>
+      {/* //modal for transaction receipt */}
       <Modal open={modalOpen} onClose={closeModal}>
         <Grid sx={style}>
           <Stack flexDirection={"row"} justifyContent={"flex-end"} mx={1}>
@@ -1020,255 +1458,380 @@ function TransactionRow({ row }: childProps) {
               onAfterPrint={closeModal}
             />
           </Stack>
-          <Grid ref={componentRef} sx={{ p: 3 }}>
-            <Grid container spacing={0}>
-              <Grid item xs={12} sm={4}>
-                <Stack flexDirection={"row"} gap={1}>
-                  <Typography variant="caption">Agent Name: </Typography>
-                  <Typography variant="caption">
-                    {`${user?.firstName} ${user?.lastName}`}
+          <Scrollbar>
+            <Grid
+              ref={componentRef}
+              sx={{ p: 3, width: { xs: 800, md: "100%" } }}
+            >
+              <Grid container>
+                <Grid item xs={4}>
+                  <Typography variant="h5" sx={{ lineHeight: 1.1 }}>
+                    {user?.company_name}
                   </Typography>
-                </Stack>
-                <Stack flexDirection={"row"} gap={1}>
-                  <Typography variant="caption">User code: </Typography>
-                  <Typography variant="caption">
-                    {`${user?.userCode}`}
+                  <Typography variant="body2" sx={{ lineHeight: 1.1 }}>
+                    {user?.shopAddress}
                   </Typography>
-                </Stack>
-                <Stack flexDirection={"row"} gap={1}>
-                  <Typography variant="caption"> Mobile Number: </Typography>
-                  <Typography variant="caption">{user?.contact_no}</Typography>
-                </Stack>
-                <Stack flexDirection={"row"} gap={1}>
-                  <Typography variant="caption"> Shop Name: </Typography>
-                  <Typography variant="caption">{user?.shopAddress}</Typography>
-                </Stack>
-                <Stack flexDirection={"row"} gap={1} mt={4}>
-                  <Typography variant="caption">Sender Name : </Typography>
-                  <Typography variant="caption">
-                    {newRow?.moneyTransferSenderId?.remitterFN}
-                    {newRow?.moneyTransferSenderId?.remitterLN}{" "}
+                  <Typography variant="body2" sx={{ lineHeight: 1.1 }}>
+                    {user?.contact_no}
                   </Typography>
-                </Stack>
-                <Stack flexDirection={"row"} gap={1}>
-                  <Typography variant="caption"> Mobile Number: </Typography>
-                  <Typography variant="caption">
-                    {newRow?.moneyTransferSenderId?.remitterMobile}
+                  <Typography variant="body2" sx={{ lineHeight: 1.1 }}>
+                    {user?.email}
                   </Typography>
-                </Stack>
-                <Stack flexDirection={"row"} gap={1}>
-                  <Typography variant="caption"> Service Type: </Typography>
-                  <Typography variant="caption">
-                    {newRow?.productName}
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography variant="h5" textAlign="center">
+                    PAYMENT RECEIPT
                   </Typography>
-                </Stack>
+                </Grid>
+                <Grid
+                  item
+                  xs={4}
+                  display="flex"
+                  justifyContent="end"
+                  alignItems="start"
+                >
+                  <Stack alignItems="end">
+                    <Logo />
+                    <Typography variant="body2">
+                      TRX Date: {fDateTime(newRow?.createdAt)}
+                    </Typography>
+                  </Stack>
+                </Grid>
               </Grid>
-              <Grid item xs={12} sm={4}>
-                <Typography variant="h6">PAYMENT RECEIPT</Typography>
+
+              <Grid container>
+                <Grid
+                  item
+                  xs={6}
+                  display="flex"
+                  flexDirection="column"
+                  justifyContent="end"
+                >
+                  {(newRow?.categoryName?.toLowerCase() == "money transfer" ||
+                    newRow?.categoryName?.toLowerCase() == "dmt1" ||
+                    newRow?.categoryName?.toLowerCase() == "dmt2") && (
+                    <React.Fragment>
+                      <Typography variant="subtitle1">
+                        Sender Details
+                      </Typography>
+                      <Typography variant="body2" sx={{ lineHeight: 1.2 }}>
+                        Sender Name :{" "}
+                        <span style={{ fontWeight: 500 }}>
+                          {" "}
+                          {newRow?.moneyTransferSenderId?.remitterFN}
+                          {newRow?.moneyTransferSenderId?.remitterLN}{" "}
+                        </span>
+                      </Typography>
+                      <Typography variant="body2" sx={{ lineHeight: 1.2 }}>
+                        Mobile Number :{" "}
+                        <span style={{ fontWeight: 500 }}>
+                          {newRow?.moneyTransferSenderId?.remitterMobile}
+                        </span>
+                      </Typography>
+                    </React.Fragment>
+                  )}
+                  {newRow?.categoryName?.toLowerCase() == "bill payment" && (
+                    <React.Fragment>
+                      <Typography variant="body2" sx={{ lineHeight: 1.2 }}>
+                        Payer Mobile Number :{" "}
+                        <span style={{ fontWeight: 500 }}>
+                          {" "}
+                          {newRow?.mobileNumber}
+                        </span>
+                      </Typography>
+                    </React.Fragment>
+                  )}
+                  {newRow?.categoryName?.toLowerCase() == "aeps" && (
+                    <React.Fragment>
+                      <Typography variant="body2" sx={{ lineHeight: 1.2 }}>
+                        Withdrawal Customer Mobile Number :{" "}
+                        <span style={{ fontWeight: 500 }}>
+                          {" "}
+                          {newRow?.mobileNumber}
+                        </span>
+                      </Typography>
+                    </React.Fragment>
+                  )}
+                </Grid>
+
+                <Grid
+                  item
+                  xs={6}
+                  display="flex"
+                  justifyContent="end"
+                  alignItems="start"
+                >
+                  <Stack alignItems="end">
+                    {(newRow?.categoryName?.toLowerCase() == "money transfer" ||
+                      newRow?.categoryName?.toLowerCase() == "dmt1" ||
+                      newRow?.categoryName?.toLowerCase() == "dmt2") && (
+                      <React.Fragment>
+                        <Typography variant="subtitle1">
+                          Benificary Details
+                        </Typography>
+
+                        <Typography variant="body2" sx={{ lineHeight: 1.2 }}>
+                          {" "}
+                          Account Holder Name:{" "}
+                          <span style={{ fontWeight: 500 }}>
+                            {newRow?.moneyTransferBeneficiaryDetails?.beneName}
+                          </span>
+                        </Typography>
+                        <Typography variant="body2" sx={{ lineHeight: 1.2 }}>
+                          {" "}
+                          Bank Name:{" "}
+                          <span style={{ fontWeight: 500 }}>
+                            {newRow?.moneyTransferBeneficiaryDetails?.bankName}
+                          </span>
+                        </Typography>
+                        <Typography variant="body2" sx={{ lineHeight: 1.2 }}>
+                          {" "}
+                          Account Number:{" "}
+                          <span style={{ fontWeight: 500 }}>
+                            {
+                              newRow?.moneyTransferBeneficiaryDetails
+                                ?.accountNumber
+                            }
+                          </span>
+                        </Typography>
+                        <Typography variant="body2" sx={{ lineHeight: 1.2 }}>
+                          {" "}
+                          IFSC:{" "}
+                          <span style={{ fontWeight: 500 }}>
+                            {newRow?.moneyTransferBeneficiaryDetails?.ifsc}
+                          </span>
+                        </Typography>
+                      </React.Fragment>
+                    )}
+                    {newRow?.categoryName?.toLowerCase() == "bill payment" && (
+                      <React.Fragment>
+                        <Typography variant="subtitle1">
+                          Operator Detail
+                        </Typography>
+                        <Typography variant="body2" sx={{ lineHeight: 1.2 }}>
+                          Operator Name :{" "}
+                          <span style={{ fontWeight: 500 }}>
+                            {" "}
+                            {newRow?.operator?.key1}
+                          </span>
+                        </Typography>
+                        <Typography variant="body2" sx={{ lineHeight: 1.2 }}>
+                          CA Number :{" "}
+                          <span style={{ fontWeight: 500 }}>
+                            {" "}
+                            {newRow?.operator?.key2}
+                          </span>
+                        </Typography>
+                      </React.Fragment>
+                    )}
+                    {newRow?.categoryName?.toLowerCase() == "aeps" && (
+                      <React.Fragment>
+                        <Typography variant="subtitle1">
+                          Customer Detail
+                        </Typography>
+                        <Typography variant="body2" sx={{ lineHeight: 1.2 }}>
+                          Bank Name :{" "}
+                          <span style={{ fontWeight: 500 }}>
+                            {" "}
+                            {newRow?.operator?.key1}
+                          </span>
+                        </Typography>
+                        <Typography variant="body2" sx={{ lineHeight: 1.2 }}>
+                          Account Number :{" "}
+                          <span style={{ fontWeight: 500 }}>
+                            {" "}
+                            {newRow?.operator?.key2}
+                          </span>
+                        </Typography>
+                      </React.Fragment>
+                    )}
+                    {newRow?.categoryName?.toLowerCase() == "recharges" && (
+                      <React.Fragment>
+                        <Typography variant="subtitle1">
+                          Operator Detail
+                        </Typography>
+                        <Typography variant="body2" sx={{ lineHeight: 1.2 }}>
+                          Operator :{" "}
+                          <span style={{ fontWeight: 500 }}>
+                            {" "}
+                            {newRow?.operator?.key1}
+                          </span>
+                        </Typography>
+                        <Typography variant="body2" sx={{ lineHeight: 1.2 }}>
+                          Mobile Number :{" "}
+                          <span style={{ fontWeight: 500 }}>
+                            {" "}
+                            {newRow?.operator?.key2}
+                          </span>
+                        </Typography>
+                      </React.Fragment>
+                    )}
+                  </Stack>
+                </Grid>
               </Grid>
-              <Grid item xs={10} sm={4}>
-                <Logo />
+
+              <TableContainer sx={{ border: "1px solid #c5c4c4" }}>
+                <Table
+                  size="small"
+                  sx={{
+                    borderCollapse: "collapse",
+                  }}
+                >
+                  <TableHead>
+                    <TableRow>
+                      <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
+                        Transaction Id
+                      </TableCell>
+                      {(newRow?.categoryName?.toLowerCase() ==
+                        "money transfer" ||
+                        newRow?.categoryName?.toLowerCase() == "dmt1" ||
+                        newRow?.categoryName?.toLowerCase() == "dmt2") && (
+                        <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
+                          Mode
+                        </TableCell>
+                      )}
+                      <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
+                        Service
+                      </TableCell>
+                      <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
+                        UTR
+                      </TableCell>
+                      <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
+                        Status
+                      </TableCell>
+                      {/* <TableCell>Amount</TableCell> */}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    <TableRow
+                      sx={{
+                        borderTop: "1px solid #c5c4c4",
+                        borderCollapse: "collapse",
+                      }}
+                    >
+                      <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
+                        {newRow?.clientRefId}
+                      </TableCell>
+                      {(newRow?.categoryName?.toLowerCase() ==
+                        "money transfer" ||
+                        newRow?.categoryName?.toLowerCase() == "dmt1" ||
+                        newRow?.categoryName?.toLowerCase() == "dmt2") && (
+                        <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
+                          {newRow?.modeOfPayment}
+                        </TableCell>
+                      )}
+                      <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
+                        {newRow?.productName}
+                      </TableCell>
+                      <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
+                        {newRow?.vendorUtrNumber}
+                      </TableCell>
+                      <TableCell sx={{ borderRight: "1px solid #c5c4c4" }}>
+                        {newRow?.status}
+                      </TableCell>
+                      {/* <TableCell>{fIndianCurrency(newRow?.amount)}</TableCell> */}
+                    </TableRow>
+                  </TableBody>
+                </Table>
+                <Stack
+                  sx={{
+                    borderTop: "1px solid #c5c4c4",
+                    px: 2,
+                    py: 0.5,
+                    flexDirection: "row",
+                    gap: 2,
+                  }}
+                >
+                  <Typography>Transaction Amount : </Typography>
+                  <Typography> {fIndianCurrency(newRow?.amount)}</Typography>
+                </Stack>
+                <Stack
+                  sx={{
+                    borderTop: "1px solid #c5c4c4",
+                    px: 2,
+                    flexDirection: "row",
+                    gap: 2,
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography>Convienience Fee : </Typography>
+                  <Stack flexDirection="row">
+                    ₹
+                    <TextField
+                      placeholder="Fee"
+                      variant="standard"
+                      size="small"
+                      value={convienienceFee}
+                      onChange={(e: any) => setConvienienceFee(e.target.value)}
+                    />
+                  </Stack>
+                  <Typography variant="caption" sx={{ lineHeight: 1.2 }}>
+                    {" "}
+                    The convienience fee charged is the sole responsibility of
+                    the Agent. {process.env.REACT_APP_COMPANY_NAME} assumes no
+                    libiility for the imposition of this fee and any associated
+                    consequences or issues arising from its application rest
+                    entirely with the Agent .
+                  </Typography>
+                </Stack>
+                <Stack
+                  sx={{
+                    borderTop: "1px solid #c5c4c4",
+                    px: 2,
+                    py: 0.5,
+                    flexDirection: "row",
+                    gap: 2,
+                  }}
+                >
+                  <Typography>Total Amount : </Typography>
+                  <Typography>
+                    {" "}
+                    {fIndianCurrency(
+                      Number(newRow?.amount) + Number(convienienceFee)
+                    )}
+                  </Typography>
+                  <Typography>
+                    {convertToWords(
+                      Number(newRow?.amount) + Number(convienienceFee)
+                    )}
+                  </Typography>
+                </Stack>
+              </TableContainer>
+              <Typography sx={{ lineHeight: 1, fontSize: 10 }}>
+                NOTE :- This transaction receipt is generated automatically and
+                dose not require a physical signature. It is not a tax invoice
+                but serves as a record of your transaction with{" "}
+                {process.env.REACT_APP_COMPANY_NAME}. Please retain it for your
+                refrence, and if you have any queries, fell free to contact our
+                Customer Support team.
+              </Typography>
+              <Stack
+                flexDirection="row"
+                sx={{
+                  color: "white",
+                  bgcolor: (theme) => theme.palette.primary.light,
+                }}
+                justifyContent="space-between"
+                mt={1}
+              >
                 <Typography variant="body2">
-                  TRX Date: {fDateTime(newRow?.createdAt)}
+                  Helpline Numbers +{process.env.REACT_APP_COMPANY_MOBILE} ,{" "}
+                  {process.env.REACT_APP_COMPANY_MOBILEOTHER}
                 </Typography>
-                <Stack>
-                  <Typography variant="subtitle1">
-                    Benificary Details
-                  </Typography>
+                <Typography variant="body2">
+                  Timings : 08:00AM to 10:00 PM (Mon-Sun)
+                </Typography>
+                <Typography variant="body2">
+                  Email : {process.env.REACT_APP_COMPANY_EMAIL}
+                </Typography>
+              </Stack>
 
-                  <Stack flexDirection={"row"}>
-                    <Typography variant="body2">
-                      {" "}
-                      Account Holder Name:{" "}
-                    </Typography>
-                    <Typography variant="body2">
-                      {newRow?.moneyTransferBeneficiaryDetails?.beneName}
-                    </Typography>
-                  </Stack>
-                  <Stack flexDirection={"row"} gap={1}>
-                    <Typography variant="body2"> Bank Name: </Typography>
-                    <Typography variant="body2">
-                      {newRow?.moneyTransferBeneficiaryDetails?.bankName}
-                    </Typography>
-                  </Stack>
-                  <Stack flexDirection={"row"} gap={1}>
-                    <Typography variant="body2"> Account Number: </Typography>
-                    <Typography variant="body2">
-                      {newRow?.moneyTransferBeneficiaryDetails?.accountNumber}
-                    </Typography>
-                  </Stack>
-                  <Stack flexDirection={"row"} gap={1}>
-                    <Typography variant="body2"> IFSC : </Typography>
-                    <Typography variant="body2">
-                      {newRow?.moneyTransferBeneficiaryDetails?.ifsc}
-                    </Typography>
-                  </Stack>
-                </Stack>
-              </Grid>
+              <Divider
+                variant="fullWidth"
+                style={{ borderWidth: "2px", borderStyle: "dashed " }}
+              />
             </Grid>
-            <Grid>
-              <Scrollbar sx={{ maxHeight: 600 }}>
-                <Stack sx={{ pr: 2 }}>
-                  <TableContainer
-                    sx={{ overflow: "unset", border: "solid 1px" }}
-                  >
-                    <Table>
-                      <TableRow
-                        sx={{
-                          borderBottom: (theme) =>
-                            `solid 1.5px ${theme.palette.divider}`,
-                        }}
-                      >
-                        <StyledTableCell align="center">
-                          <Typography variant="subtitle2">
-                            Transaction Id
-                          </Typography>
-                        </StyledTableCell>
-                        <StyledTableCell align="center">
-                          <Typography variant="subtitle2">Service</Typography>
-                        </StyledTableCell>
-                        <StyledTableCell align="center">
-                          <Typography variant="subtitle2">UTR</Typography>
-                        </StyledTableCell>
-                        <StyledTableCell align="center">
-                          <Typography variant="subtitle2">Status</Typography>
-                        </StyledTableCell>
-                        <StyledTableCell align="center">
-                          <Typography variant="subtitle2">Amount</Typography>
-                        </StyledTableCell>
-                      </TableRow>
-
-                      <TableBody>
-                        <TableRow
-                          sx={{
-                            borderBottom: (theme) =>
-                              `solid 1.5px ${theme.palette.divider}`,
-                          }}
-                        >
-                          <TableCell align="left">
-                            <Typography variant="body2" noWrap>
-                              {newRow?.clientRefId}
-                            </Typography>
-                          </TableCell>
-                          <TableCell align="center">
-                            <Typography variant="body2" noWrap>
-                              {newRow?.productName}
-                            </Typography>
-                          </TableCell>
-
-                          <TableCell align="center">
-                            <Typography variant="body2" noWrap>
-                              {newRow?.vendorUtrNumber || "-"}
-                            </Typography>
-                          </TableCell>
-
-                          <TableCell align="center">
-                            <Label
-                              variant="soft"
-                              color={
-                                (newRow.status === "failed" && "error") ||
-                                ((newRow.status === "pending" ||
-                                  newRow.status === "in_process") &&
-                                  "warning") ||
-                                "success"
-                              }
-                              sx={{ textTransform: "capitalize" }}
-                            >
-                              {newRow.status ? sentenceCase(newRow.status) : ""}
-                            </Label>
-                          </TableCell>
-                          <TableCell align="center">
-                            <Typography variant="body2" noWrap>
-                              Rs.{fCurrency(newRow?.amount)}
-                            </Typography>
-                          </TableCell>
-                        </TableRow>
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                  <Stack>
-                    <Typography
-                      align="left"
-                      variant="body2"
-                      whiteSpace={"nowrap"}
-                    >
-                      Transaction Amount : {" " + fCurrency(newRow.amount)}
-                    </Typography>
-                    <Typography
-                      align="left"
-                      variant="body2"
-                      whiteSpace={"nowrap"}
-                    >
-                      Agent Convienience Fee:{" "}
-                      <TextField
-                        variant="standard"
-                        size="small"
-                        value={textFieldValue}
-                        onChange={handleTextFieldChange}
-                      />
-                    </Typography>
-                    <Grid item xs={12} md={9}>
-                      <Typography variant="caption">
-                        The convienience fee charged is the sole responsibility
-                        of the Agent. K1 assumes no libiility for the imposition
-                        of this fee and any associated consequences or issues
-                        arising from its application rest entirely with the
-                        Agent{" "}
-                      </Typography>
-                    </Grid>
-                    <Typography
-                      align="left"
-                      variant="body1"
-                      whiteSpace={"nowrap"}
-                    >
-                      Total Amount:{`${+textFieldValue + +newRow.amount}`}
-                    </Typography>
-                  </Stack>
-                  <Typography variant="subtitle2">NOTES</Typography>
-                  <Grid container>
-                    <Grid item xs={12} md={9}>
-                      <Typography variant="caption">
-                        This transaction receipt is generated automatically and
-                        dose not require a physical signature. It is not a tax
-                        invoice but serves as a record of your transaction with
-                        Tramo. Please retain it for your refrence, and if you
-                        have any queries, fell free to contact our Customer
-                        Support team.
-                      </Typography>
-                      <Typography>
-                        <Stack
-                          flexDirection={{ xs: "column", sm: "row" }}
-                          sx={{
-                            color: "white",
-                            bgcolor: "darkblue",
-                            pt: 1,
-                            pb: 1,
-                          }}
-                          justifyContent="space-between"
-                        >
-                          <Typography variant="caption">
-                            Helpline Numbers +
-                            {process.env.REACT_APP_COMPANY_MOBILE} ,{" "}
-                            {process.env.REACT_APP_COMPANY_MOBILEOTHER}
-                          </Typography>
-                          <Typography variant="caption">
-                            Timings : 08:00AM to 10:00 PM (Mon-Sun)
-                          </Typography>
-                          <Typography variant="caption">
-                            {process.env.REACT_APP_COMPANY_EMAIL}
-                          </Typography>
-                        </Stack>
-                      </Typography>
-                    </Grid>
-                  </Grid>
-                </Stack>
-              </Scrollbar>
-            </Grid>
-            <Divider
-              variant="fullWidth"
-              style={{ borderWidth: "2px", borderStyle: "dashed " }}
-            />
-          </Grid>
+          </Scrollbar>
         </Grid>
       </Modal>
     </>

@@ -43,6 +43,8 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import MotionModal from "src/components/animate/MotionModal";
 import FundFlow from "../FundManagement/FundFlow";
+import DirectFundTransfer from "./DirectFundTransfer";
+import Iconify from "src/components/iconify";
 
 // ----------------------------------------------------------------------
 
@@ -70,11 +72,15 @@ type RowProps = {
   createdAt: string;
   selfie: any;
   AEPS_wallet_amount: any;
+  company_name: string;
 };
+
+export let handleClosefunTransDist: any;
 
 export default function AllDistributor() {
   const [appdata, setAppdata] = useState([]);
   const isMobile = useResponsive("up", "sm");
+  const [tempData, setTempData] = useState<any>([]);
   const [open, setModalEdit] = React.useState(false);
   const [pageSize, setPageSize] = useState<any>(25);
   const [currentPage, setCurrentPage] = useState<any>(1);
@@ -85,33 +91,60 @@ export default function AllDistributor() {
   const [selectedRow, setSelectedRow] = useState<RowProps | null>(null);
   const [openFundtrans, setFundTrans] = React.useState(false);
   const [SelectAgent, setSelectAgent] = useState([]);
-  console.log("========== SelectAgent==============", SelectAgent);
-
+  const [userList, setUserList] = useState([]);
+  const [open1, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose1 = () => setOpen(false);
+  const handleClose = () => setModalEdit(false);
+  handleClosefunTransDist = () => setFundTrans(false);
   type FormValuesProps = {
     status: string;
     shopName: string;
     mobile: string;
     userCode: string;
+    usersearchby: string;
+    User: string;
   };
 
   const txnSchema = Yup.object().shape({
     status: Yup.string(),
     clientRefId: Yup.string(),
+    usersearchby: Yup.string().required("Search by is required field"),
+    searchval: Yup.string()
+      .when("usersearchby", {
+        is: "userCode",
+        then: Yup.string().required("User Code is required field"),
+      })
+      .when("usersearchby", {
+        is: "firstName",
+        then: Yup.string().required("First Name is required field"),
+      })
+      .when("usersearchby", {
+        is: "contact_no",
+        then: Yup.string().required("Contact Number is required field"),
+      })
+      .when("usersearchby", {
+        is: "email",
+        then: Yup.string().required("Email is required field"),
+      }),
   });
+
   const defaultValues = {
     category: "",
     status: "",
     userCode: "",
     mobile: "",
     shopName: "",
+    usersearchby: "",
+    User: "",
   };
-
   const methods = useForm<FormValuesProps>({
     resolver: yupResolver(txnSchema),
     defaultValues,
   });
 
   const {
+    resetField,
     reset,
     getValues,
     setValue,
@@ -119,6 +152,15 @@ export default function AllDistributor() {
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
+
+
+  useEffect(() => {
+    if (getValues("User")?.length > 2) searchFromUser(getValues("User"));
+  }, [watch("User")]);
+
+  useEffect(()=> {
+    resetField('User')
+  },[watch("usersearchby")])
 
   const openEditModal = (val: any) => {
     setSelectedRow(val);
@@ -130,10 +172,6 @@ export default function AllDistributor() {
         email: "",
         mobile: "",
       },
-    };
-
-    const FundTransfer = (val: any) => {
-      setFundTrans(true);
     };
 
     let token = localStorage.getItem("token");
@@ -156,9 +194,6 @@ export default function AllDistributor() {
     });
   };
 
-  const handleClose = () => setModalEdit(false);
-  const handleClosefunTrans = () => setFundTrans(false);
-
   const tableLabels: any = [
     { id: "product", label: "Name" },
     { id: "due", label: "User Code" },
@@ -166,8 +201,8 @@ export default function AllDistributor() {
     { id: "main_wallet_amount", label: "Current Balance" },
     { id: "maxComm", label: "Member Since" },
     { id: "schemeId", label: "Scheme Id" },
-    { id: "status", label: "Status" },
-    { id: "fundtrans", label: "Fund Transfer" },
+    { id: "status", label: "Balance"},
+    { id: "fundtrans", label: "Fund Transfer", align: "center" },
   ];
 
   const style = {
@@ -225,42 +260,155 @@ export default function AllDistributor() {
     });
   };
 
+  const searchFromUser = (val: string) => {
+    let body = {
+      searchBy: watch("usersearchby"),
+      searchInput: val,
+      finalStatus: "approved",
+    };
+    {
+      Api(`admin/search_user`, "POST", body, "").then((Response: any) => {
+        console.log("======get_CategoryList==response=====>" + Response);
+        if (Response.status == 200) {
+          if (Response.data.code == 200) {
+            setUserList(Response.data.data);
+          } else {
+            console.log("======search_usert=======>" + Response);
+          }
+        }
+      });
+    }
+  };
+
+  const handleReset = (val: any) => {
+    reset(defaultValues);
+    setSelectedRow(val);
+    allDistributor();
+  };
+
   const FundTransfer = (val: any) => {
     setFundTrans(true);
+    setSelectedRow(val);
   };
   return (
     <>
       <Stack>
-        <FormProvider methods={methods} onSubmit={handleSubmit(allDistributor)}>
-          <Stack flexDirection={"row"} justifyContent={"first"}>
-            <Stack
-              direction={{ xs: "column", sm: "row" }}
-              spacing={2}
-              style={{ padding: "0 25px", marginBottom: "10px" }}
+      <Stack flexDirection={"row"} gap={1} justifyContent={"right"} mb={1}>
+          <Button variant="contained" onClick={handleReset}>
+            <Iconify icon="bx:reset" color={"common.white"} mr={1} />
+            Reset
+          </Button>
+          <Button variant="contained" onClick={handleOpen}>
+            <Iconify
+              icon="icon-park-outline:filter"
+              color={"common.white"}
+              mr={1}
+            />{" "}
+            Filter
+          </Button>
+        </Stack>
+        <MotionModal
+          open={open1}
+          onClose={handleClose1}
+          width={{ xs: "95%", sm: 500 }}
+        >
+          {/* <Box> */}
+          <FormProvider methods={methods} onSubmit={handleSubmit(allDistributor)}>
+            <RHFSelect
+              fullWidth
+              name="usersearchby"
+              label="User Search By"
+              size="small"
+              placeholder="User Search By"
+              // InputLabelProps={{ shrink: true }}
+              SelectProps={{
+                native: false,
+                sx: { textTransform: "capitalize",mb:"10px" },
+              }}
             >
-              <RHFTextField name="shopName" label="Shop Name" />
-              <RHFTextField name="mobile" label="Mobile" />
-              <RHFTextField name="userCode" label="User Code" />
-
-              <LoadingButton
-                variant="contained"
-                type="submit"
-                loading={isSubmitting}
-              >
-                Search
-              </LoadingButton>
-              <LoadingButton
-                variant="contained"
-                onClick={() => {
-                  reset(defaultValues);
-                  allDistributor();
-                }}
-              >
-                Clear
-              </LoadingButton>
+              <MenuItem value={"userCode"}>User Code</MenuItem>
+              <MenuItem value={"firstName"}>First Name</MenuItem>
+              <MenuItem value={"shopName"}>Shop Name</MenuItem>
+              <MenuItem value={"contact_no"}>Contact Number</MenuItem>
+              <MenuItem value={"email"}>Email</MenuItem>
+            </RHFSelect>
+            {watch("usersearchby") && (
+              <Stack sx={{ position: "relative", minWidth: "200px" }}>
+                <RHFTextField
+                  fullWidth
+                  name="User"
+                  placeholder={"Type here..."}
+                />
+                <Stack flexDirection={"row"} mt={5}>
+                <LoadingButton
+                  variant="contained"
+                  type="submit"
+                  loading={isSubmitting}
+                  onClick={()=> {
+                   setAppdata(tempData) 
+                   handleClose1()
+                   reset(defaultValues)
+                  }}
+                >
+                  Search
+                </LoadingButton>
+                <LoadingButton
+              variant="contained"
+              onClick={() => {
+                reset(defaultValues);
+                allDistributor();
+              }}
+            >
+              Clear
+            </LoadingButton>
             </Stack>
-          </Stack>
-        </FormProvider>
+                <Stack
+                  sx={{
+                    position: "absolute",
+                    top: 40,
+                    zIndex: 9,
+                    width: "100%",
+                    bgcolor: "white",
+                    border: "1px solid grey",
+                    borderRadius: 2,
+                  }}
+                >
+                  <Scrollbar sx={{ maxHeight: 400 }}>
+                    {userList.length > 0 &&
+                      userList.map((item: any) => {
+                        return (
+                          <Typography
+                            sx={{
+                              p: 1,
+                              cursor: "pointer",
+                              color: "grey",
+                              "&:hover": { color: "black" },
+                            }}
+                            onClick={() => {
+                              setUserList([]);
+                              setTempData( [{...item}])
+                              setValue(
+                                "User",
+                                `${item.firstName} ${item.lastName}`
+                              );
+                            }}
+                            variant="subtitle2"
+                          >
+                            {" "}
+                            {item.userCode
+                              ? `${item.firstName} ${item.lastName} (${item.userCode})`
+                              : `${item.firstName} ${item.lastName}`}
+                          </Typography>
+                        );
+                      })}
+                  </Scrollbar>
+                </Stack>
+              </Stack>
+            )}
+          </FormProvider>
+
+          {/* </Box> */}
+        </MotionModal>
       </Stack>
       <Card>
         <TableContainer>
@@ -350,10 +498,10 @@ export default function AllDistributor() {
 
       <MotionModal
         open={openFundtrans}
-        onClose={handleClosefunTrans}
+        onClose={handleClosefunTransDist}
         width={{ xs: "95%", sm: 500 }}
       >
-        <FundFlow />
+        <DirectFundTransfer props={selectedRow} />
       </MotionModal>
     </>
   );
@@ -387,6 +535,9 @@ function EcommerceBestSalesmanRow({
                 {row.email}
               </Typography>
               <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                {row?.company_name ? row?.company_name : " No Shop Name "}
+              </Typography>
+              <Typography variant="body2" sx={{ color: "text.secondary" }}>
                 {new Date(row.createdAt).toLocaleString()}
               </Typography>
             </Box>
@@ -404,13 +555,16 @@ function EcommerceBestSalesmanRow({
         <TableCell sx={{ color: "#0D571C" }}>
           <Typography>
             {" "}
-            Rs.{fIndianCurrency(row?.main_wallet_amount || "0")}
+            {fIndianCurrency(row?.main_wallet_amount || "0")}
           </Typography>
         </TableCell>
         <TableCell>{fDateTime(row.createdAt)}</TableCell>
         <TableCell>{row.schemeId}</TableCell>
-        <TableCell align="right">{row.verificationStatus}</TableCell>
-        <TableCell align="right">
+        <TableCell align="left">
+          <Typography>Main Balance : {fIndianCurrency(row?.main_wallet_amount || "0")}</Typography>
+          <Typography>AEPS Balance : {fIndianCurrency(row?.AEPS_wallet_amount  || "0" )}</Typography>
+        </TableCell>
+        <TableCell align="left">
           <Button variant="contained" onClick={() => FundTransfer(row)}>
             Fund Transfer
           </Button>

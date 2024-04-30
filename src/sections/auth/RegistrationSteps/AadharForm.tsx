@@ -161,7 +161,8 @@ export default function AadharForm(props: any) {
               enqueueSnackbar(
                 Response.data.message
                   ? Response.data.message
-                  : Response.data.err.message
+                  : Response.data.err.message,
+                { variant: "error" }
               );
             }
           }
@@ -200,11 +201,12 @@ export default function AadharForm(props: any) {
             } else if (Response.data.code == 500) {
               otpReset(defaultValues2);
 
-              enqueueSnackbar(Response.data.err.message);
+              enqueueSnackbar(Response.data.err.message, { variant: "error" });
             } else {
-              enqueueSnackbar(Response.data.err.message);
+              enqueueSnackbar(Response.data.err.message, { variant: "error" });
             }
           } else {
+            enqueueSnackbar("Failed", { variant: "error" });
           }
         }
       );
@@ -232,7 +234,7 @@ export default function AadharForm(props: any) {
           if (Response.data.code == 200) {
             enqueueSnackbar(Response.data.message);
           } else {
-            enqueueSnackbar(Response.data.message);
+            enqueueSnackbar(Response.data.message, { variant: "error" });
           }
         }
       }
@@ -684,7 +686,7 @@ function PanCard(props: any) {
           setLoading(false);
         } else {
           setLoading(false);
-          enqueueSnackbar(Response.data.err.message);
+          enqueueSnackbar(Response.data.err.message, { variant: "error" });
           setPanAttempt(Response.data.remaining_Attempts);
         }
       } else {
@@ -803,10 +805,7 @@ function PanCard(props: any) {
           sx={{
             width: "40%",
             marginTop: "50px",
-            // height: '200px',
-            // backgroundSize: 'cover',
-            // boxShadow: 10,
-            // border: '20px  #F0F9FB',
+
             marginLeft: "350px",
           }}
         />

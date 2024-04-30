@@ -28,6 +28,7 @@ import { useSnackbar } from "../../../components/snackbar";
 import { Api } from "src/webservices";
 import FormProvider, {
   RHFCodes,
+  RHFSecureCodes,
   RHFSelect,
   RHFTextField,
 } from "../../../components/hook-form";
@@ -53,6 +54,7 @@ type FormValuesProps = {
 };
 
 export default function DTH() {
+  const { initialize } = useAuthContext();
   const subCategoryContext: any = useContext(SubCategoryContext);
   const categoryContext: any = useContext(CategoryContext);
 
@@ -98,42 +100,21 @@ export default function DTH() {
     handleSubmit,
     formState: { errors, isSubmitting, isSubmitSuccessful },
   } = methods;
-
-  const TABS = [
-    {
-      value: "3G/4G",
-      label: "3G/4G",
-    },
-    {
-      value: "COMBO",
-      label: "COMBO",
-    },
-    {
-      value: "Romaing",
-      label: "Romaing",
-    },
-    {
-      value: "TOPUP",
-      label: "TOPUP",
-    },
-  ];
-
-  const circleList = [
-    { id: 1, name: "Delhi NCR" },
-    { id: 2, name: "Uttar Pradesh" },
-    { id: 3, name: "UP West and Uttaranchal" },
-  ];
-
   useEffect(() => {
-    getProductFilter();
-  }, []);
+    subCategoryContext?.subcategoryId &&
+      subCategoryContext?.categoryId &&
+      getProductFilter(
+        subCategoryContext?.categoryId,
+        subCategoryContext?.subcategoryId
+      );
+  }, [subCategoryContext?.subcategoryId]);
 
-  const getProductFilter = () => {
+  const getProductFilter = (cateId: string, subCateId: string) => {
     let token = localStorage.getItem("token");
     let body = {
-      category: categoryContext._id,
-      subcategory: subCategoryContext,
-      productFor: " ",
+      category: cateId,
+      subcategory: subCateId,
+      productFor: "",
     };
     Api("product/product_Filter", "POST", body, token).then((Response: any) => {
       console.log("==========>>product Filter", Response);
@@ -252,7 +233,7 @@ export default function DTH() {
 }
 
 function VerifyNPIN({ data, handleClose }: any) {
-  const { user, UpdateUserDetail } = useAuthContext();
+  const { user, UpdateUserDetail, initialize } = useAuthContext();
   const { DTHNumber, amount, circle, operatorid, productName } = data;
   const { enqueueSnackbar } = useSnackbar();
   const [confirm, setConfirm] = React.useState(false);
@@ -318,12 +299,9 @@ function VerifyNPIN({ data, handleClose }: any) {
                 "==============>>> post mobile data message",
                 Response.data.message
               );
-              UpdateUserDetail({
-                main_wallet_amount:
-                  Response?.data?.data?.agentDetails?.newMainWalletBalance,
-              });
+              initialize();
             } else {
-              enqueueSnackbar(Response.data.message);
+              enqueueSnackbar(Response.data.message, { variant: "error" });
               console.log(
                 "==============>>> post mobile number",
                 Response.data.message
@@ -370,10 +348,9 @@ function VerifyNPIN({ data, handleClose }: any) {
             gap={2}
           >
             <Typography variant="h4">Confirm NPIN</Typography>
-            <RHFCodes
+            <RHFSecureCodes
               keyName="otp"
               inputs={["otp1", "otp2", "otp3", "otp4", "otp5", "otp6"]}
-              type="password"
             />
 
             {(!!error2.otp1 ||
@@ -452,7 +429,7 @@ function FetchDetail({ data }: any) {
         if (Response.data.code == 200) {
           enqueueSnackbar(Response.data.message);
         } else {
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "error" });
         }
       }
     });

@@ -1,5 +1,5 @@
 import { Helmet } from "react-helmet-async";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as Yup from "yup";
 import { LoadingButton } from "@mui/lab";
 import { useForm } from "react-hook-form";
@@ -26,6 +26,7 @@ import {
   useTheme,
   Tooltip,
   IconButton,
+  Alert,
 } from "@mui/material";
 import { TableHeadCustom } from "../../../components/table";
 import { Api } from "src/webservices";
@@ -49,6 +50,10 @@ import Iconify from "src/components/iconify/Iconify";
 import DownloadIcon from "src/assets/icons/DownloadIcon";
 import RoleBasedGuard from "src/auth/RoleBasedGuard";
 import { fDateTime } from "src/utils/formatTime";
+import ReactToPrint from "react-to-print";
+import { PATH_DASHBOARD } from "src/routes/paths";
+import LoadingScreen from "src/components/loading-screen/LoadingScreen";
+import ApiDataLoading from "src/components/customFunctions/ApiDataLoading";
 
 // ----------------------------------------------------------------------
 
@@ -75,6 +80,7 @@ export default function AEPS(props: any) {
   const { enqueueSnackbar } = useSnackbar();
   const { user, initialize } = useAuthContext();
   const theme = useTheme();
+  const componentRef = useRef<any>();
   const [CurrentTab, setCurrentTab] = useState("");
   const [paymentType, setPymentType] = useState([]);
   const [scanning, setscanning] = useState(false);
@@ -91,6 +97,10 @@ export default function AEPS(props: any) {
     createdAt: "",
     clientRefId: "",
   });
+
+  const [isUserHaveBankAccount, setIsUserHaveBankAccount] = useState<
+    boolean | null
+  >(null);
 
   const [autoClose, setAutoClose] = useState(0);
   const [failedMessage, setFailedMessage] = useState("");
@@ -205,6 +215,7 @@ export default function AEPS(props: any) {
     getBankList();
     getAepsProduct();
     getCategory();
+    getUserBankList();
   }, []);
 
   useEffect(() => {
@@ -250,6 +261,24 @@ export default function AEPS(props: any) {
     { _id: 2, name: "Aeps FAQs" },
   ];
 
+  const getUserBankList = () => {
+    let token = localStorage.getItem("token");
+    Api(`user/user_bank_list`, "GET", "", token).then((Response: any) => {
+      console.log("======BankList==response=====>" + Response);
+      if (Response.status == 200) {
+        if (Response.data.code == 200) {
+          if (Response.data.data.length) {
+            if (Response?.data?.data[0]?.bankAccounts?.length)
+              setIsUserHaveBankAccount(true);
+            else setIsUserHaveBankAccount(false);
+          }
+        } else {
+          enqueueSnackbar(Response?.data?.message, { variant: "error" });
+        }
+      }
+    });
+  };
+
   const getCategory = () => {
     let token = localStorage.getItem("token");
     Api(`category/get_CategoryList`, "GET", "", token).then((Response: any) => {
@@ -274,7 +303,7 @@ export default function AEPS(props: any) {
         if (Response.data.code == 200) {
           setBankList(Response.data.data.data);
         } else {
-          enqueueSnackbar(Response?.data?.message);
+          enqueueSnackbar(Response?.data?.message, { variant: "error" });
         }
       }
     });
@@ -287,10 +316,10 @@ export default function AEPS(props: any) {
       if (Response.status == 200) {
         if (Response.data.code == 200) {
           setPymentType(Response.data.data);
-          setCurrentTab(Response.data.data[0].productName);
-          setProductId(Response.data.data[0]._id);
+          setCurrentTab(Response.data.data[0]?.productName);
+          setProductId(Response.data.data[0]?._id);
         } else {
-          enqueueSnackbar(Response?.data?.message);
+          enqueueSnackbar(Response?.data?.message, { variant: "error" });
         }
       }
     });
@@ -402,6 +431,7 @@ export default function AEPS(props: any) {
             enqueueSnackbar(
               Response.data.txnId.amount + " Successfully Transfered"
             );
+            initialize();
 
             handleOpenResponse();
             setResponse(Response.data.txnId);
@@ -469,9 +499,10 @@ export default function AEPS(props: any) {
               setFailedMessage(Response.data.data.message);
             }
             handleOpenResponse();
+            initialize();
             setStatement(Response.data.data.data.miniStatementStructureModel);
             setResAmount(Response.data.data.data.balanceAmount);
-            enqueueSnackbar(Response.data.data.message);
+            enqueueSnackbar(Response.data.data.message, { variant: "warning" });
           } else {
             setFailedMessage(Response.data.message);
             handleOpenError();
@@ -675,6 +706,39 @@ export default function AEPS(props: any) {
       setAttend(false);
     }
   }, [localAttendance]);
+
+  if (isUserHaveBankAccount == null) {
+    return <ApiDataLoading />;
+  }
+
+  if (!isUserHaveBankAccount) {
+    return (
+      <Stack
+        sx={{
+          flexDirection: "row",
+          justifyContent: "center",
+          alignItems: "center",
+          mt: 20,
+        }}
+      >
+        <Stack gap={1}>
+          <LoadingButton
+            variant="contained"
+            onClick={() =>
+              navigate(PATH_DASHBOARD.fundmanagement.mybankaccount)
+            }
+            sx={{ alignSelf: "center" }}
+          >
+            Add New Bank Account
+          </LoadingButton>
+          <Alert severity="warning">
+            Note: if you already add a bank. Please choose a default bank
+            account from your existing banks.
+          </Alert>
+        </Stack>
+      </Stack>
+    );
+  }
 
   return (
     <>
@@ -1054,45 +1118,68 @@ export default function AEPS(props: any) {
               style={{ borderRadius: "20px" }}
               width={{ sm: "100%", md: "60%" }}
             >
+              <Stack flexDirection={"row"} justifyContent={"flex-end"} mx={1}>
+                <Tooltip title="Close" onClick={handleCloseResponse}>
+                  <IconButton>
+                    <Iconify icon="carbon:close-outline" />
+                  </IconButton>
+                </Tooltip>
+                <ReactToPrint
+                  trigger={() => (
+                    <Tooltip title="Print">
+                      <IconButton>
+                        <Iconify icon="eva:printer-fill" />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                  content={() => componentRef.current}
+                  onAfterPrint={handleCloseResponse}
+                />
+              </Stack>
               <Scrollbar sx={{ maxHeight: 500 }}>
-                {statement.length ? (
-                  <TableContainer sx={{ overflow: "unset" }}>
-                    {resAmount && (
-                      <Typography variant="h2" textAlign={"center"}>
-                        Balance: {resAmount}
-                      </Typography>
-                    )}
-                    <Table>
-                      <TableHeadCustom headLabel={tableHead} />
-                      <TableBody>
-                        {statement.map((row: any, index: number) =>
-                          row.date ? (
-                            <TableRow key={row._id}>
-                              <TableCell>{row.date}</TableCell>
-                              <TableCell>{row.narration}</TableCell>
-                              <TableCell>{row.txnType}</TableCell>
-                              <TableCell
-                                style={
-                                  row.txnType == "Cr"
-                                    ? { color: "green" }
-                                    : { color: "red" }
-                                }
-                              >
-                                {row.txnType == "Cr" ? "+" : "-"} {row.amount}
-                              </TableCell>
-                            </TableRow>
-                          ) : (
-                            <TableRow key={index}>{row}</TableRow>
-                          )
-                        )}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                ) : (
-                  <Typography variant="h3" noWrap>
-                    Statement Not Available
-                  </Typography>
-                )}
+                <Grid
+                  ref={componentRef}
+                  sx={{ p: 3, width: { xs: 800, md: "100%" } }}
+                >
+                  {statement.length ? (
+                    <TableContainer sx={{ overflow: "unset" }}>
+                      {resAmount && (
+                        <Typography variant="h2" textAlign={"center"}>
+                          Balance: {resAmount}
+                        </Typography>
+                      )}
+                      <Table>
+                        <TableHeadCustom headLabel={tableHead} />
+                        <TableBody>
+                          {statement.map((row: any, index: number) =>
+                            row.date ? (
+                              <TableRow key={row._id}>
+                                <TableCell>{row.date}</TableCell>
+                                <TableCell>{row.narration}</TableCell>
+                                <TableCell>{row.txnType}</TableCell>
+                                <TableCell
+                                  style={
+                                    row.txnType == "Cr"
+                                      ? { color: "green" }
+                                      : { color: "red" }
+                                  }
+                                >
+                                  {row.txnType == "Cr" ? "+" : "-"} {row.amount}
+                                </TableCell>
+                              </TableRow>
+                            ) : (
+                              <TableRow key={index}>{row}</TableRow>
+                            )
+                          )}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  ) : (
+                    <Typography variant="h3" noWrap>
+                      Statement Not Available
+                    </Typography>
+                  )}
+                </Grid>
                 <Button
                   variant="contained"
                   onClick={handleCloseResponse}

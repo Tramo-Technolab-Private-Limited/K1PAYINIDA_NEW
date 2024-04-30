@@ -16,6 +16,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import FormProvider, {
   RHFAutocomplete,
   RHFCodes,
+  RHFSecureCodes,
   RHFTextField,
 } from "../../../components/hook-form";
 import { useEffect, useState } from "react";
@@ -185,10 +186,10 @@ function Bbps_One() {
               )
           );
         } else {
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "error" });
         }
       } else {
-        enqueueSnackbar("Failed");
+        enqueueSnackbar("Failed", { variant: "error" });
       }
     });
   };
@@ -207,10 +208,10 @@ function Bbps_One() {
         if (Response.data.code == 200) {
           setProductList(Response.data.data);
         } else {
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "error" });
         }
       } else {
-        enqueueSnackbar("Failed");
+        enqueueSnackbar("Failed", { variant: "error" });
       }
     });
   };
@@ -223,10 +224,10 @@ function Bbps_One() {
           setParamList(Response.data.data.productParams);
           setIsBillFetchMendatory(Response.data.dataisBillFetchMandatory);
         } else {
-          enqueueSnackbar(Response.data.message);
+          enqueueSnackbar(Response.data.message, { variant: "error" });
         }
       } else {
-        enqueueSnackbar("Failed");
+        enqueueSnackbar("Failed", { variant: "error" });
       }
     });
   };
@@ -249,10 +250,10 @@ function Bbps_One() {
             setIsBillFetch(true);
             enqueueSnackbar(Response.data.message);
           } else {
-            enqueueSnackbar(Response.data.error.message);
+            enqueueSnackbar(Response.data.error.message, { variant: "error" });
           }
         } else {
-          enqueueSnackbar("Failed");
+          enqueueSnackbar("Failed", { variant: "error" });
           handleToReset();
         }
       });
@@ -626,7 +627,7 @@ const BbpsBillPayment = ({
   handleToReset,
 }: any) => {
   const { enqueueSnackbar } = useSnackbar();
-  const { user, UpdateUserDetail } = useAuthContext();
+  const { user, initialize } = useAuthContext();
   const [isParentValid, setIsParentValid] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -727,10 +728,7 @@ const BbpsBillPayment = ({
           if (Response.status == 200) {
             if (Response.data.code == 200) {
               if (Response.data.data.status == "success") {
-                UpdateUserDetail({
-                  main_wallet_amount:
-                    Response?.data?.data?.agentDetails?.newMainWalletBalance,
-                });
+                initialize();
               }
               TextToSpeak(Response.data.message);
               enqueueSnackbar(Response.data.message);
@@ -872,10 +870,9 @@ const BbpsBillPayment = ({
             gap={2}
           >
             <Typography variant="h4">Confirm NPIN</Typography>
-            <RHFCodes
+            <RHFSecureCodes
               keyName="otp"
               inputs={["otp1", "otp2", "otp3", "otp4", "otp5", "otp6"]}
-              type="password"
             />
             {(!!errors.otp1 ||
               !!errors.otp2 ||

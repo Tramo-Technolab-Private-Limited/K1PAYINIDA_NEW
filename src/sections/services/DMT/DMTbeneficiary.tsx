@@ -96,7 +96,7 @@ const Reducer = (state: any, action: any) => {
         beneVerified: true,
       };
     case "VERIFY_FETCH_FAILURE":
-      return { ...state, isLoading: false, data: {} };
+      return { ...state, isLoading: false, data: {}, beneVerified: false };
     case "GET_BENE_REQUEST":
       return { ...state, isLoading: true };
     case "GET_BENE_SUCCESS":
@@ -174,7 +174,7 @@ export default function DMTbeneficiary() {
   const methods = useForm<FormValuesProps>({
     resolver: yupResolver(DMTSchema),
     defaultValues,
-    mode: "all",
+    mode: "onSubmit",
   });
 
   const {
@@ -205,7 +205,7 @@ export default function DMTbeneficiary() {
             });
           } else {
             getbeneDispatch({ type: "GET_BENE_FAILURE" });
-            enqueueSnackbar(Response.data.message);
+            enqueueSnackbar(Response.data.message, { variant: "error" });
           }
         }
       }
@@ -227,7 +227,7 @@ export default function DMTbeneficiary() {
             }),
           });
           openEditModal();
-          enqueueSnackbar(Response.data.message);
+          // enqueueSnackbar(Response.data.message);
         } else {
           getbeneDispatch({ type: "GET_BANK_FAILURE" });
         }
@@ -236,35 +236,40 @@ export default function DMTbeneficiary() {
   };
 
   const verifyBene = async () => {
-    remitterVerifyDispatch({ type: "VERIFY_FETCH_REQUEST" });
     let token = localStorage.getItem("token");
+    remitterVerifyDispatch({ type: "VERIFY_FETCH_REQUEST" });
     let body = {
       ifsc: getValues("ifsc"),
       accountNumber: getValues("accountNumber"),
       bankName: getValues("bankName"),
+      remitterMobile: remitterContext.remitterMobile,
     };
-    (await trigger(["ifsc", "accountNumber", "bankName"])) &&
-      Api("moneyTransfer/beneficiary/verify", "POST", body, token).then(
-        (Response: any) => {
-          if (Response.status == 200) {
-            if (Response.data.code == 200) {
-              remitterVerifyDispatch({
-                type: "VERIFY_FETCH_SUCCESS",
-                payload: Response.data.data,
-              });
-              enqueueSnackbar(Response.data.message);
-              setValue("beneName", Response.data.name);
-              setValue("isBeneVerified", true);
-              UpdateUserDetail({
-                main_wallet_amount: user?.main_wallet_amount - 3,
-              });
+    (await trigger(["ifsc", "accountNumber", "bankName"]))
+      ? Api("moneyTransfer/beneficiary/verify", "POST", body, token).then(
+          (Response: any) => {
+            if (Response.status == 200) {
+              if (Response.data.code == 200) {
+                remitterVerifyDispatch({
+                  type: "VERIFY_FETCH_SUCCESS",
+                  payload: Response.data.data,
+                });
+                enqueueSnackbar(Response.data.message);
+                setValue("beneName", Response.data.name);
+                setValue("isBeneVerified", true);
+                UpdateUserDetail({
+                  main_wallet_amount: user?.main_wallet_amount - 3,
+                });
+              } else {
+                remitterVerifyDispatch({ type: "VERIFY_FETCH_FAILURE" });
+                enqueueSnackbar(Response.data.message, { variant: "error" });
+              }
             } else {
               remitterVerifyDispatch({ type: "VERIFY_FETCH_FAILURE" });
-              enqueueSnackbar(Response.data.message);
+              enqueueSnackbar("Failed", { variant: "error" });
             }
           }
-        }
-      );
+        )
+      : remitterVerifyDispatch({ type: "VERIFY_FETCH_FAILURE" });
   };
 
   const addBeneficiary = (data: FormValuesProps) => {
@@ -286,6 +291,7 @@ export default function DMTbeneficiary() {
       (Response: any) => {
         if (Response.status == 200) {
           if (Response.data.code == 200) {
+            enqueueSnackbar(Response.data.message);
             getbeneDispatch({
               type: "GET_BENE_SUCCESS",
               payload: [...getBene.data, Response.data.data],
@@ -294,14 +300,17 @@ export default function DMTbeneficiary() {
               type: "ADD_BENE_SUCCESS",
               payload: Response.data.data,
             });
+            remitterVerifyDispatch({
+              type: "VERIFY_FETCH_FAILURE",
+            });
             enqueueSnackbar(Response.data.message);
             handleClose();
           } else {
             addbeneDispatch({ type: "ADD_BENE_FAILURE" });
-            enqueueSnackbar(Response.data.message);
+            enqueueSnackbar(Response.data.message, { variant: "error" });
           }
         } else {
-          enqueueSnackbar("Internal server error");
+          enqueueSnackbar("Internal server error", { variant: "error" });
           addbeneDispatch({ type: "ADD_BENE_FAILURE" });
         }
       }
@@ -330,18 +339,23 @@ export default function DMTbeneficiary() {
         ) : (
           <Paper sx={{ width: "100%", overflow: "hidden" }}>
             <Stack justifyContent={"end"} flexDirection={"row"} mb={1}>
-              <Button variant="contained" size="medium" onClick={getBankList}>
+              <LoadingButton
+                variant="contained"
+                size="medium"
+                onClick={getBankList}
+                loading={getBank.isLoading}
+              >
                 <span style={{ paddingRight: "5px", fontSize: "14px" }}>
                   +{" "}
                 </span>{" "}
                 Add New Beneficiary
-              </Button>
+              </LoadingButton>
             </Stack>
             <TableContainer component={Paper}>
               <Scrollbar
                 sx={
                   isMobile
-                    ? { maxHeight: window.innerHeight - 110 }
+                    ? { maxHeight: window.innerHeight - 170 }
                     : { maxHeight: window.innerHeight - 470 }
                 }
               >
@@ -409,8 +423,8 @@ export default function DMTbeneficiary() {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: "95%",
           }}
+          width={{ xs: "95%", md: 500 }}
         >
           <Card sx={{ p: 3 }}>
             <FormProvider
@@ -430,6 +444,7 @@ export default function DMTbeneficiary() {
                   name="bank"
                   disabled={remitterVerify?.beneVerified}
                   onChange={setBankDetail}
+                  noOptionsText="No Bank Account"
                   options={getBank?.data}
                   getOptionLabel={(option: any) => option?.bankName}
                   renderOption={(props, option) => (
@@ -570,12 +585,12 @@ const BeneList = React.memo(
       setModalEdit2(false);
       setDeleteOtp("");
     };
-
     const verifyBene = (val: string) => {
       setVarifyStatus(false);
       let token = localStorage.getItem("token");
       let body = {
         beneficiaryId: val,
+        remitterMobile: remitterNumber,
       };
       Api("moneyTransfer/beneficiary/verify", "POST", body, token).then(
         (Response: any) => {
@@ -591,11 +606,11 @@ const BeneList = React.memo(
                 main_wallet_amount: user?.main_wallet_amount - 3,
               });
             } else {
-              enqueueSnackbar(Response.data.message);
+              enqueueSnackbar(Response.data.message, { variant: "error" });
             }
             setVarifyStatus(true);
           } else {
-            enqueueSnackbar("Internal server error");
+            enqueueSnackbar("Internal server error", { variant: "error" });
             setVarifyStatus(true);
           }
         }
@@ -614,7 +629,7 @@ const BeneList = React.memo(
           if (Response.data.code == 200) {
             enqueueSnackbar(Response.data.message);
           } else {
-            enqueueSnackbar(Response.data.message);
+            enqueueSnackbar(Response.data.message, { variant: "error" });
           }
         }
       });
@@ -636,7 +651,7 @@ const BeneList = React.memo(
               setDeleteOtp("");
               deleteBene(row._id);
             } else {
-              enqueueSnackbar(Response.data.message);
+              enqueueSnackbar(Response.data.message, { variant: "error" });
             }
             setIsLoading(false);
           } else {

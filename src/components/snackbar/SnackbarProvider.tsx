@@ -38,7 +38,7 @@ export default function SnackbarProvider({ children }: Props) {
         autoHideDuration={3000}
         TransitionComponent={isRTL ? Collapse : undefined}
         variant="success" // Set default variant
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
         iconVariant={{
           info: <SnackbarIcon icon="eva:info-fill" color="info" />,
           success: (

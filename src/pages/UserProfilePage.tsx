@@ -16,6 +16,8 @@ import {
   Modal,
   Hidden,
   Avatar,
+  Tooltip,
+  IconButton,
 } from "@mui/material";
 // routes
 import { PATH_DASHBOARD } from "../routes/paths";
@@ -40,11 +42,12 @@ import {
   ProfileFollowers,
 } from "../sections/profile";
 import { Api } from "src/webservices";
-import TramoCertificate from "../assets/icons/photo-1526925539332-aa3b66e35444.avif.png";
+import TramoCertificate from "../assets/icons/K1Certificate.png";
 import { AwsDocSign } from "../components/customFunctions/AwsDocSign";
 import jsPDF from "jspdf";
 import { useAuthContext } from "src/auth/useAuthContext";
 import Image from "src/components/image/Image";
+import ReactToPrint from "react-to-print";
 // ----------------------------------------------------------------------
 
 export default function UserProfilePage() {
@@ -162,12 +165,12 @@ export default function UserProfilePage() {
       icon: <Iconify icon="ic:round-account-box" />,
       component: <Profile info={_userAbout} posts={_userFeeds} />,
     },
-    {
-      value: "My Network",
-      label: "My Network",
-      icon: <Iconify icon="eva:heart-fill" />,
-      component: <ProfileFollowers followers={_userFollowers} />,
-    },
+    // {
+    //   value: "My Network",
+    //   label: "My Network",
+    //   icon: <Iconify icon="eva:heart-fill" />,
+    //   component: <ProfileFollowers followers={_userFollowers} />,
+    // },
     // {
     //   value: 'friends',
     //   label: 'Friends',
@@ -189,8 +192,6 @@ export default function UserProfilePage() {
     //   component: <ProfileGallery gallery={_userGallery} />,
     // },
   ];
-
-  udata.role == "agent" && TABS.pop();
 
   return (
     <>
@@ -237,9 +238,7 @@ export default function UserProfilePage() {
               label={tab.label}
             />
           ))}
-          <Button onClick={openModal} sx={{ ml: 1 }}>
-            Download Certificate
-          </Button>
+          <Button onClick={openModal}>certificate</Button>
         </Tabs>
       </Card>
       {TABS.map(
@@ -256,19 +255,22 @@ export default function UserProfilePage() {
       >
         <Grid
           sx={{
-            width: "95%",
-            margin: "auto",
-            backgroundColor: "#fff",
-            borderRadius: 2,
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            bgcolor: "#ffffff",
             boxShadow: 24,
-            p: 2,
+            width: { xs: "95%", md: 600 },
+            p: 4,
+            borderRadius: "20px",
           }}
         >
           <Grid ref={componentRef}>
             <Typography
               variant="caption"
               position={"absolute"}
-              top={"27%"}
+              top={"28%"}
               left={"42%"}
             >
               {user?.firstName + " " + user?.lastName}
@@ -276,7 +278,7 @@ export default function UserProfilePage() {
             <Typography
               variant="caption"
               position={"absolute"}
-              top={"75.5%"}
+              top={"74%"}
               left={"23%"}
             >
               {user?._id}
@@ -284,8 +286,8 @@ export default function UserProfilePage() {
             <Typography
               variant="caption"
               position={"absolute"}
-              top={"44%"}
-              left={"55%"}
+              top={"44.5%"}
+              left={"54%"}
             >
               {user?.contact_no}
             </Typography>
@@ -296,6 +298,14 @@ export default function UserProfilePage() {
               left={"57%"}
             >
               {user?.userCode}
+            </Typography>
+            <Typography
+              variant="caption"
+              position={"absolute"}
+              top={"51.5%"}
+              left={"35%"}
+            >
+              {user?.company_address || "No Shop Name"}
             </Typography>
             <Typography
               variant="caption"
@@ -330,7 +340,7 @@ export default function UserProfilePage() {
               {formatDateted(user?.approvalDate)}
             </Typography>
             <img
-              src={user?.selfie[0]}
+              src={user?.selfie[0].length && AwsDocSign(user?.selfie[0])}
               width={90}
               height={85}
               style={{
@@ -345,7 +355,18 @@ export default function UserProfilePage() {
           </Grid>
           <Stack flexDirection={"row"}>
             <Button onClick={closeModal}>close</Button>
-            <Button onClick={downloadAsPDF}>Download PDF</Button>
+            {/* <Button onClick={downloadAsPDF}>Download PDF</Button> */}
+            <ReactToPrint
+              trigger={() => (
+                <Tooltip title="Print">
+                  <IconButton>
+                    <Iconify icon="eva:printer-fill" />
+                  </IconButton>
+                </Tooltip>
+              )}
+              content={() => componentRef.current}
+              onAfterPrint={closeModal}
+            />
           </Stack>
         </Grid>
       </Modal>
