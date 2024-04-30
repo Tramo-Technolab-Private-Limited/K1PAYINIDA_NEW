@@ -65,7 +65,7 @@ export default function AttendenceAeps(props: any) {
     setMessage("");
   };
 
-  const [deviceName, setDeviceName] = React.useState("one");
+  const [deviceName, setDeviceName] = React.useState("");
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setDeviceName(newValue);
@@ -341,38 +341,18 @@ export default function AttendenceAeps(props: any) {
           justifyContent={"center"}
         >
           <Typography variant="h4">
-            {" "}
             Plaese mark the attendance to use{" "}
             {props.attendance == "AEPS" ? "AEPS" : "Aadhar Pay"}{" "}
           </Typography>
-          {/* <RHFSelect
-            name="deviceName"
-            label="Select Device"
-            placeholder="Select Device"
-            SelectProps={{ native: false, sx: { textTransform: "capitalize" } }}
-            sx={{ width: "90%", margin: "auto" }}
-          >
-            <MenuItem value={"MORPHO"}>MORPHO</MenuItem>
-            <MenuItem value={"STARTEK"}>STARTEK</MenuItem>
-            <MenuItem value={"MANTRA"}>MANTRA</MenuItem>
-            <MenuItem value={"SECUGEN"}>SECUGEN</MenuItem>
-          </RHFSelect> */}
+
           <Tabs
             value={deviceName}
             onChange={handleChange}
             textColor="secondary"
             indicatorColor="secondary"
             aria-label="secondary tabs example"
-            sx={{ width: "90%", marginLeft: 20 }}
+            sx={{ margin: "auto" }}
           >
-            {/* <Tab
-              value={"STARTEK"}
-              label={
-                <Typography sx={{ height: "40px", width: "40px" }}>
-                  <img src={Startek} />
-                </Typography>
-              }
-            /> */}
             <Tab
               value={"STARTEK"}
               iconPosition="top"
@@ -383,7 +363,6 @@ export default function AttendenceAeps(props: any) {
               }
               label="STARTEK"
             />
-
             <Tab
               value={"MORPHO"}
               iconPosition="top"
@@ -418,31 +397,16 @@ export default function AttendenceAeps(props: any) {
             />
           </Tabs>
 
-          {/* <RHFTextField
-            name="remark"
-            label="Remark"
-            placeholder="Remark"
-            sx={{ width: "90%", margin: "auto" }}
-          /> */}
           <Stack>
-            <Button
-              variant="contained"
-              type="submit"
-              sx={{ width: "fit-content", margin: "auto" }}
-            >
-              Scan fingure to continue
-            </Button>
-            {/* <Stack mt={5}>
+            {deviceName !== "" && (
               <Button
                 variant="contained"
-                size="small"
-                onClick={() => navigate("/auth/mystats")}
-                sx={{ width: "fit-content", margin: "auto", ml:25 }}
-                // startIcon={<SendIcon />}
+                type="submit"
+                sx={{ width: "fit-content", margin: "auto", mt: 2 }}
               >
-                Back
+                Scan fingure to continue
               </Button>
-            </Stack> */}
+            )}
           </Stack>
         </Stack>
       </FormProvider>
