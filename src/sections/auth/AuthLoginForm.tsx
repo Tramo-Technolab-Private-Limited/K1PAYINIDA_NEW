@@ -14,6 +14,7 @@ import FormProvider, { RHFTextField } from "../../components/hook-form";
 import { Api } from "src/webservices";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router";
+import { fetchLocation } from "src/utils/fetchLocation";
 
 // ----------------------------------------------------------------------
 
@@ -72,6 +73,7 @@ export default function AuthLoginForm() {
       password: data.password,
     };
     try {
+      await fetchLocation();
       await Api(`auth/login_in`, "POST", body, "").then((Response: any) => {
         if (Response.status == 200) {
           if (Response.data.code == 200) {

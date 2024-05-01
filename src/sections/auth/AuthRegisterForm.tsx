@@ -44,6 +44,7 @@ import Scrollbar from "src/components/scrollbar/Scrollbar";
 import { useAuthContext } from "src/auth/useAuthContext";
 // import { requestPermission } from "./firebase";
 import MotionModal from "src/components/animate/MotionModal";
+import { fetchLocation } from "src/utils/fetchLocation";
 // import CircularWithValueLabel from "src/components/customFunctions/ProgressCircular";
 
 // ----------------------------------------------------------------------
@@ -326,7 +327,7 @@ export default function AuthRegisterForm(props: any) {
   //   });
   // };
 
-  const onSubmit = (data: FormValuesProps) => {
+  const onSubmit = async (data: FormValuesProps) => {
     if (
       (value2 == "agent" && refByCode == "distributor") ||
       (value2 == "distributor" && refByCode == "m_distributor") ||
@@ -344,7 +345,8 @@ export default function AuthRegisterForm(props: any) {
         email: data.email.toLowerCase(),
         mobileNumber: data.mobile,
       };
-      Api(`auth/sendOTP`, "POST", body, "").then((Response: any) => {
+
+      await Api(`auth/sendOTP`, "POST", body, "").then((Response: any) => {
         console.log("=============>" + JSON.stringify(Response));
         if (Response.status == 200) {
           if (Response.data.code == 200) {
@@ -467,7 +469,7 @@ export default function AuthRegisterForm(props: any) {
 
   // useEffect(() => requestPermission(), []);
 
-  const createUser = () => {
+  const createUser = async () => {
     const body = {
       contactNo: formValues.mobileNumber,
       email: formValues.email?.toLowerCase(),
@@ -477,7 +479,8 @@ export default function AuthRegisterForm(props: any) {
       referralCode: formValues.refCode,
       FCM_token: sessionStorage.getItem("fcm"),
     };
-    Api(`auth/create_account`, "POST", body, "").then((Response: any) => {
+    await fetchLocation();
+    await Api(`auth/create_account`, "POST", body, "").then((Response: any) => {
       console.log("=============> Create" + JSON.stringify(Response));
       if (Response.status == 200) {
         if (Response.data.code == 200) {

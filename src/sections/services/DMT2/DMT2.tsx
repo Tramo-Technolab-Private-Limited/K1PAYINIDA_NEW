@@ -30,6 +30,7 @@ import DMT2BeneTable from "./DMT2BeneTable";
 import { useNavigate } from "react-router";
 import SendIcon from "@mui/icons-material/Send";
 import RoleBasedGuard from "src/auth/RoleBasedGuard";
+import { fetchLocation } from "src/utils/fetchLocation";
 // ----------------------------------------------------------------------
 
 type FormValuesProps = {
@@ -361,14 +362,15 @@ const OtpSubmissionForRegistrantion = ({
     formState: { errors, isSubmitting },
   } = methods;
 
-  const verifyOtp = (data: FormValuesProps) => {
+  const verifyOtp = async (data: FormValuesProps) => {
     setIsLoading(true);
     let token = localStorage.getItem("token");
     let body = {
       remitterMobile: mobilenumber,
       otp: data.otp1 + data.otp2 + data.otp3,
     };
-    Api("dmt2/remitter/verifyOTP", "POST", body, token).then(
+    await fetchLocation();
+    await Api("dmt2/remitter/verifyOTP", "POST", body, token).then(
       (Response: any) => {
         console.log("==============>>> register remmiter Response", Response);
         if (Response.status == 200) {
@@ -468,7 +470,7 @@ const NewRegistration = ({ mobilenumber, handleNewRegistaion }: any) => {
     formState: { errors, isSubmitting },
   } = methods;
 
-  const addRemmiter = (data: FormValuesProps) => {
+  const addRemmiter = async (data: FormValuesProps) => {
     setIsLoading(true);
     let token = localStorage.getItem("token");
     let body = {
@@ -478,7 +480,8 @@ const NewRegistration = ({ mobilenumber, handleNewRegistaion }: any) => {
       occupation: data.remitterOccupation,
       email: data.remitterEmail || "",
     };
-    Api("dmt2/remitter", "POST", body, token).then((Response: any) => {
+    await fetchLocation();
+    await Api("dmt2/remitter", "POST", body, token).then((Response: any) => {
       console.log("==============>>> register remmiter Response", Response);
       if (Response.status == 200) {
         if (Response.data.code == 200) {
