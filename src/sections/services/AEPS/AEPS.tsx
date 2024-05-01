@@ -26,6 +26,7 @@ import {
   useTheme,
   Tooltip,
   IconButton,
+  Alert,
 } from "@mui/material";
 import { TableHeadCustom } from "../../../components/table";
 import { Api } from "src/webservices";
@@ -50,6 +51,9 @@ import DownloadIcon from "src/assets/icons/DownloadIcon";
 import RoleBasedGuard from "src/auth/RoleBasedGuard";
 import { fDateTime } from "src/utils/formatTime";
 import ReactToPrint from "react-to-print";
+import { PATH_DASHBOARD } from "src/routes/paths";
+import LoadingScreen from "src/components/loading-screen/LoadingScreen";
+import ApiDataLoading from "src/components/customFunctions/ApiDataLoading";
 
 // ----------------------------------------------------------------------
 
@@ -93,6 +97,10 @@ export default function AEPS(props: any) {
     createdAt: "",
     clientRefId: "",
   });
+
+  const [isUserHaveBankAccount, setIsUserHaveBankAccount] = useState<
+    boolean | null
+  >(null);
 
   const [autoClose, setAutoClose] = useState(0);
   const [failedMessage, setFailedMessage] = useState("");
@@ -207,6 +215,7 @@ export default function AEPS(props: any) {
     getBankList();
     getAepsProduct();
     getCategory();
+    getUserBankList();
   }, []);
 
   useEffect(() => {
@@ -251,6 +260,24 @@ export default function AEPS(props: any) {
     { _id: 1, name: "Device Drivers" },
     { _id: 2, name: "Aeps FAQs" },
   ];
+
+  const getUserBankList = () => {
+    let token = localStorage.getItem("token");
+    Api(`user/user_bank_list`, "GET", "", token).then((Response: any) => {
+      console.log("======BankList==response=====>" + Response);
+      if (Response.status == 200) {
+        if (Response.data.code == 200) {
+          if (Response.data.data.length) {
+            if (Response?.data?.data[0]?.bankAccounts?.length)
+              setIsUserHaveBankAccount(true);
+            else setIsUserHaveBankAccount(false);
+          }
+        } else {
+          enqueueSnackbar(Response?.data?.message, { variant: "error" });
+        }
+      }
+    });
+  };
 
   const getCategory = () => {
     let token = localStorage.getItem("token");
@@ -405,6 +432,7 @@ export default function AEPS(props: any) {
               Response.data.txnId.amount + " Successfully Transfered"
             );
             initialize();
+
             handleOpenResponse();
             setResponse(Response.data.txnId);
           } else {
@@ -470,11 +498,11 @@ export default function AEPS(props: any) {
               handleOpenError();
               setFailedMessage(Response.data.data.message);
             }
-            initialize();
             handleOpenResponse();
+            initialize();
             setStatement(Response.data.data.data.miniStatementStructureModel);
             setResAmount(Response.data.data.data.balanceAmount);
-            enqueueSnackbar(Response.data.data.message);
+            enqueueSnackbar(Response.data.data.message, { variant: "warning" });
           } else {
             setFailedMessage(Response.data.message);
             handleOpenError();
@@ -678,6 +706,39 @@ export default function AEPS(props: any) {
       setAttend(false);
     }
   }, [localAttendance]);
+
+  if (isUserHaveBankAccount == null) {
+    return <ApiDataLoading />;
+  }
+
+  if (!isUserHaveBankAccount) {
+    return (
+      <Stack
+        sx={{
+          flexDirection: "row",
+          justifyContent: "center",
+          alignItems: "center",
+          mt: 20,
+        }}
+      >
+        <Stack gap={1}>
+          <LoadingButton
+            variant="contained"
+            onClick={() =>
+              navigate(PATH_DASHBOARD.fundmanagement.mybankaccount)
+            }
+            sx={{ alignSelf: "center" }}
+          >
+            Add New Bank Account
+          </LoadingButton>
+          <Alert severity="warning">
+            Note: if you already add a bank. Please choose a default bank
+            account from your existing banks.
+          </Alert>
+        </Stack>
+      </Stack>
+    );
+  }
 
   return (
     <>

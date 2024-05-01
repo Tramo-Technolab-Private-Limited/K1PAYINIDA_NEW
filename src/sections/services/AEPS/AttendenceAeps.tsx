@@ -26,18 +26,16 @@ import Lottie from "lottie-react";
 import fingerScan from "../../../components/JsonAnimations/fingerprint-scan.json";
 import { useAuthContext } from "src/auth/useAuthContext";
 import { Navigate, useNavigate } from "react-router";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
 import { fDateTime } from "src/utils/formatTime";
+import { CaptureDevice } from "src/utils/CaptureDevice";
+import { fetchLocation } from "src/utils/fetchLocation";
+import MotionModal from "src/components/animate/MotionModal";
+import { LoadingButton } from "@mui/lab";
 
-import Startek from "../../../assets/images/StartekOne.svg";
-import Morpho from "../../../assets/images/MorphoOne.png";
-import Mantra from "../../../assets/images/Mantra.png";
-import Secugen from "../../../assets/images/SecugenOne.png";
-// ---------------------------------------------------
+// ----------------------------------------------------------------------
 
 type FormValuesProps = {
-  // deviceName: string;
+  deviceName: string;
   remark: string;
   AEPS: string;
   AP: string;
@@ -47,6 +45,7 @@ export default function AttendenceAeps(props: any) {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const { user, UpdateUserDetail, initialize } = useAuthContext();
+  const [scanLoading, setScanLoading] = useState(false);
   const theme = useTheme();
   const [message, setMessage] = useState("");
   const [arrofObj, setarrofObj] = useState<any>([]);
@@ -63,12 +62,6 @@ export default function AttendenceAeps(props: any) {
     setOpen(false);
     setarrofObj([]);
     setMessage("");
-  };
-
-  const [deviceName, setDeviceName] = React.useState("one");
-
-  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-    setDeviceName(newValue);
   };
 
   const AEPSSchema = Yup.object().shape({
@@ -106,88 +99,69 @@ export default function AttendenceAeps(props: any) {
 
   useEffect(() => {
     if (arrofObj.length > 0) {
-      Attendence();
+      // Attendence();
     }
   }, [arrofObj.length]);
 
   //   ********************************jquery start here for capture device ***************************
 
-  const Attendence = () => {
-    handleOpenLoading();
-    let token = localStorage.getItem("token");
-    let body = {
-      serviceType: props.attendance,
-      latitude: localStorage.getItem("lat"),
-      longitude: localStorage.getItem("long"),
-      requestRemarks: getValues("remark"),
-      nationalBankIdentificationNumber: "",
-      captureResponse: {
-        errCode: arrofObj[0].errcode,
-        errInfo: arrofObj[0].errinfo,
-        fCount: arrofObj[0].fcount,
-        fType: arrofObj[0].ftype,
-        iCount: arrofObj[0].icount,
-        iType: null,
-        pCount: arrofObj[0].pcount,
-        pType: "0",
-        nmPoints: arrofObj[0].nmpoint,
-        qScore: arrofObj[0].qscore,
-        dpID: arrofObj[0].dpid,
-        rdsID: arrofObj[0].rdsid,
-        rdsVer: arrofObj[0].rdsver,
-        dc: arrofObj[0].dc,
-        mi: arrofObj[0].mi,
-        mc: arrofObj[0].mc,
-        ci: arrofObj[0].ci,
-        sessionKey: arrofObj[0].skey.textContent,
-        hmac: arrofObj[0].hmac.textContent,
-        PidDatatype: arrofObj[0].piddatatype,
-        Piddata: arrofObj[0].piddata.textContent,
-      },
-    };
-    Api("aeps/presence", "POST", body, token).then((Response: any) => {
-      console.log("==============>>>fatch beneficiary Response", Response);
-      if (Response.status == 200) {
-        if (Response.data.code == 200) {
-          enqueueSnackbar(Response.data.data.message);
-          // props.attendance == "AP"
-          //   ? UpdateUserDetail({ attendanceAP: true })
-          //   : UpdateUserDetail({
-          //       attendanceAEPS: true,
-          //     });
-          initialize();
-
-          setMessage(Response.data.message);
-        } else if (Response.data.responseCode == 410) {
-          enqueueSnackbar(Response.data.err.message, { variant: "error" });
-          setMessage(Response.data.responseMessage);
+  const attendance = async (data: FormValuesProps) => {
+    handleOpen();
+    const { error, success }: any = await CaptureDevice(data.deviceName);
+    handleClose();
+    if (!success) {
+      enqueueSnackbar(error);
+      setMessage(error);
+      handleOpen();
+      return;
+    }
+    await fetchLocation();
+    try {
+      let token = localStorage.getItem("token");
+      let body = {
+        attendanceType: "Daily",
+        serviceType: props.attendance,
+        latitude: localStorage.getItem("lat"),
+        longitude: localStorage.getItem("long"),
+        requestRemarks: getValues("remark"),
+        nationalBankIdentificationNumber: "",
+        captureResponse: success,
+      };
+      await Api("aeps/presence", "POST", body, token).then((Response: any) => {
+        console.log("==============>>>fatch beneficiary Response", Response);
+        if (Response.status == 200) {
+          if (Response.data.code == 200) {
+            enqueueSnackbar(Response.data.data.message);
+            initialize();
+            setMessage(Response.data.message);
+          } else if (Response.data.responseCode == 410) {
+            enqueueSnackbar(Response.data.err.message, { variant: "error" });
+            setMessage(Response.data.responseMessage);
+            handleOpen();
+          } else {
+            enqueueSnackbar(Response.data.data.message, { variant: "error" });
+            setMessage(Response.data.data.message);
+            handleOpen();
+          }
         } else {
-          enqueueSnackbar(Response.data.data.message, { variant: "error" });
-          setMessage(Response.data.data.message);
-          console.log(
-            "==============>>> fatch beneficiary message",
-            Response.data.message
-          );
+          setMessage("Failed");
         }
-        handleClose();
-        handleCloseLoading();
-      } else {
-        handleCloseLoading();
-        handleClose();
-      }
-    });
+      });
+    } catch (Err) {
+      console.log(Err);
+    }
   };
 
   const capture = (data: FormValuesProps) => {
     handleOpen();
     var rdUrl = "";
-    if (deviceName == "MANTRA") {
+    if (getValues("deviceName") == "MANTRA") {
       rdUrl = "https://127.0.0.1:8005/rd/capture";
-    } else if (deviceName == "MORPHO") {
+    } else if (getValues("deviceName") == "MORPHO") {
       rdUrl = "http://127.0.0.1:11100/capture";
-    } else if (deviceName == "STARTEK") {
+    } else if (getValues("deviceName") == "STARTEK") {
       rdUrl = "http://127.0.0.1:11101/rd/capture";
-    } else if (deviceName == "SECUGEN") {
+    } else if (getValues("deviceName") == "SECUGEN") {
       rdUrl = "http://127.0.0.1:11100/rd/capture";
     }
     if (rdUrl == "") {
@@ -326,11 +300,10 @@ export default function AttendenceAeps(props: any) {
       <Helmet>
         <title>AEPS Attendance | {process.env.REACT_APP_COMPANY_NAME}</title>
       </Helmet>
-      <FormProvider methods={methods} onSubmit={handleSubmit(capture)}>
+      <FormProvider methods={methods} onSubmit={handleSubmit(attendance)}>
         <Stack
           width={{ xs: "100%", sm: 450 }}
           margin={"auto"}
-          minWidth="60%"
           bgcolor={"#fff"}
           border={"1px solid #dadada"}
           borderRadius={"10px"}
@@ -345,7 +318,7 @@ export default function AttendenceAeps(props: any) {
             Plaese mark the attendance to use{" "}
             {props.attendance == "AEPS" ? "AEPS" : "Aadhar Pay"}{" "}
           </Typography>
-          {/* <RHFSelect
+          <RHFSelect
             name="deviceName"
             label="Select Device"
             placeholder="Select Device"
@@ -356,97 +329,41 @@ export default function AttendenceAeps(props: any) {
             <MenuItem value={"STARTEK"}>STARTEK</MenuItem>
             <MenuItem value={"MANTRA"}>MANTRA</MenuItem>
             <MenuItem value={"SECUGEN"}>SECUGEN</MenuItem>
-          </RHFSelect> */}
-          <Tabs
-            value={deviceName}
-            onChange={handleChange}
-            textColor="secondary"
-            indicatorColor="secondary"
-            aria-label="secondary tabs example"
-            sx={{ width: "90%", marginLeft: 20 }}
-          >
-            {/* <Tab
-              value={"STARTEK"}
-              label={
-                <Typography sx={{ height: "40px", width: "40px" }}>
-                  <img src={Startek} />
-                </Typography>
-              }
-            /> */}
-            <Tab
-              value={"STARTEK"}
-              iconPosition="top"
-              icon={
-                <Stack sx={{ height: "40px", width: "40px" }}>
-                  <img src={Startek} />
-                </Stack>
-              }
-              label="STARTEK"
-            />
+          </RHFSelect>
 
-            <Tab
-              value={"MORPHO"}
-              iconPosition="top"
-              icon={
-                <Typography sx={{ height: "50px", width: "40px" }}>
-                  <img src={Morpho} />
-                </Typography>
-              }
-              label="MORPHO"
-            />
-
-            <Tab
-              value={"MANTRA"}
-              iconPosition="top"
-              icon={
-                <Typography sx={{ height: "40px", width: "40px" }}>
-                  <img src={Mantra} />
-                </Typography>
-              }
-              label="MANTRA"
-            />
-
-            <Tab
-              value={"SECUGEN"}
-              iconPosition="top"
-              icon={
-                <Typography sx={{ height: "40px", width: "40px" }}>
-                  <img src={Secugen} />
-                </Typography>
-              }
-              label="SECUGEN"
-            />
-          </Tabs>
-
-          {/* <RHFTextField
-            name="remark"
-            label="Remark"
-            placeholder="Remark"
-            sx={{ width: "90%", margin: "auto" }}
-          /> */}
           <Stack>
-            <Button
+            <LoadingButton
               variant="contained"
               type="submit"
+              loading={isSubmitting}
               sx={{ width: "fit-content", margin: "auto" }}
             >
               Scan fingure to continue
-            </Button>
-            {/* <Stack mt={5}>
-              <Button
-                variant="contained"
-                size="small"
-                onClick={() => navigate("/auth/mystats")}
-                sx={{ width: "fit-content", margin: "auto", ml:25 }}
-                // startIcon={<SendIcon />}
-              >
-                Back
-              </Button>
-            </Stack> */}
+            </LoadingButton>
           </Stack>
         </Stack>
       </FormProvider>
-      <Modal
+
+      <MotionModal open={open} width={{ xs: "95%", md: 500 }}>
+        {isSubmitting && <Lottie animationData={fingerScan} />}
+        {message && (
+          <>
+            <Stack flexDirection={"column"} alignItems={"center"}>
+              <Typography variant="h4">Attendence Status</Typography>
+            </Stack>
+            <Typography variant="h4" textAlign={"center"} color={"#9e9e9ef0"}>
+              {message}
+            </Typography>
+            <Stack flexDirection={"row"} justifyContent={"center"}>
+              <Button variant="contained" onClick={handleClose} sx={{ mt: 2 }}>
+                Close
+              </Button>
+            </Stack>
+          </>
+        )}
+      </MotionModal>
+
+      {/* <Modal
         open={open}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
@@ -479,10 +396,10 @@ export default function AttendenceAeps(props: any) {
             </Stack>
           </Box>
         )}
-      </Modal>
+      </Modal> */}
 
       {/* Loading Modal */}
-      <Modal
+      {/* <Modal
         open={openLoading}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
@@ -496,7 +413,7 @@ export default function AttendenceAeps(props: any) {
             />
           </Stack>
         </Box>
-      </Modal>
+      </Modal> */}
     </>
   );
 }
