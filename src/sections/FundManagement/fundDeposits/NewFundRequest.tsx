@@ -41,6 +41,7 @@ import React from "react";
 import CloseIcon from "src/assets/icons/CloseIcon";
 import MotionModal from "src/components/animate/MotionModal";
 import { fIndianCurrency } from "src/utils/formatNumber";
+import { fetchLocation } from "src/utils/fetchLocation";
 
 AWS.config.update({
   accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
@@ -160,35 +161,59 @@ function NewFundRequest({ getRaisedRequest }: props) {
     txnId: Yup.string()
       .when("modesDetail.modeName", {
         is: "RTGS",
-        then: Yup.string().required("Transaction ID is required")
-        .matches(/^[A-Za-z0-9/]*$/, "Only letters, numbers, and forward slashes are allowed"),
+        then: Yup.string()
+          .required("Transaction ID is required")
+          .matches(
+            /^[A-Za-z0-9/]*$/,
+            "Only letters, numbers, and forward slashes are allowed"
+          ),
       })
       .when("modesDetail.modeName", {
         is: "IMPS",
-        then: Yup.string().required("Transaction ID is required")
-        .matches(/^[A-Za-z0-9/]*$/, "Only letters, numbers, and forward slashes are allowed"),
+        then: Yup.string()
+          .required("Transaction ID is required")
+          .matches(
+            /^[A-Za-z0-9/]*$/,
+            "Only letters, numbers, and forward slashes are allowed"
+          ),
       })
       .when("modesDetail.modeName", {
         is: "NEFT",
-        then: Yup.string().required("Transaction ID is required")
-        .matches(/^[A-Za-z0-9/]*$/, "Only letters, numbers, and forward slashes are allowed"),
+        then: Yup.string()
+          .required("Transaction ID is required")
+          .matches(
+            /^[A-Za-z0-9/]*$/,
+            "Only letters, numbers, and forward slashes are allowed"
+          ),
       })
       .when("modesDetail.modeName", {
         is: "Fund Transfer",
-        then: Yup.string().required("Transaction ID is required")
-        .matches(/^[A-Za-z0-9/]*$/, "Only letters, numbers, and forward slashes are allowed"),
+        then: Yup.string()
+          .required("Transaction ID is required")
+          .matches(
+            /^[A-Za-z0-9/]*$/,
+            "Only letters, numbers, and forward slashes are allowed"
+          ),
       }),
 
     filePath: Yup.string()
       .when("modesDetail.modeName", {
         is: "Cash deposit at branch",
-        then: Yup.string().required("Please Select Slip")
-        .matches(/^[A-Za-z0-9/]*$/, "Only letters, numbers, and forward slashes are allowed"),
+        then: Yup.string()
+          .required("Please Select Slip")
+          .matches(
+            /^[A-Za-z0-9/]*$/,
+            "Only letters, numbers, and forward slashes are allowed"
+          ),
       })
       .when("modesDetail.modeName", {
         is: "Cash deposit at CDM",
-        then: Yup.string().required("Please Select Slip")
-        .matches(/^[A-Za-z0-9/]*$/, "Only letters, numbers, and forward slashes are allowed"),
+        then: Yup.string()
+          .required("Please Select Slip")
+          .matches(
+            /^[A-Za-z0-9/]*$/,
+            "Only letters, numbers, and forward slashes are allowed"
+          ),
       }),
     remarks: Yup.string().required("Remark Field is required"),
   });
@@ -301,7 +326,8 @@ function NewFundRequest({ getRaisedRequest }: props) {
       transactionSlip: data.filePath,
     };
 
-    Api(`agent/fundManagement/raiseRequest`, "POST", body, token).then(
+    await fetchLocation();
+    await Api(`agent/fundManagement/raiseRequest`, "POST", body, token).then(
       (Response: any) => {
         if (Response.status == 200) {
           if (Response.data.code == 200) {
@@ -495,20 +521,20 @@ function NewFundRequest({ getRaisedRequest }: props) {
               onChange={(newValue: any) => setValue("date", newValue)}
               renderInput={(params: any) => (
                 <RHFTextField
-                name="date"
-                type="date"
-                size="small"
-                autoComplete="off"
-                onKeyDown={(e: any) => {
-                  e.preventDefault();
-                  return false;
-                }}  
-                onPaste={(e: any) => {
-                  e.preventDefault();
-                  return false;
-                }}  
-                {...params}
-              />
+                  name="date"
+                  type="date"
+                  size="small"
+                  autoComplete="off"
+                  onKeyDown={(e: any) => {
+                    e.preventDefault();
+                    return false;
+                  }}
+                  onPaste={(e: any) => {
+                    e.preventDefault();
+                    return false;
+                  }}
+                  {...params}
+                />
               )}
             />
           </LocalizationProvider>

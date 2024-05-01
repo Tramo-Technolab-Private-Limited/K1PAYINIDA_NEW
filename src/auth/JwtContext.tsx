@@ -16,6 +16,7 @@ import {
 } from "./types";
 import { Api } from "src/webservices";
 import { useNavigate } from "react-router";
+import { fetchLocation } from "src/utils/fetchLocation";
 
 // ----------------------------------------------------------------------
 
@@ -132,21 +133,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [location, setLocation] = useState<boolean | null>(null);
 
   const initialize = useCallback(async () => {
-    navigator.geolocation.getCurrentPosition(
-      ({ coords }: any) => {
-        setLocation(true);
-        localStorage.setItem("lat", coords.latitude);
-        localStorage.setItem("long", coords.longitude);
-      },
-      (error) => {
-        setLocation(false);
-      }
-    );
-    fetch("https://api.ipify.org?format=json")
-      .then((response) => response.json())
-      .then((data) => {
-        localStorage.setItem("ip", data.ip);
-      });
+    let location = await fetchLocation();
+    if (location.coords.latitude && location.coords.longitude) {
+      setLocation(true);
+    } else {
+      setLocation(false);
+    }
     try {
       const token =
         typeof window !== "undefined" ? localStorage.getItem("token") : "";
