@@ -143,7 +143,8 @@ function UpdateFundRequest({ preData, handleClose, getRaisedRequest }: props) {
       .required("Amount is required"),
     date: Yup.date()
       .typeError("please enter a valid date")
-      .required("Please select Date"),
+      .required("Please select Date")
+      .min(dayjs(new Date()).subtract(180, "day"), "please enter valid date"),
     branchName: Yup.string().required("Branch Name is required"),
     mobileNumber: Yup.string()
       .required("Mobile number field is required")
@@ -494,7 +495,7 @@ function UpdateFundRequest({ preData, handleClose, getRaisedRequest }: props) {
               inputFormat="DD/MM/YYYY"
               value={dayjs(watch("date"))}
               maxDate={new Date()}
-              minDate={dayjs(new Date()).subtract(4, "day") as any}
+              minDate={dayjs(new Date()).subtract(180, "day") as any}
               onChange={(newValue: any) => setValue("date", newValue)}
               renderInput={(params: any) => (
                 <RHFTextField
