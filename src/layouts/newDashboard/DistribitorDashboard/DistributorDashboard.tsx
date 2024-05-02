@@ -21,11 +21,20 @@ import DonutView from "../Charts/DonutView";
 import LineView from "../Charts/LineView";
 import MonochromePieChart from "../Charts/MonochromePie";
 import TransactionDeatails from "../TransactionDeatails";
+import Scrollbar from "src/components/scrollbar";
+import useResponsive from "src/hooks/useResponsive";
 
 function DistributorDashboard() {
+  const isMobile = useResponsive("up", "sm");
   return (
     <>
-      <Stack style={{ maxHeight: "720px", overflowX: "auto" }}>
+      <Scrollbar
+        sx={
+          isMobile
+            ? { maxHeight: window.innerHeight - 134 }
+            : { maxHeight: window.innerHeight - 170 }
+        }
+      >
         <Stack width={"100%"} p={2} spacing={2}>
           <TransactionDeatails />
 
@@ -185,7 +194,7 @@ function DistributorDashboard() {
             </Grid>
           </Box>
         </Stack>
-      </Stack>
+      </Scrollbar>
     </>
   );
 }

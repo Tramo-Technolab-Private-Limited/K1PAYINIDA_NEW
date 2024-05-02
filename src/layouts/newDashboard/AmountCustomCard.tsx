@@ -29,6 +29,11 @@ function AmountCustomCard(props: any) {
             </Typography>
           </Stack>
           <Stack>{props?.icon}</Stack>
+          {/* <Stack>
+            <Button variant="contained" onClick={props.onClick}>
+              Hi
+            </Button>
+          </Stack> */}
         </Stack>
       </Card>
     </>

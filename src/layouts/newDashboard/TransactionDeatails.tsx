@@ -8,6 +8,7 @@ import {
   Stack,
   Tab,
   Tabs,
+  Typography,
 } from "@mui/material";
 import { Api } from "src/webservices";
 import WalletTop from "../../assets/dashboardIcon/Wallet.svg";
@@ -20,6 +21,10 @@ function TransactionDeatails() {
   const [value, setValue] = useState("daily");
   const [transaction, setTransactions] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
   const [totalCommission, setTotalCommission] = useState({
     totalCommission: "",
   });
@@ -30,6 +35,19 @@ function TransactionDeatails() {
     setValue(newValue);
   };
 
+  const style = {
+    position: "absolute" as "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: { xs: "920", sm: "920" },
+    bgcolor: "background.paper",
+    border: "2px ",
+    borderRadius: 2,
+    boxShadow: 24,
+    p: 4,
+    overflow: "auto",
+  };
   useEffect(() => {
     getTransactionList();
     getTotalCommission();
@@ -81,6 +99,10 @@ function TransactionDeatails() {
     );
   };
 
+  const handleClickB = () => {
+    console.log("Clicked in Component B");
+  };
+
   return (
     <>
       <Card
@@ -123,14 +145,14 @@ function TransactionDeatails() {
               <Grid container spacing={3}>
                 {transaction.map((item: any) => (
                   <Grid item xs={12} sm={6} md={4}>
-                    <Stack>
+                    <span onClick={handleClickB}>
                       <CustomCard
                         color="FFFFFF"
                         Status={item?.status}
                         amount={item?.count}
                         noOfTransaction={item?.totalAmount}
                       />
-                    </Stack>
+                    </span>
                   </Grid>
                 ))}
               </Grid>
@@ -146,11 +168,13 @@ function TransactionDeatails() {
             >
               <Grid container spacing={3}>
                 <Grid item xs={12} sm={6} md={4}>
+                  {/* <span onClick={handleOpen}> */}
                   <AmountCustomCard
                     amountType="Wallet Top Up"
                     Amount="40,00,00,000"
                     icon={<img src={WalletTop} />}
                   />
+                  {/* </span> */}
                 </Grid>
                 <Grid item xs={12} sm={6} md={4}>
                   <AmountCustomCard
@@ -171,6 +195,24 @@ function TransactionDeatails() {
           </>
         )}
       </Card>
+
+      {/* <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography
+            id="transition-modal-title"
+            variant="h6"
+            component="h2"
+            sx={{ marginBottom: 2 }}
+          >
+            <CustomCard />
+          </Typography>
+        </Box>
+      </Modal> */}
     </>
   );
 }
