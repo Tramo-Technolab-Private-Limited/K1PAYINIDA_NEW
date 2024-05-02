@@ -36,6 +36,7 @@ import Label from "src/components/label/Label";
 import { sentenceCase } from "change-case";
 import ApiDataLoading from "src/components/customFunctions/ApiDataLoading";
 import CustomPagination from "src/components/customFunctions/CustomPagination";
+import { fetchLocation } from "src/utils/fetchLocation";
 
 type FormValuesProps = {
   amount: number | null | string;
@@ -138,6 +139,7 @@ export default React.memo(function SettlementToWallet() {
         startDate: "",
         endDate: "",
       };
+      await fetchLocation();
       await Api(`transaction/transactionByUser`, "POST", body, token).then(
         (Response: any) => {
           console.log("======Transaction==response=====>" + Response);

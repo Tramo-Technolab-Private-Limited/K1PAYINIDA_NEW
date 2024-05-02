@@ -41,6 +41,7 @@ import ApiDataLoading from "../../../components/customFunctions/ApiDataLoading";
 import { useAuthContext } from "src/auth/useAuthContext";
 import Scrollbar from "src/components/scrollbar/Scrollbar";
 import useResponsive from "src/hooks/useResponsive";
+import { fetchLocation } from "src/utils/fetchLocation";
 // ----------------------------------------------------------------------
 
 type FormValuesProps = {
@@ -179,7 +180,7 @@ export default function DMTbeneficiary() {
 
   const {
     reset,
-    setError,
+    watch,
     setValue,
     getValues,
     trigger,
@@ -190,6 +191,11 @@ export default function DMTbeneficiary() {
   useEffect(() => {
     fatchBeneficiary(remitterContext.remitterMobile);
   }, [remitterContext]);
+
+  useEffect(() => {
+    setValue("mobileNumber", getValues("mobileNumber").slice(0, 10));
+    getValues("mobileNumber").length > 0 && trigger("mobileNumber");
+  }, [watch("mobileNumber")]);
 
   const fatchBeneficiary = (val: any) => {
     let token = localStorage.getItem("token");
@@ -236,6 +242,7 @@ export default function DMTbeneficiary() {
   };
 
   const verifyBene = async () => {
+    await fetchLocation();
     let token = localStorage.getItem("token");
     remitterVerifyDispatch({ type: "VERIFY_FETCH_REQUEST" });
     let body = {
@@ -245,7 +252,7 @@ export default function DMTbeneficiary() {
       remitterMobile: remitterContext.remitterMobile,
     };
     (await trigger(["ifsc", "accountNumber", "bankName"]))
-      ? Api("moneyTransfer/beneficiary/verify", "POST", body, token).then(
+      ? await Api("moneyTransfer/beneficiary/verify", "POST", body, token).then(
           (Response: any) => {
             if (Response.status == 200) {
               if (Response.data.code == 200) {
@@ -272,7 +279,7 @@ export default function DMTbeneficiary() {
       : remitterVerifyDispatch({ type: "VERIFY_FETCH_FAILURE" });
   };
 
-  const addBeneficiary = (data: FormValuesProps) => {
+  const addBeneficiary = async (data: FormValuesProps) => {
     addbeneDispatch({ type: "ADD_BENE_REQUEST" });
     let token = localStorage.getItem("token");
     let body = {
@@ -287,7 +294,8 @@ export default function DMTbeneficiary() {
       isBeneVerified: data.isBeneVerified,
       bankId: data.bankId,
     };
-    Api("moneyTransfer/beneficiary", "POST", body, token).then(
+    await fetchLocation();
+    await Api("moneyTransfer/beneficiary", "POST", body, token).then(
       (Response: any) => {
         if (Response.status == 200) {
           if (Response.data.code == 200) {
@@ -331,6 +339,7 @@ export default function DMTbeneficiary() {
     setValue("ifsc", value?.masterIFSC);
     setValue("bankId", value?.ekoBankId);
   }
+
   return (
     <>
       <Grid>
@@ -585,14 +594,15 @@ const BeneList = React.memo(
       setModalEdit2(false);
       setDeleteOtp("");
     };
-    const verifyBene = (val: string) => {
+    const verifyBene = async (val: string) => {
       setVarifyStatus(false);
       let token = localStorage.getItem("token");
       let body = {
         beneficiaryId: val,
         remitterMobile: remitterNumber,
       };
-      Api("moneyTransfer/beneficiary/verify", "POST", body, token).then(
+      await fetchLocation();
+      await Api("moneyTransfer/beneficiary/verify", "POST", body, token).then(
         (Response: any) => {
           if (Response.status == 200) {
             if (Response.data.code == 200) {

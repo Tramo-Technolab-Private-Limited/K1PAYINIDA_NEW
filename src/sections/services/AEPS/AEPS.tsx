@@ -54,6 +54,7 @@ import ReactToPrint from "react-to-print";
 import { PATH_DASHBOARD } from "src/routes/paths";
 import LoadingScreen from "src/components/loading-screen/LoadingScreen";
 import ApiDataLoading from "src/components/customFunctions/ApiDataLoading";
+import { fetchLocation } from "src/utils/fetchLocation";
 
 // ----------------------------------------------------------------------
 
@@ -204,6 +205,7 @@ export default function AEPS(props: any) {
 
   const {
     reset,
+    trigger,
     watch,
     getValues,
     setValue,
@@ -362,7 +364,8 @@ export default function AEPS(props: any) {
         Piddata: arrofObj[0].piddata.textContent || "",
       },
     };
-    Api("aeps/get_balance", "POST", body, token).then((Response: any) => {
+    await fetchLocation();
+    await Api("aeps/get_balance", "POST", body, token).then((Response: any) => {
       console.log("==============>>>fatch beneficiary Response", Response);
       if (Response.status == 200) {
         if (Response.data.code == 200) {
@@ -381,7 +384,7 @@ export default function AEPS(props: any) {
     });
   };
 
-  const cashWidthraw = () => {
+  const cashWidthraw = async () => {
     handleCloseConfirmDetail();
     handleOpenLoading();
     let token = localStorage.getItem("token");
@@ -423,7 +426,8 @@ export default function AEPS(props: any) {
         Piddata: arrofObj[0].piddata.textContent,
       },
     };
-    Api("aeps/cash_withdrawal_LTS", "POST", body, token).then(
+    await fetchLocation();
+    await Api("aeps/cash_withdrawal_LTS", "POST", body, token).then(
       (Response: any) => {
         console.log("==============>>>fatch beneficiary Response", Response);
         if (Response.status == 200) {
@@ -451,7 +455,7 @@ export default function AEPS(props: any) {
     );
   };
 
-  const miniStatement = () => {
+  const miniStatement = async () => {
     handleCloseConfirmDetail();
     handleOpenLoading();
     let token = localStorage.getItem("token");
@@ -489,7 +493,8 @@ export default function AEPS(props: any) {
         Piddata: arrofObj[0].piddata.textContent,
       },
     };
-    Api("aeps/get_mini_statement", "POST", body, token).then(
+    await fetchLocation();
+    await Api("aeps/get_mini_statement", "POST", body, token).then(
       (Response: any) => {
         console.log("==============>>>fatch beneficiary Response", Response);
         if (Response.status == 200) {
@@ -706,6 +711,11 @@ export default function AEPS(props: any) {
       setAttend(false);
     }
   }, [localAttendance]);
+
+  useEffect(() => {
+    setValue("mobileNumber", getValues("mobileNumber")?.slice(0, 10));
+    getValues("mobileNumber")?.length > 0 && trigger("mobileNumber");
+  }, [watch("mobileNumber")]);
 
   if (isUserHaveBankAccount == null) {
     return <ApiDataLoading />;

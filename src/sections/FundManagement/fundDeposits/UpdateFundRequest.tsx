@@ -39,6 +39,7 @@ import React from "react";
 import MotionModal from "src/components/animate/MotionModal";
 import CloseIcon from "src/assets/icons/CloseIcon";
 import { fIndianCurrency } from "src/utils/formatNumber";
+import { fetchLocation } from "src/utils/fetchLocation";
 
 AWS.config.update({
   accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
@@ -216,6 +217,7 @@ function UpdateFundRequest({ preData, handleClose, getRaisedRequest }: props) {
   const {
     reset,
     watch,
+    trigger,
     setValue,
     getValues,
     handleSubmit,
@@ -301,8 +303,8 @@ function UpdateFundRequest({ preData, handleClose, getRaisedRequest }: props) {
       request_to: "ADMIN",
       transactionSlip: data.filePath,
     };
-
-    Api(
+    await fetchLocation();
+    await Api(
       `agent/fundManagement/updateRaisedRequests/${preData._id}`,
       "POST",
       body,
@@ -349,6 +351,11 @@ function UpdateFundRequest({ preData, handleClose, getRaisedRequest }: props) {
     if (option == "percentage")
       setValue("feeCalc", String((Number(amount) * Number(value)) / 100));
   };
+
+  useEffect(() => {
+    setValue("mobileNumber", getValues("mobileNumber").slice(0, 10));
+    getValues("mobileNumber").length > 0 && trigger("mobileNumber");
+  }, [watch("mobileNumber")]);
 
   return (
     <>

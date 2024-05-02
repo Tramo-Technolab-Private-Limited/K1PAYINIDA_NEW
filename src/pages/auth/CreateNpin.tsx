@@ -29,6 +29,7 @@ import Iconify from "../../components/iconify";
 import { Api } from "../../webservices";
 import { useState, useEffect } from "react";
 import { useAuthContext } from "src/auth/useAuthContext";
+import { fetchLocation } from "src/utils/fetchLocation";
 // ----------------------------------------------------------------------
 
 type FormValuesProps = {
@@ -123,7 +124,6 @@ export default function CreateNpin() {
           data.code5 +
           data.code6,
       };
-
       await Api(`auth/create_Npin`, "POST", body, token).then(
         (Response: any) => {
           console.log("=============>" + JSON.stringify(Response));
