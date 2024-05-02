@@ -13,15 +13,22 @@ import {
 import DonutView from "../Charts/DonutView";
 import LineView from "../Charts/LineView";
 import TransactionDeatails from "../TransactionDeatails";
+import Scrollbar from "src/components/scrollbar";
+import useResponsive from "src/hooks/useResponsive";
 function AgentDashboard() {
+  const isMobile = useResponsive("up", "sm");
   return (
     <>
-      <Stack style={{ maxHeight: "720px", overflowY: "auto" }}>
+      <Scrollbar
+        sx={
+          isMobile
+            ? { maxHeight: window.innerHeight - 96 }
+            : { maxHeight: window.innerHeight - 104 }
+        }
+      >
         <Stack width={"100%"} p={2} spacing={2}>
           <AgentServices />
-
           <TransactionDeatails />
-
           <Box
             sx={{
               display: "flex",
@@ -58,7 +65,7 @@ function AgentDashboard() {
             </Grid>
           </Box>
         </Stack>
-      </Stack>
+      </Scrollbar>
     </>
   );
 }
