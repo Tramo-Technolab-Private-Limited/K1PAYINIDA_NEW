@@ -161,6 +161,7 @@ function MobilePrepaid() {
   const {
     reset,
     getValues,
+    trigger,
     watch,
     setValue,
     handleSubmit,
@@ -252,16 +253,6 @@ function MobilePrepaid() {
     }
   }
 
-  const style = {
-    position: "absolute" as "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    bgcolor: "#ffffff",
-    boxShadow: 24,
-    p: 4,
-  };
-
   useEffect(() => {
     subCategoryContext?.subcategoryId &&
       subCategoryContext?.categoryId &&
@@ -272,6 +263,8 @@ function MobilePrepaid() {
   }, [subCategoryContext?.subcategoryId]);
 
   useEffect(() => {
+    setValue("mobileNumber", getValues("mobileNumber").slice(0, 10));
+    getValues("mobileNumber").length > 0 && trigger("mobileNumber");
     if (watch("mobileNumber").length === 10) {
       getRechargePlan(getValues("mobileNumber"));
     }

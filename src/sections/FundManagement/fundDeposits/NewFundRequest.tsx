@@ -249,6 +249,7 @@ function NewFundRequest({ getRaisedRequest }: props) {
   const {
     reset,
     watch,
+    trigger,
     setValue,
     getValues,
     handleSubmit,
@@ -373,6 +374,11 @@ function NewFundRequest({ getRaisedRequest }: props) {
     if (option == "percentage")
       setValue("feeCalc", String((Number(amount) * Number(value)) / 100));
   };
+
+  useEffect(() => {
+    setValue("mobileNumber", getValues("mobileNumber").slice(0, 10));
+    getValues("mobileNumber").length > 0 && trigger("mobileNumber");
+  }, [watch("mobileNumber")]);
 
   return (
     <Card sx={{ p: 2, bgcolor: "primary.lighter", height: "100%" }}>
