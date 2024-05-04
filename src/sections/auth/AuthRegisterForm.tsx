@@ -250,6 +250,7 @@ export default function AuthRegisterForm(props: any) {
 
   const {
     reset,
+    trigger,
     register,
     setValue,
     getValues,
@@ -550,6 +551,11 @@ export default function AuthRegisterForm(props: any) {
   const handleChangeCheck = (event: any) => {
     setCheckbox(event.target.checked);
   };
+
+  useEffect(() => {
+    setValue("mobile", getValues("mobile").slice(0, 10));
+    getValues("mobile").length > 0 && trigger("mobile");
+  }, [watch("mobile")]);
 
   return (
     <>

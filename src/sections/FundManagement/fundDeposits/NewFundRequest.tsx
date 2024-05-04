@@ -151,7 +151,7 @@ function NewFundRequest({ getRaisedRequest }: props) {
     date: Yup.date()
       .typeError("please enter a valid date")
       .required("Please select Date")
-      .min(dayjs(new Date()).subtract(4, "day"), "please enter valid date"),
+      .min(dayjs(new Date()).subtract(180, "day"), "please enter valid date"),
 
     branchName: Yup.string().required("Branch Name is required"),
     mobileNumber: Yup.string()
@@ -199,21 +199,11 @@ function NewFundRequest({ getRaisedRequest }: props) {
     filePath: Yup.string()
       .when("modesDetail.modeName", {
         is: "Cash deposit at branch",
-        then: Yup.string()
-          .required("Please Select Slip")
-          .matches(
-            /^[A-Za-z0-9/]*$/,
-            "Only letters, numbers, and forward slashes are allowed"
-          ),
+        then: Yup.string().required("Please Select Slip"),
       })
       .when("modesDetail.modeName", {
         is: "Cash deposit at CDM",
-        then: Yup.string()
-          .required("Please Select Slip")
-          .matches(
-            /^[A-Za-z0-9/]*$/,
-            "Only letters, numbers, and forward slashes are allowed"
-          ),
+        then: Yup.string().required("Please Select Slip"),
       }),
     remarks: Yup.string().required("Remark Field is required"),
   });
@@ -249,6 +239,7 @@ function NewFundRequest({ getRaisedRequest }: props) {
   const {
     reset,
     watch,
+    trigger,
     setValue,
     getValues,
     handleSubmit,
@@ -373,6 +364,11 @@ function NewFundRequest({ getRaisedRequest }: props) {
     if (option == "percentage")
       setValue("feeCalc", String((Number(amount) * Number(value)) / 100));
   };
+
+  useEffect(() => {
+    setValue("mobileNumber", getValues("mobileNumber").slice(0, 10));
+    getValues("mobileNumber").length > 0 && trigger("mobileNumber");
+  }, [watch("mobileNumber")]);
 
   return (
     <Card sx={{ p: 2, bgcolor: "primary.lighter", height: "100%" }}>
@@ -517,7 +513,7 @@ function NewFundRequest({ getRaisedRequest }: props) {
               inputFormat="DD/MM/YYYY"
               value={dayjs(watch("date"))}
               maxDate={new Date()}
-              minDate={dayjs(new Date()).subtract(4, "day") as any}
+              minDate={dayjs(new Date()).subtract(180, "day") as any}
               onChange={(newValue: any) => setValue("date", newValue)}
               renderInput={(params: any) => (
                 <RHFTextField

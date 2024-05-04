@@ -12,6 +12,7 @@ import { m } from "framer-motion";
 import { MotionContainer, varFade } from "src/components/animate";
 import { fundRequestProps } from "./fundDeposits/types";
 import useResponsive from "src/hooks/useResponsive";
+import FundManagementSkeleton from "src/components/skeletons/FundManagementSkeleton";
 
 export const BankAccountContext = createContext([]);
 
@@ -19,6 +20,7 @@ export default function MyFundDeposite() {
   const isMobile = useResponsive("up", "sm");
   const [bankList, setBankList] = useState([]);
   const [tableData, setTableData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     getBankDeatails();
@@ -36,6 +38,7 @@ export default function MyFundDeposite() {
             console.log("======BankList=======>" + Response);
           }
         }
+        setIsLoading(false);
       }
     );
   };
@@ -65,6 +68,10 @@ export default function MyFundDeposite() {
       }
     );
   };
+
+  if (isLoading) {
+    return <FundManagementSkeleton />;
+  }
 
   return (
     <MotionContainer>

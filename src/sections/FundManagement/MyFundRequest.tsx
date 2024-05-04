@@ -62,6 +62,7 @@ export default function (props: any) {
     { id: "mobile", label: "Mobile" },
     { id: " branch", label: " Branch" },
     { id: " status", label: " Status" },
+    { id: " AdminRemark", label: " Admin Remark" },
   ];
 
   type FormValuesProps = {
@@ -476,12 +477,19 @@ export default function (props: any) {
                             ? sentenceCase(row.status.toLowerCase())
                             : ""}
                         </Label>
-                        {row.status.toLowerCase() === "rejected" && (
-                          <Typography variant="caption" alignSelf={"start"}>
-                            {row.comments}
-                          </Typography>
-                        )}
                       </Stack>
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      {row.status.toLowerCase() === "rejected" && (
+                        <Typography variant="caption" alignSelf={"start"}>
+                          {row.comments}
+                        </Typography>
+                      )}
+                      {row.status.toLowerCase() === "approved" && (
+                        <Typography variant="caption" alignSelf={"start"}>
+                          {row.comments}
+                        </Typography>
+                      )}
                     </StyledTableCell>
                   </StyledTableRow>
                 ))}

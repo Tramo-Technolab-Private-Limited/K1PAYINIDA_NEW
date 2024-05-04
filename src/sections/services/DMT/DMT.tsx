@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
 
-import React, { useReducer, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import * as Yup from "yup";
 import { useForm } from "react-hook-form";
 
@@ -112,11 +112,14 @@ export default function DMT() {
   const methods = useForm<FormValuesProps>({
     resolver: yupResolver(DMTSchema),
     defaultValues,
-    mode: "onChange",
+    mode: "onSubmit",
   });
 
   const {
     reset,
+    trigger,
+    setValue,
+    watch,
     getValues,
     handleSubmit,
     formState: { isValid, isSubmitting },
@@ -231,6 +234,11 @@ export default function DMT() {
       handleClose1();
     }
   };
+
+  useEffect(() => {
+    setValue("mobileNumber", getValues("mobileNumber").slice(0, 10));
+    getValues("mobileNumber").length > 0 && trigger("mobileNumber");
+  }, [watch("mobileNumber")]);
 
   return (
     <RoleBasedGuard hasContent roles={["agent"]}>
