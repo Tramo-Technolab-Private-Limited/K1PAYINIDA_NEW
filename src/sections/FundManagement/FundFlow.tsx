@@ -106,12 +106,12 @@ function FundFlow({ userDetail, from, parentHandleClose }: childProps) {
 
   const defaultValues = {
     transactionType: "",
-    User: !!from ? `${userDetail?.firstName} ${userDetail?.lastName}` : "",
+    User: "",
     searchby: "",
     userDetail: {
-      firstName: !from ? userDetail?.firstName : "",
-      lastName: !from ? userDetail?.lastName : "",
-      _id: !from ? userDetail?._id : "",
+      firstName: "",
+      lastName: "",
+      _id: "",
     },
     reason: "",
     amount: "",
@@ -138,6 +138,11 @@ function FundFlow({ userDetail, from, parentHandleClose }: childProps) {
     searchUsers();
     getTransaction();
   }, []);
+
+  useEffect(() => {
+    setValue("userDetail", userDetail);
+    setValue("User", `${userDetail?.firstName} ${userDetail?.lastName}`);
+  }, [userDetail]);
 
   useEffect(() => {
     setFilteredUser(
