@@ -104,7 +104,8 @@ export default function Services(props: any) {
                   ) : superCurrentTab.toLowerCase() == "matm" ? (
                     <MATM supCategory={tab} />
                   ) : superCurrentTab.toLowerCase() == "dmt1" ? (
-                    <DMT1 />
+                    // <DMT1 />
+                    <ServiceUnderUpdate />
                   ) : // <ServiceUnderUpdate />
                   superCurrentTab.toLowerCase() == "dmt2" ? (
                     <DMT2 />
