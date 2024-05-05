@@ -45,6 +45,7 @@ import MotionModal from "src/components/animate/MotionModal";
 import FundFlow from "../FundManagement/FundFlow";
 import DirectFundTransfer from "./DirectFundTransfer";
 import Iconify from "src/components/iconify";
+import ManageFundFlow from "../FundManagement/ManageFundFlow";
 
 // ----------------------------------------------------------------------
 
@@ -128,7 +129,6 @@ export default function AllDistributor() {
         then: Yup.string().required("Email is required field"),
       }),
   });
-
   const defaultValues = {
     category: "",
     status: "",
@@ -138,6 +138,7 @@ export default function AllDistributor() {
     usersearchby: "",
     User: "",
   };
+
   const methods = useForm<FormValuesProps>({
     resolver: yupResolver(txnSchema),
     defaultValues,
@@ -153,14 +154,13 @@ export default function AllDistributor() {
     formState: { isSubmitting },
   } = methods;
 
-
   useEffect(() => {
     if (getValues("User")?.length > 2) searchFromUser(getValues("User"));
   }, [watch("User")]);
 
-  useEffect(()=> {
-    resetField('User')
-  },[watch("usersearchby")])
+  useEffect(() => {
+    resetField("User");
+  }, [watch("usersearchby")]);
 
   const openEditModal = (val: any) => {
     setSelectedRow(val);
@@ -194,6 +194,26 @@ export default function AllDistributor() {
     });
   };
 
+  const searchFromUser = (val: string) => {
+    let body = {
+      searchBy: watch("usersearchby"),
+      searchInput: val,
+      finalStatus: "approved",
+    };
+    {
+      Api(`admin/search_user`, "POST", body, "").then((Response: any) => {
+        console.log("======get_CategoryList==response=====>" + Response);
+        if (Response.status == 200) {
+          if (Response.data.code == 200) {
+            setUserList(Response.data.data);
+          } else {
+            console.log("======search_usert=======>" + Response);
+          }
+        }
+      });
+    }
+  };
+
   const tableLabels: any = [
     { id: "product", label: "Name" },
     { id: "due", label: "User Code" },
@@ -201,7 +221,7 @@ export default function AllDistributor() {
     { id: "main_wallet_amount", label: "Current Balance" },
     { id: "maxComm", label: "Member Since" },
     { id: "schemeId", label: "Scheme Id" },
-    { id: "status", label: "Balance"},
+    { id: "status", label: "Balance" },
     { id: "fundtrans", label: "Fund Transfer", align: "center" },
   ];
 
@@ -260,24 +280,9 @@ export default function AllDistributor() {
     });
   };
 
-  const searchFromUser = (val: string) => {
-    let body = {
-      searchBy: watch("usersearchby"),
-      searchInput: val,
-      finalStatus: "approved",
-    };
-    {
-      Api(`admin/search_user`, "POST", body, "").then((Response: any) => {
-        console.log("======get_CategoryList==response=====>" + Response);
-        if (Response.status == 200) {
-          if (Response.data.code == 200) {
-            setUserList(Response.data.data);
-          } else {
-            console.log("======search_usert=======>" + Response);
-          }
-        }
-      });
-    }
+  const FundTransfer = (val: any) => {
+    setFundTrans(true);
+    setSelectedRow(val);
   };
 
   const handleReset = (val: any) => {
@@ -286,34 +291,31 @@ export default function AllDistributor() {
     allDistributor();
   };
 
-  const FundTransfer = (val: any) => {
-    setFundTrans(true);
-    setSelectedRow(val);
-  };
   return (
-    <>
-      <Stack>
+    <Stack>
       <Stack flexDirection={"row"} gap={1} justifyContent={"right"} mb={1}>
-          <Button variant="contained" onClick={handleReset}>
-            <Iconify icon="bx:reset" color={"common.white"} mr={1} />
-            Reset
-          </Button>
-          <Button variant="contained" onClick={handleOpen}>
-            <Iconify
-              icon="icon-park-outline:filter"
-              color={"common.white"}
-              mr={1}
-            />{" "}
-            Filter
-          </Button>
-        </Stack>
+        <Button variant="contained" onClick={handleReset}>
+          <Iconify icon="bx:reset" color={"common.white"} mr={1} />
+          Reset
+        </Button>
+        <Button variant="contained" onClick={handleOpen}>
+          <Iconify
+            icon="icon-park-outline:filter"
+            color={"common.white"}
+            mr={1}
+          />{" "}
+          Filter
+        </Button>
         <MotionModal
           open={open1}
           onClose={handleClose1}
           width={{ xs: "95%", sm: 500 }}
         >
           {/* <Box> */}
-          <FormProvider methods={methods} onSubmit={handleSubmit(allDistributor)}>
+          <FormProvider
+            methods={methods}
+            onSubmit={handleSubmit(allDistributor)}
+          >
             <RHFSelect
               fullWidth
               name="usersearchby"
@@ -323,7 +325,7 @@ export default function AllDistributor() {
               // InputLabelProps={{ shrink: true }}
               SelectProps={{
                 native: false,
-                sx: { textTransform: "capitalize",mb:"10px" },
+                sx: { textTransform: "capitalize", mb: "10px" },
               }}
             >
               <MenuItem value={"userCode"}>User Code</MenuItem>
@@ -339,29 +341,29 @@ export default function AllDistributor() {
                   name="User"
                   placeholder={"Type here..."}
                 />
-                <Stack flexDirection={"row"} mt={5}>
-                <LoadingButton
-                  variant="contained"
-                  type="submit"
-                  loading={isSubmitting}
-                  onClick={()=> {
-                   setAppdata(tempData) 
-                   handleClose1()
-                   reset(defaultValues)
-                  }}
-                >
-                  Search
-                </LoadingButton>
-                <LoadingButton
-              variant="contained"
-              onClick={() => {
-                reset(defaultValues);
-                allDistributor();
-              }}
-            >
-              Clear
-            </LoadingButton>
-            </Stack>
+                <Stack flexDirection={"row"} mt={5} gap={1}>
+                  <LoadingButton
+                    variant="contained"
+                    type="submit"
+                    loading={isSubmitting}
+                    onClick={() => {
+                      setAppdata(tempData);
+                      handleClose1();
+                      reset(defaultValues);
+                    }}
+                  >
+                    Search
+                  </LoadingButton>
+                  <LoadingButton
+                    variant="contained"
+                    onClick={() => {
+                      reset(defaultValues);
+                      allDistributor();
+                    }}
+                  >
+                    Clear
+                  </LoadingButton>
+                </Stack>
                 <Stack
                   sx={{
                     position: "absolute",
@@ -386,7 +388,7 @@ export default function AllDistributor() {
                             }}
                             onClick={() => {
                               setUserList([]);
-                              setTempData( [{...item}])
+                              setTempData([{ ...item }]);
                               setValue(
                                 "User",
                                 `${item.firstName} ${item.lastName}`
@@ -495,15 +497,7 @@ export default function AllDistributor() {
           )}
         </Box>
       </Modal>
-
-      <MotionModal
-        open={openFundtrans}
-        onClose={handleClosefunTransDist}
-        width={{ xs: "95%", sm: 500 }}
-      >
-        <DirectFundTransfer props={selectedRow} />
-      </MotionModal>
-    </>
+    </Stack>
   );
 }
 
@@ -518,6 +512,9 @@ function EcommerceBestSalesmanRow({
   openEditModal,
   FundTransfer,
 }: EcommerceBestSalesmanRowProps) {
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
   return (
     <>
       <TableRow>
@@ -561,14 +558,29 @@ function EcommerceBestSalesmanRow({
         <TableCell>{fDateTime(row.createdAt)}</TableCell>
         <TableCell>{row.schemeId}</TableCell>
         <TableCell align="left">
-          <Typography>Main Balance : {fIndianCurrency(row?.main_wallet_amount || "0")}</Typography>
-          <Typography>AEPS Balance : {fIndianCurrency(row?.AEPS_wallet_amount  || "0" )}</Typography>
+          <Typography>
+            Main Balance : {fIndianCurrency(row?.main_wallet_amount || "0")}
+          </Typography>
+          <Typography>
+            AEPS Balance : {fIndianCurrency(row?.AEPS_wallet_amount || "0")}
+          </Typography>
         </TableCell>
-        <TableCell align="left">
-          <Button variant="contained" onClick={() => FundTransfer(row)}>
+        <TableCell align="center">
+          <Button variant="contained" onClick={handleOpen}>
             Fund Transfer
           </Button>
         </TableCell>
+        <MotionModal
+          open={open}
+          onClose={handleClose}
+          width={{ xs: "95%", sm: 500 }}
+        >
+          <FundFlow
+            userDetail={row}
+            from={"networkModule"}
+            parentHandleClose={handleClose}
+          />
+        </MotionModal>
       </TableRow>
     </>
   );
