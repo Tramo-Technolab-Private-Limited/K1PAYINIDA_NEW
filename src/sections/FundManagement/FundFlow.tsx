@@ -38,7 +38,7 @@ import Iconify from "src/components/iconify";
 import Label from "src/components/label/Label";
 import { sentenceCase } from "change-case";
 import { useNavigate } from "react-router";
-import { fCurrency } from "src/utils/formatNumber";
+import { fCurrency, fIndianCurrency } from "src/utils/formatNumber";
 import { fetchLocation } from "src/utils/fetchLocation";
 
 type FormValuesProps = {
@@ -55,7 +55,13 @@ type FormValuesProps = {
   remarks: string;
 };
 
-function FundFlow() {
+type childProps = {
+  userDetail?: any;
+  from?: string;
+  parentHandleClose?: any;
+};
+
+function FundFlow({ userDetail, from, parentHandleClose }: childProps) {
   const { enqueueSnackbar } = useSnackbar();
   const { user, initialize } = useAuthContext();
   const [isLoading, setIsLoading] = useState(false);
@@ -81,19 +87,9 @@ function FundFlow() {
   const handleOpenDetails = () => setOpenConfirm(true);
   const handleCloseDetails = () => {
     setOpenConfirm(false);
+    parentHandleClose();
     reset(defaultValues);
   };
-
-  const navigate = useNavigate();
-  const tableLabels = [
-    { id: "Date&Time", label: "Date & Time" },
-    { id: "TransactionType", label: "Transaction Type" },
-    { id: "Client Ref Id", label: "Client Ref Id" },
-    { id: "From", label: "From" },
-    { id: "to", label: "To" },
-    { id: "amount", label: "Amount" },
-    { id: "status", label: "Status" },
-  ];
 
   const FilterSchema = Yup.object().shape({
     transactionType: Yup.string().required("Transaction Type is required"),
@@ -110,12 +106,12 @@ function FundFlow() {
 
   const defaultValues = {
     transactionType: "",
-    User: "",
+    User: !!from ? `${userDetail?.firstName} ${userDetail?.lastName}` : "",
     searchby: "",
     userDetail: {
-      firstName: "",
-      lastName: "",
-      _id: "",
+      firstName: !from ? userDetail?.firstName : "",
+      lastName: !from ? userDetail?.lastName : "",
+      _id: !from ? userDetail?._id : "",
     },
     reason: "",
     amount: "",
@@ -164,9 +160,9 @@ function FundFlow() {
   }, [watch("User")]);
 
   useEffect(() => {
-    resetField("User");
+    !from && resetField("User");
     resetField("searchby");
-    resetField("userDetail");
+    !from && resetField("userDetail");
     resetField("amount");
     resetField("reason");
     resetField("remarks");
@@ -257,7 +253,9 @@ function FundFlow() {
                   amount: Response.data.data.from.amount,
                 },
               ]);
-              getTransaction();
+              setIsLoading(false);
+              setIsTxnOpen(true);
+              handleCloseDetails();
             } else {
               enqueueSnackbar(Response.data.message, { variant: "error" });
               setErrorMsg(Response.data.message);
@@ -290,9 +288,7 @@ function FundFlow() {
     <>
       <RoleBasedGuard hasContent roles={["distributor", "m_distributor"]}>
         <Grid display={"grid"} m={1}>
-          <Typography variant="h3" my={2}>
-            Fund Flow
-          </Typography>
+          <Typography variant="h3">Fund Flow</Typography>
           <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
             <Grid
               display={"grid"}
@@ -329,78 +325,74 @@ function FundFlow() {
                 <MenuItem value={"Usercode"}>User code</MenuItem>
               </RHFSelect> */}
 
-              {getValues("transactionType") && (
-                <Stack sx={{ position: "relative", minWidth: "200px" }}>
-                  <RHFTextField
-                    fullWidth
-                    name="User"
-                    placeholder={"Search user by Email, User Code & First Name"}
-                  />
-                  {filteredUser.length > 0 && watch("User").length > 0 && (
-                    <Stack
-                      sx={{
-                        position: "absolute",
-                        top: 40,
-                        zIndex: 9,
-                        width: "100%",
-                        bgcolor: "white",
-                        border: "1px solid grey",
-                        borderRadius: 2,
-                      }}
-                    >
-                      <Scrollbar sx={{ maxHeight: 400 }}>
-                        {filteredUser.map((item: any) => {
-                          return (
-                            <Stack
-                              flexDirection={"row"}
-                              gap={1}
-                              sx={{
-                                p: 1,
-                                cursor: "pointer",
-                                color: "grey",
-                                "&:hover": { color: "black" },
-                              }}
-                              onClick={() => {
-                                setValue("userDetail", item);
-                                setValue(
-                                  "User",
-                                  `${item.firstName} ${item.lastName}`
-                                );
-                                setFilteredUser([]);
-                              }}
-                            >
-                              <CustomAvatar
-                                src={item?.selfie[0]}
-                                alt={item?.firstName}
-                                name={item?.firstName}
-                              />
-                              <Stack>
-                                <Typography variant="body2">
-                                  {item.firstName} {item.lastName}{" "}
-                                </Typography>{" "}
-                                <Typography variant="body2">
-                                  {item.userCode}
-                                </Typography>{" "}
-                                <Typography variant="body2">
-                                  {item.email}
-                                </Typography>{" "}
-                                <Typography variant="body2">
-                                  Main Balance :{" "}
-                                  {fCurrency(item.main_wallet_amount)}
-                                </Typography>{" "}
-                                <Typography variant="body2">
-                                  AEPS Balance :{" "}
-                                  {fCurrency(item.AEPS_wallet_amount)}
-                                </Typography>{" "}
-                              </Stack>
+              <Stack sx={{ position: "relative", minWidth: "200px" }}>
+                <RHFTextField
+                  fullWidth
+                  name="User"
+                  disabled={!!from}
+                  variant={!!from ? "filled" : "outlined"}
+                  placeholder={"Search user by Email, User Code & First Name"}
+                />
+                {filteredUser.length > 0 && watch("User").length > 0 && (
+                  <Stack
+                    sx={{
+                      position: "absolute",
+                      top: 40,
+                      zIndex: 9999,
+                      width: "100%",
+                      bgcolor: "white",
+                      border: "1px solid grey",
+                      borderRadius: 2,
+                    }}
+                  >
+                    <Scrollbar sx={{ maxHeight: 200 }}>
+                      {filteredUser.map((item: any) => {
+                        return (
+                          <Stack
+                            flexDirection={"row"}
+                            gap={1}
+                            sx={{
+                              p: 1,
+                              cursor: "pointer",
+                              color: "grey",
+                              "&:hover": { color: "black" },
+                            }}
+                            onClick={() => {
+                              setValue("userDetail", item);
+                              setValue(
+                                "User",
+                                `${item?.firstName} ${item?.lastName}`
+                              );
+                              setFilteredUser([]);
+                            }}
+                          >
+                            <CustomAvatar
+                              src={item?.selfie[0]}
+                              alt={item?.firstName}
+                              name={item?.firstName}
+                            />
+                            <Stack>
+                              <Typography variant="body2">
+                                {item.firstName} {item.lastName} (
+                                {item.userCode})
+                              </Typography>{" "}
+                              <Typography variant="body2">
+                                {item.email}
+                              </Typography>{" "}
+                              <Typography variant="body2">
+                                Main :{" "}
+                                {fIndianCurrency(item.main_wallet_amount) || 0}{" "}
+                                / AEPS :{" "}
+                                {fIndianCurrency(item.AEPS_wallet_amount) || 0}
+                              </Typography>{" "}
                             </Stack>
-                          );
-                        })}
-                      </Scrollbar>
-                    </Stack>
-                  )}
-                </Stack>
-              )}
+                          </Stack>
+                        );
+                      })}
+                    </Scrollbar>
+                  </Stack>
+                )}
+              </Stack>
 
               <RHFTextField
                 name="reason"
@@ -458,6 +450,7 @@ function FundFlow() {
           isTxnOpen={isTxnOpen}
           handleTxnModal={() => {
             setIsTxnOpen(false);
+            parentHandleClose();
             setErrorMsg("");
           }}
           errorMsg={errorMsg}
