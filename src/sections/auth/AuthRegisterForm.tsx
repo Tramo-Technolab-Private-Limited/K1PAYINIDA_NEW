@@ -457,9 +457,9 @@ export default function AuthRegisterForm(props: any) {
         data.code4 +
         data.code5 +
         data.code6,
-      email: data.email?.toLowerCase(),
-      mobileNumber: data.mobileNumber,
-      password: data.password,
+      email: getValues("email")?.toLowerCase(),
+      mobileNumber: getValues("mobile"),
+      password: getValues("password"),
       role: value2 == "m_distributor" ? value2 : radioVal,
       refferalCode: rfcode,
       FCM_Token: sessionStorage.getItem("fcm"),
@@ -470,11 +470,14 @@ export default function AuthRegisterForm(props: any) {
       if (Response.status == 200) {
         if (Response.data.code == 200) {
           enqueueSnackbar(Response.data.message);
+          localStorage.setItem("token", Response.data.data.token);
           initialize();
         } else {
-          setVerifyLoad(false);
           enqueueSnackbar(Response.data.message, { variant: "error" });
         }
+        setVerifyLoad(false);
+      } else {
+        setVerifyLoad(false);
       }
     });
   };
