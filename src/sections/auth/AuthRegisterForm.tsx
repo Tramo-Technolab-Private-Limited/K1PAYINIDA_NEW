@@ -438,8 +438,15 @@ export default function AuthRegisterForm(props: any) {
     });
   };
 
-  const formSubmit = (data: FormValuesProps) => {
+  const formSubmit = async (data: FormValuesProps) => {
     setVerifyLoad(true);
+    let rfcode;
+    if (value2 == "distributor") {
+      rfcode = "MD_" + formValues.refCode;
+    } else if (value2 == "agent") {
+      rfcode = "D_" + formValues.refCode;
+    }
+
     const body = {
       email_OTP:
         data.otp1 + data.otp2 + data.otp3 + data.otp4 + data.otp5 + data.otp6,
@@ -450,59 +457,32 @@ export default function AuthRegisterForm(props: any) {
         data.code4 +
         data.code5 +
         data.code6,
-      email: formValues.email?.toLowerCase(),
-      mobileNumber: formValues.mobileNumber,
-    };
-
-    Api(`auth/verifyOTP`, "POST", body, "").then((Response: any) => {
-      console.log("=============>" + JSON.stringify(Response));
-      if (Response.status == 200) {
-        if (Response.data.code == 200) {
-          enqueueSnackbar(Response.data.message);
-          createUser();
-        } else {
-          setVerifyLoad(false);
-          enqueueSnackbar(Response.data.message, { variant: "error" });
-        }
-      }
-    });
-  };
-
-  // useEffect(() => requestPermission(), []);
-
-  const createUser = async () => {
-    const body = {
-      contactNo: formValues.mobileNumber,
-      email: formValues.email?.toLowerCase(),
-      password: formValues.password,
+      email: getValues("email")?.toLowerCase(),
+      mobileNumber: getValues("mobile"),
+      password: getValues("password"),
       role: value2 == "m_distributor" ? value2 : radioVal,
-      application_no: Math.floor(Math.random() * 10000000),
-      referralCode: formValues.refCode,
-      FCM_token: sessionStorage.getItem("fcm"),
+      refferalCode: rfcode,
+      FCM_Token: sessionStorage.getItem("fcm"),
     };
     await fetchLocation();
-    await Api(`auth/create_account`, "POST", body, "").then((Response: any) => {
-      console.log("=============> Create" + JSON.stringify(Response));
+    await Api(`auth/verifyOTP`, "POST", body, "").then((Response: any) => {
+      console.log("=============>" + JSON.stringify(Response));
       if (Response.status == 200) {
         if (Response.data.code == 200) {
           enqueueSnackbar(Response.data.message);
           localStorage.setItem("token", Response.data.data.token);
           initialize();
-          setVerifyLoad(false);
         } else {
           enqueueSnackbar(Response.data.message, { variant: "error" });
         }
-        if (Response.data.code == 400) {
-          setVerifyLoad(false);
-          setRefName("");
-          setgOTP(false);
-          reset(defaultValues);
-          otpReset(defaultValues2);
-          setFormValues({ ...formValues, refCode: "" });
-        }
+        setVerifyLoad(false);
+      } else {
+        setVerifyLoad(false);
       }
     });
   };
+
+  // useEffect(() => requestPermission(), []);
 
   const handleChangeRadio = (
     event: React.SyntheticEvent,
