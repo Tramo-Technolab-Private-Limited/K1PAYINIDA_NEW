@@ -1517,7 +1517,7 @@ function TransactionRow({ row }: childProps) {
                         Sender Name :{" "}
                         <span style={{ fontWeight: 500 }}>
                           {" "}
-                          {newRow?.moneyTransferSenderId?.remitterFN}
+                          {newRow?.moneyTransferSenderId?.remitterFN}{" "}
                           {newRow?.moneyTransferSenderId?.remitterLN}{" "}
                         </span>
                       </Typography>

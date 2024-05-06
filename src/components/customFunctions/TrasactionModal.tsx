@@ -26,6 +26,7 @@ import Hold from "src/assets/transactionIcons/Hold";
 import Inprocess from "src/assets/transactionIcons/Inprocess";
 import Initiated from "src/assets/transactionIcons/Initiated";
 import CustomTransactionSlip from "./CustomTransactionSlip";
+import DownloadIcon from "@mui/icons-material/Download";
 import { Margin } from "@mui/icons-material";
 import Iconify from "../iconify";
 import { fDateTime } from "src/utils/formatTime";
@@ -90,8 +91,12 @@ export default function TransactionModal({
               <Button onClick={handleTxnModal} variant="contained">
                 Close
               </Button>
-              <Button onClick={() => setSlip(true)} variant="contained">
-                Receipt
+              <Button
+                onClick={() => setSlip(true)}
+                variant="contained"
+                startIcon={<DownloadIcon />}
+              >
+                Download Receipt
               </Button>
             </Stack>
           </Box>
@@ -260,12 +265,16 @@ export default function TransactionModal({
           >
             {successMsg}
           </Typography>
-          <Stack flexDirection="row" gap={1}>
+          <Stack flexDirection="row" gap={1} p={1}>
             <Button onClick={handleTxnModal} variant="contained">
               Close
             </Button>
-            <Button onClick={() => setSlip(true)} variant="contained">
-              Receipt
+            <Button
+              onClick={() => setSlip(true)}
+              variant="contained"
+              startIcon={<DownloadIcon />}
+            >
+              Download Receipt
             </Button>
           </Stack>
         </Scrollbar>
