@@ -139,6 +139,7 @@ export default function DMTbeneficiary() {
   const [open, setModalEdit] = React.useState(false);
   const openEditModal = () => setModalEdit(true);
   const handleClose = () => {
+    remitterVerifyDispatch({ type: "VERIFY_FETCH_FAILURE" });
     setModalEdit(false);
     reset(defaultValues);
   };
@@ -242,9 +243,9 @@ export default function DMTbeneficiary() {
   };
 
   const verifyBene = async () => {
-    await fetchLocation();
     let token = localStorage.getItem("token");
     remitterVerifyDispatch({ type: "VERIFY_FETCH_REQUEST" });
+    await fetchLocation();
     let body = {
       ifsc: getValues("ifsc"),
       accountNumber: getValues("accountNumber"),
@@ -595,7 +596,6 @@ const BeneList = React.memo(
       setDeleteOtp("");
     };
     const verifyBene = async (val: string) => {
-      setVarifyStatus(false);
       let token = localStorage.getItem("token");
       let body = {
         beneficiaryId: val,
@@ -700,7 +700,10 @@ const BeneList = React.memo(
                 variant="contained"
                 color="warning"
                 loading={!varifyStatus}
-                onClick={() => verifyBene(cell._id)}
+                onClick={() => {
+                  setVarifyStatus(false);
+                  verifyBene(cell._id);
+                }}
               >
                 Verify Now
               </LoadingButton>
