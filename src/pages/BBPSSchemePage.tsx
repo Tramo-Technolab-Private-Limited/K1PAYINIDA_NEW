@@ -21,7 +21,7 @@ import {
   styled,
   tableCellClasses,
 } from "@mui/material";
-import { TableHeadCustom } from "src/components/table";
+import { TableHeadCustom, TableNoData } from "src/components/table";
 import CustomPagination from "../components/customFunctions/CustomPagination";
 import { useSnackbar } from "notistack";
 import ApiDataLoading from "../components/customFunctions/ApiDataLoading";
@@ -252,10 +252,15 @@ export default function BBPSSchemePage() {
         <ApiDataLoading />
       ) : (
         <>
-          {tableData.length > 0 && (
-            <Stack>
+          {tableData.length > 0 ? (
+            <Stack mx={1}>
               <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-                <Stack flexDirection={"row"} gap={1} mb={1}>
+                <Stack
+                  flexDirection={"row"}
+                  gap={1}
+                  mb={1}
+                  width={{ xs: "100%", sm: "50%" }}
+                >
                   <RHFSelect
                     name="subcategory"
                     label="Category"
@@ -297,7 +302,7 @@ export default function BBPSSchemePage() {
                   sx={
                     isMobile
                       ? { maxHeight: window.innerHeight - 200 }
-                      : { maxHeight: window.innerHeight - 160 }
+                      : { maxHeight: window.innerHeight - 130 }
                   }
                 >
                   <Table
@@ -329,6 +334,21 @@ export default function BBPSSchemePage() {
                   </Table>
                 </Scrollbar>
               </TableContainer>
+              <CustomPagination
+                pageSize={pageSize}
+                onChange={(
+                  event: React.ChangeEvent<unknown>,
+                  value: number
+                ) => {
+                  setCurrentPage(value);
+                }}
+                page={currentPage}
+                Count={(isFilter ? searchData : tableData).length}
+              />
+            </Stack>
+          ) : (
+            <Stack direction="row" justifyContent="center">
+              <TableNoData isNotFound={!tableData.length} />
             </Stack>
           )}
         </>
