@@ -128,7 +128,6 @@ export default function TransactionModal({
           >
             <Box display="grid" gridTemplateColumns="repeat(12, 1fr)">
               <>
-                {/* <CustomTransactionSlip newRow={transactionDetail} /> */}
                 <Stack mb={40} ml={85}>
                   <Tooltip title="Close" onClick={handleCloseRecipt}>
                     <IconButton>
