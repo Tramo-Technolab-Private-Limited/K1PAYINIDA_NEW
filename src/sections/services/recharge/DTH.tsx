@@ -308,9 +308,11 @@ function VerifyNPIN({ data, handleClose }: any) {
                 "==============>>> post mobile number",
                 Response.data.message
               );
+              handleClose();
             }
             otpReset(defaultValues2);
             setConfirm(false);
+            handleClose();
           }
         }
       );
