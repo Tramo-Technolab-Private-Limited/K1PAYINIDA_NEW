@@ -14,8 +14,6 @@ import {
   MenuItem,
   Modal,
   useTheme,
-  Tabs,
-  Tab,
 } from "@mui/material";
 import { Api } from "src/webservices";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -34,10 +32,6 @@ import { fetchLocation } from "src/utils/fetchLocation";
 import MotionModal from "src/components/animate/MotionModal";
 import { LoadingButton } from "@mui/lab";
 
-import Startek from "../../../assets/images/StartekOne.svg";
-import Morpho from "../../../assets/images/MorphoOne.png";
-import Mantra from "../../../assets/images/Mantra.png";
-import Secugen from "../../../assets/images/SecugenOne.png";
 // ----------------------------------------------------------------------
 
 type FormValuesProps = {
@@ -68,12 +62,6 @@ export default function AttendenceAeps(props: any) {
     setOpen(false);
     setarrofObj([]);
     setMessage("");
-  };
-
-  const [deviceName, setDeviceName] = React.useState("");
-
-  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-    setDeviceName(newValue);
   };
 
   const AEPSSchema = Yup.object().shape({
@@ -131,7 +119,7 @@ export default function AttendenceAeps(props: any) {
     try {
       let token = localStorage.getItem("token");
       let body = {
-        attendanceType: "Daily",
+        attendanceType: "DAILY",
         serviceType: props.attendance,
         latitude: localStorage.getItem("lat"),
         longitude: localStorage.getItem("long"),
@@ -326,72 +314,32 @@ export default function AttendenceAeps(props: any) {
           justifyContent={"center"}
         >
           <Typography variant="h4">
+            {" "}
             Plaese mark the attendance to use{" "}
             {props.attendance == "AEPS" ? "AEPS" : "Aadhar Pay"}{" "}
           </Typography>
-
-          <Tabs
-            value={deviceName}
-            onChange={handleChange}
-            textColor="secondary"
-            indicatorColor="secondary"
-            aria-label="secondary tabs example"
-            sx={{ margin: "auto" }}
+          <RHFSelect
+            name="deviceName"
+            label="Select Device"
+            placeholder="Select Device"
+            SelectProps={{ native: false, sx: { textTransform: "capitalize" } }}
+            sx={{ width: "90%", margin: "auto" }}
           >
-            <Tab
-              value={"STARTEK"}
-              iconPosition="top"
-              icon={
-                <Stack sx={{ height: "40px", width: "40px" }}>
-                  <img src={Startek} />
-                </Stack>
-              }
-              label="STARTEK"
-            />
-            <Tab
-              value={"MORPHO"}
-              iconPosition="top"
-              icon={
-                <Typography sx={{ height: "50px", width: "40px" }}>
-                  <img src={Morpho} />
-                </Typography>
-              }
-              label="MORPHO"
-            />
-
-            <Tab
-              value={"MANTRA"}
-              iconPosition="top"
-              icon={
-                <Typography sx={{ height: "40px", width: "40px" }}>
-                  <img src={Mantra} />
-                </Typography>
-              }
-              label="MANTRA"
-            />
-
-            <Tab
-              value={"SECUGEN"}
-              iconPosition="top"
-              icon={
-                <Typography sx={{ height: "40px", width: "40px" }}>
-                  <img src={Secugen} />
-                </Typography>
-              }
-              label="SECUGEN"
-            />
-          </Tabs>
+            <MenuItem value={"MORPHO"}>MORPHO</MenuItem>
+            <MenuItem value={"STARTEK"}>STARTEK</MenuItem>
+            <MenuItem value={"MANTRA"}>MANTRA</MenuItem>
+            <MenuItem value={"SECUGEN"}>SECUGEN</MenuItem>
+          </RHFSelect>
 
           <Stack>
-            {deviceName !== "" && (
-              <Button
-                variant="contained"
-                type="submit"
-                sx={{ width: "fit-content", margin: "auto", mt: 2 }}
-              >
-                Scan fingure to continue
-              </Button>
-            )}
+            <LoadingButton
+              variant="contained"
+              type="submit"
+              loading={isSubmitting}
+              sx={{ width: "fit-content", margin: "auto" }}
+            >
+              Scan fingure to continue
+            </LoadingButton>
           </Stack>
         </Stack>
       </FormProvider>
