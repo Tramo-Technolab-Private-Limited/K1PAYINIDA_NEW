@@ -42,6 +42,11 @@ import { useAuthContext } from "src/auth/useAuthContext";
 import MotionModal from "src/components/animate/MotionModal";
 import { Icon } from "@iconify/react";
 import { fetchLocation } from "src/utils/fetchLocation";
+import CustomTransactionSlip from "src/components/customFunctions/CustomTransactionSlip";
+import { sentenceCase } from "change-case";
+import { fDateTime } from "src/utils/formatTime";
+import successAnimation from "../../../components/JsonAnimations/success.json";
+import Lottie from "lottie-react";
 
 // ----------------------------------------------------------------------
 
@@ -127,6 +132,13 @@ function MobilePrepaid() {
     otpReset(defaultValues2);
   };
 
+  const [responseOpen, setResponseOpen] = useState(false);
+  const handleOpenResponse = () => setResponseOpen(true);
+  const handleCloseResponse = () => setResponseOpen(false);
+
+  const [isAnimation, setIsAnimation] = useState(false);
+  const [isReceiptOpen, setIsReceiptOpen] = useState(false);
+  const [transactionDetail, setTransactionDetail] = useState<any>([]);
   const [planList, setPlanList] = useState([]);
   const [tabsData, setTabsData] = useState({
     "3G/4G": [],
@@ -161,8 +173,8 @@ function MobilePrepaid() {
   const {
     reset,
     getValues,
-    trigger,
     watch,
+    trigger,
     setValue,
     handleSubmit,
     formState: { errors, isSubmitting, isValid },
@@ -212,32 +224,56 @@ function MobilePrepaid() {
     { id: 3, name: "Haryana", value: "Haryana" },
     {
       id: 4,
-      name: "AndhraPradeshTelangana",
-      value: "Andhra Pradesh Telangana",
+      name: "Andhra Pradesh",
+      value: "Andhra Pradesh",
     },
     { id: 5, name: "Assam", value: "Assam" },
-    { id: 6, name: "BiharJharkhand", value: "Bihar Jharkhand" },
+    { id: 6, name: "Bihar", value: "Bihar" },
     { id: 7, name: "Chennai", value: "Chennai" },
     { id: 8, name: "HimachalPradesh", value: "Himachal Pradesh" },
-    { id: 9, name: "JammuKashmir", value: "Jammu Kashmir" },
+    { id: 9, name: "Jammu", value: "Jammu" },
     { id: 10, name: "Karnataka", value: "Karnataka" },
     { id: 11, name: "Kerala", value: "Kerala" },
     { id: 12, name: "Kolkata", value: "Kolkata" },
     {
       id: 13,
-      name: "MadhyaPradeshChhattisgarh",
-      value: "Madhya Pradesh Chhattisgarh",
+      name: "Chhattisgarh",
+      value: "Chhattisgarh",
     },
-    { id: 14, name: "MaharashtraGoa", value: "Maharashtra Goa" },
-    { id: 15, name: "Mumbai", value: "Mumbai" },
+    { id: 14, name: "Goa", value: "Goa" },
+    { id: 15, name: "Maharashtra", value: "Maharashtra" },
     { id: 16, name: "NorthEast", value: "North East" },
-    { id: 17, name: "Orissa", value: "Orissa" },
+    { id: 17, name: "Odisha", value: "Odisha" },
     { id: 18, name: "Punjab", value: "Punjab" },
     { id: 19, name: "Rajasthan", value: "Rajasthan" },
-    { id: 20, name: "TamilNadu", value: "Tamil Nadu" },
-    { id: 21, name: "UPEast", value: "UP East" },
-    { id: 22, name: "UP West and Uttaranchal", value: "UP West" },
+    { id: 20, name: "Tamil Nadu", value: "Tamil Nadu" },
+    { id: 21, name: "Uttar Pradesh", value: "Uttar Pradesh" },
+    // { id: 22, name: "UP West and Uttaranchal", value: "UP West" },
     { id: 23, name: "WestBengal", value: "West Bengal" },
+    { id: 24, name: "Arunachal Pradesh", value: "Arunachal Pradesh" },
+    { id: 25, name: "Jharkhand", value: "Jharkhand" },
+    { id: 26, name: "Madhya Pradesh", value: "Madhya Pradesh" },
+    { id: 27, name: "Manipur", value: "Manipur" },
+    { id: 28, name: "Meghalaya", value: "Meghalaya" },
+    { id: 29, name: "Mizoram", value: "Mizoram" },
+    { id: 30, name: "Nagaland", value: "Nagaland" },
+    { id: 31, name: "Sikkim", value: "Sikkim" },
+    { id: 32, name: "Telangana", value: "Telangana" },
+    { id: 33, name: "Tripura", value: "Tripura" },
+    { id: 34, name: "Uttarakhand", value: "Uttarakhand" },
+    {
+      id: 35,
+      name: "Andaman and Nicobar Islands",
+      value: "Andaman and Nicobar Islands",
+    },
+    { id: 36, name: "Chandigarh", value: "Chandigarh" },
+    { id: 37, name: "Dadra and Nagar Haveli", value: "Dadra and Nagar Haveli" },
+    { id: 38, name: "Lakshadweep", value: "Lakshadweep" },
+    { id: 39, name: "Puducherry", value: "Puducherry" },
+    { id: 40, name: "Ladakh", value: "Ladakh" },
+    { id: 41, name: "Kashmir", value: "Kashmir" },
+    { id: 42, name: "Daman", value: "Daman" },
+    { id: 43, name: "Diu", value: "Diu" },
   ];
 
   function tabChange(val: any) {
@@ -274,11 +310,11 @@ function MobilePrepaid() {
     if (getValues("operator") && getValues("circle")) browsePlan();
   }, [watch("operator") || watch("circle")]);
 
-  const getRechargePlan = async (val: string) => {
+  const getRechargePlan = (val: string) => {
     let token = localStorage.getItem("token");
     setIsOperatorFetchLoading(true);
-    await fetchLocation();
-    await Api(`agents/v1/getOperator/${val}`, "GET", "", token).then(
+
+    Api(`agents/v1/getOperator/${val}`, "GET", "", token).then(
       (Response: any) => {
         if (Response.status == 200) {
           if (Response.data.code == 200) {
@@ -366,6 +402,14 @@ function MobilePrepaid() {
               type: "RECHARGE_FETCH_SUCCESS",
               payload: Response.data.data,
             });
+            if (Response.data.data.status == "success") {
+              setIsAnimation(true);
+              setTimeout(() => {
+                setIsAnimation(false);
+              }, 1800);
+            }
+            setTransactionDetail([Response.data.data]);
+            handleOpenResponse();
             initialize();
           } else {
             enqueueSnackbar(Response.data.message, { variant: "error" });
@@ -439,6 +483,13 @@ function MobilePrepaid() {
               disabled={isOperatorFetchLoading}
               SelectProps={{
                 native: false,
+                MenuProps: {
+                  PaperProps: {
+                    style: {
+                      maxHeight: "200px",
+                    },
+                  },
+                },
                 sx: { textTransform: "capitalize" },
               }}
             >
@@ -597,7 +648,7 @@ function MobilePrepaid() {
             mt={2}
             gap={2}
           >
-            <Typography variant="h4">Confirm NPIN</Typography>
+            <Typography variant="h4">Confirm TPIN</Typography>
             <RHFSecureCodes
               keyName="otp"
               inputs={["otp1", "otp2", "otp3", "otp4", "otp5", "otp6"]}
@@ -633,6 +684,88 @@ function MobilePrepaid() {
           {/* )} */}
         </FormProvider>
       </MotionModal>
+
+      <MotionModal open={responseOpen} width={{ xs: "95%", md: 500 }}>
+        {isAnimation && (
+          <Stack sx={{ position: "absolute" }}>
+            {" "}
+            <Lottie animationData={successAnimation} />{" "}
+          </Stack>
+        )}
+        <Stack flexDirection={"column"} alignItems={"center"}>
+          <Typography variant="h3">
+            Transaction {sentenceCase(rechargeState?.data?.status || "")}
+          </Typography>
+        </Stack>
+        <Stack flexDirection={"row"} justifyContent={"space-between"} mt={2}>
+          <Typography variant="subtitle1">Amount</Typography>
+          <Typography variant="body1">
+            ₹{rechargeState?.data?.amount}
+          </Typography>
+        </Stack>
+        <Stack flexDirection={"row"} justifyContent={"space-between"} mt={2}>
+          <Typography variant="subtitle1">Transaction Id</Typography>
+          <Typography variant="body1">
+            {rechargeState?.data?.transactionId}
+          </Typography>
+        </Stack>
+        <Stack flexDirection={"row"} justifyContent={"space-between"} mt={2}>
+          <Typography variant="subtitle1">Date</Typography>
+          <Typography variant="body1">
+            {fDateTime(rechargeState?.data?.createdAt)}
+          </Typography>
+        </Stack>
+        <Stack flexDirection={"row"} justifyContent={"space-between"} mt={2}>
+          <Typography variant="subtitle1">Client Ref Id</Typography>
+          <Typography variant="body1">
+            {rechargeState?.data?.clientRefId}
+          </Typography>
+        </Stack>{" "}
+        <Stack flexDirection="row" gap={1}>
+          <Button
+            variant="contained"
+            onClick={handleCloseResponse}
+            sx={{ my: 3 }}
+          >
+            Close
+          </Button>
+          <Button
+            variant="contained"
+            sx={{ my: 3 }}
+            onClick={() => setIsReceiptOpen(true)}
+          >
+            View Receipt
+          </Button>
+        </Stack>
+      </MotionModal>
+      <Modal
+        open={isReceiptOpen}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <>
+          <Grid
+            sx={{
+              position: "absolute" as "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              bgcolor: "#ffffff",
+              boxShadow: 4,
+              p: 2,
+              borderRadius: "20px",
+              minWidth: { xs: "95%", md: 720 },
+            }}
+          >
+            <Stack>
+              <CustomTransactionSlip
+                newRow={transactionDetail}
+                handleCloseRecipt={() => setIsReceiptOpen(false)}
+              />
+            </Stack>
+          </Grid>
+        </>
+      </Modal>
     </>
   );
 }
