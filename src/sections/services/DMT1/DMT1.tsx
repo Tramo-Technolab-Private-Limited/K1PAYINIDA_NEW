@@ -236,97 +236,97 @@ export default function DMT1() {
   }, [watch("mobileNumber")]);
 
   return (
-    <ServiceUnderUpdate />
+    // <ServiceUnderUpdate />
 
-    // <RoleBasedGuard hasContent roles={["agent"]}>
-    //   <RemitterContext.Provider value={remitter.data}>
-    //     <Helmet>
-    //       <title>DMT1 |{process.env.REACT_APP_COMPANY_NAME}</title>
-    //     </Helmet>
-    //     <Grid container spacing={2}>
-    //       <Grid item sm={3}>
-    //         <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-    //           <Box
-    //             rowGap={2}
-    //             columnGap={2}
-    //             ml={1}
-    //             display="grid"
-    //             sx={{ position: "relative" }}
-    //             gridTemplateColumns={{
-    //               xs: "repeat(1, 1fr)",
-    //             }}
-    //           >
-    //             <Stack flexDirection="row" alignItems={"center"} gap={1}>
-    //               <ArrowBackIosNewOutlinedIcon
-    //                 onClick={() => navigate(-1)}
-    //                 sx={{
-    //                   height: "25px",
-    //                   width: "25px",
-    //                   cursor: "pointer",
-    //                 }}
-    //               />
-    //               <Typography variant="h4">DMT1</Typography>
-    //             </Stack>
+    <RoleBasedGuard hasContent roles={["agent"]}>
+      <RemitterContext.Provider value={remitter.data}>
+        <Helmet>
+          <title>DMT1 |{process.env.REACT_APP_COMPANY_NAME}</title>
+        </Helmet>
+        <Grid container spacing={2}>
+          <Grid item sm={3}>
+            <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+              <Box
+                rowGap={2}
+                columnGap={2}
+                ml={1}
+                display="grid"
+                sx={{ position: "relative" }}
+                gridTemplateColumns={{
+                  xs: "repeat(1, 1fr)",
+                }}
+              >
+                <Stack flexDirection="row" alignItems={"center"} gap={1}>
+                  <ArrowBackIosNewOutlinedIcon
+                    onClick={() => navigate(-1)}
+                    sx={{
+                      height: "25px",
+                      width: "25px",
+                      cursor: "pointer",
+                    }}
+                  />
+                  <Typography variant="h4">DMT1</Typography>
+                </Stack>
 
-    //             <RHFTextField
-    //               name="mobileNumber"
-    //               type="number"
-    //               label="Sender Mobile Number"
-    //               placeholder="Sender Mobile Number"
-    //               aria-autocomplete="none"
-    //               InputProps={{
-    //                 endAdornment: isValid && (
-    //                   <LoadingButton
-    //                     type="submit"
-    //                     variant="contained"
-    //                     loading={isSubmitting}
-    //                     sx={{ right: "-10px" }}
-    //                   >
-    //                     Search
-    //                   </LoadingButton>
-    //                 ),
-    //               }}
-    //             />
-    //           </Box>
-    //           <Typography variant="body2" sx={{ ml: 1 }}>
-    //             To comply with RBI guidelines, a valid sender mobile number is
-    //             mandatory for DMT1. Please ensure you provide a valid sender
-    //             mobile number to proceed with the transaction.
-    //           </Typography>
-    //         </FormProvider>
-    //         {remitter.remitterfetch && <DMT1RemitterDetail />}
-    //       </Grid>
-    //       <Grid item xs={12} sm={9}>
-    //         {remitter.remitterfetch && <DMT1beneficiary />}
-    //       </Grid>
-    //     </Grid>
-    //     <Modal
-    //       open={open1}
-    //       aria-labelledby="modal-modal-title"
-    //       aria-describedby="modal-modal-description"
-    //     >
-    //       <Box sx={style}>
-    //         <NewRegistration
-    //           mobilenumber={getValues("mobileNumber")}
-    //           handleNewRegistaion={handleNewRegistaion}
-    //         />
-    //       </Box>
-    //     </Modal>
-    //     <Modal
-    //       open={open2}
-    //       aria-labelledby="modal-modal-title"
-    //       aria-describedby="modal-modal-description"
-    //     >
-    //       <Box sx={style}>
-    //         <OtpSubmissionForRegistrantion
-    //           callback={childFunc}
-    //           mobilenumber={getValues("mobileNumber")}
-    //           handleClose2={handleClose2}
-    //         />
-    //       </Box>
-    //     </Modal>
-    //   </RemitterContext.Provider>
-    // </RoleBasedGuard>
+                <RHFTextField
+                  name="mobileNumber"
+                  type="number"
+                  label="Sender Mobile Number"
+                  placeholder="Sender Mobile Number"
+                  aria-autocomplete="none"
+                  InputProps={{
+                    endAdornment: isValid && (
+                      <LoadingButton
+                        type="submit"
+                        variant="contained"
+                        loading={isSubmitting}
+                        sx={{ right: "-10px" }}
+                      >
+                        Search
+                      </LoadingButton>
+                    ),
+                  }}
+                />
+              </Box>
+              <Typography variant="body2" sx={{ ml: 1 }}>
+                To comply with RBI guidelines, a valid sender mobile number is
+                mandatory for DMT1. Please ensure you provide a valid sender
+                mobile number to proceed with the transaction.
+              </Typography>
+            </FormProvider>
+            {remitter.remitterfetch && <DMT1RemitterDetail />}
+          </Grid>
+          <Grid item xs={12} sm={9}>
+            {remitter.remitterfetch && <DMT1beneficiary />}
+          </Grid>
+        </Grid>
+        <Modal
+          open={open1}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <NewRegistration
+              mobilenumber={getValues("mobileNumber")}
+              handleNewRegistaion={handleNewRegistaion}
+            />
+          </Box>
+        </Modal>
+        <Modal
+          open={open2}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <OtpSubmissionForRegistrantion
+              callback={childFunc}
+              mobilenumber={getValues("mobileNumber")}
+              handleClose2={handleClose2}
+            />
+          </Box>
+        </Modal>
+      </RemitterContext.Provider>
+    </RoleBasedGuard>
   );
 }
 

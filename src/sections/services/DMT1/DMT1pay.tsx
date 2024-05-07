@@ -186,19 +186,17 @@ export default function DMT1pay({ clearPayout, remitter, beneficiary }: any) {
             if (Response.status == 200) {
               if (Response.data.code == 200) {
                 Response.data.response.map((element: any) => {
-                  enqueueSnackbar(element.data.message);
+                  enqueueSnackbar(element.message);
+                  TextToSpeak(element.message);
                   initialize();
                 });
                 setTransactionDetail(
                   Response.data.response.map((item: any) => item.data)
                 );
-
                 // setTransactionDetail(Response.data.data);
-                TextToSpeak(Response.data.message);
                 handleClose();
                 handleOpen1();
                 // setCount(5);
-
                 setTxn(false);
                 setErrorMsg("");
               } else {
@@ -290,7 +288,7 @@ export default function DMT1pay({ clearPayout, remitter, beneficiary }: any) {
                 </RadioGroup>
               </FormControl>
               <Stack flexDirection={"row"} gap={1}>
-                <Button
+                <LoadingButton
                   onClick={() => {
                     handleClose2();
                     handleOpen();
@@ -312,7 +310,7 @@ export default function DMT1pay({ clearPayout, remitter, beneficiary }: any) {
                   }
                 >
                   Pay Now
-                </Button>
+                </LoadingButton>
                 <Button
                   onClick={() => {
                     handleClose2();
@@ -484,9 +482,13 @@ export default function DMT1pay({ clearPayout, remitter, beneficiary }: any) {
                     </FormHelperText>
                   )}
                   <Stack flexDirection={"row"} gap={1} mt={2}>
-                    <Button variant="contained" type="submit">
+                    <LoadingButton
+                      variant="contained"
+                      type="submit"
+                      loading={isSubmitting}
+                    >
                       Yes, Continue
-                    </Button>
+                    </LoadingButton>
                     <Button
                       variant="contained"
                       color="warning"
