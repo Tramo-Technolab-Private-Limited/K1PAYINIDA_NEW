@@ -3,72 +3,88 @@ import axios from 'axios';
 const siteUrl = process.env.REACT_APP_BASE_URL;
 
 export function UploadFile(url: any, body: any, token: any) {
-  const formData = new FormData();
-  formData.append('file', body);
-
-  const config = {
+  var init = {
+    method: "POST",
     headers: {
-      'Content-Type': 'multipart/form-data',
       token: token ? token : null,
-    },
-  };
 
-  return axios.post(siteUrl + url, formData, config)
-    .then(response => {
-      const apiData = {
-        status: response.status,
-        data: response.data,
-      };
-      if (apiData.data.code === 410) {
-        localStorage.setItem('authentication', 'false');
-      }
-      return apiData;
-    })
-    .catch(error => {
-      return 'error';
+    },
+    body: body,
+  };
+  return fetch(siteUrl + url, init)
+    .then((res) =>
+      res.json().then((data) => {
+        var apiData = {
+          status: res.status,
+          data: data,
+        };
+        if (apiData.data.code == 410) {
+          localStorage.setItem("authentication", "false");
+        }
+        return apiData;
+      })
+    )
+    .catch((err) => {
+      return "error";
     });
 }
 
 export async function Api(url: any, apiMethod: any, body: any, token: any) {
-  const userAgent = navigator.userAgent;
+  let userAgent: any = navigator.userAgent;
 
-  let headers = {
-    token: token ? token : null,
-    'Content-Type': 'application/json',
-    latitude: localStorage.getItem('lat'),
-    longitude: localStorage.getItem('long'),
-    ip: localStorage.getItem('ip'),
-    'user-Agent': userAgent,
-    devicetype: userAgent.match(/Android/i)
-      ? 'android'
-      : userAgent.match(/mac/i)
-        ? 'macbook'
-        : 'windows',
-  };
+  // Wrap the geolocation call in a new Promise.
 
-  let data = null;
-  if (apiMethod !== 'GET') {
-    data = JSON.stringify(body);
-  }
+  var init: any =
+    apiMethod === "GET"
+      ? {
+        method: "GET",
+        headers: {
+          //  'Authorization': token
+          "Content-Type": "application/json",
+          token: token ? token : null,
+          latitude: localStorage.getItem("lat"),
+          longitude: localStorage.getItem("long"),
+          ip: localStorage.getItem("ip"),
+          "user-Agent": userAgent,
+          devicetype: userAgent.match(/Android/i)
+            ? "android"
+            : userAgent.match(/mac/i)
+              ? "macbook"
+              : "windows",
+        },
+      }
+      : {
+        method: apiMethod,
+        headers: {
+          token: token ? token : null,
+          "Content-Type": "application/json",
+          latitude: localStorage.getItem("lat"),
+          longitude: localStorage.getItem("long"),
+          ip: localStorage.getItem("ip"),
+          "user-Agent": userAgent,
+          devicetype: userAgent.match(/Android/i)
+            ? "android"
+            : userAgent.match(/mac/i)
+              ? "macbook"
+              : "windows",
+        },
+        body: JSON.stringify(body),
+      };
 
-  const config = {
-    method: apiMethod,
-    url: siteUrl + url,
-    headers: headers,
-    data: data,
-  };
-
-  try {
-    const response = await axios(config);
-    const apiData = {
-      status: response.status,
-      data: response.data,
-    };
-    if (apiData.data.code === 410) {
-      localStorage.setItem('authentication', 'false');
-    }
-    return apiData;
-  } catch (error) {
-    return 'error';
-  }
+  return fetch(siteUrl + url, init)
+    .then((res) =>
+      res.json().then((data) => {
+        var apiData = {
+          status: res.status,
+          data: data,
+        };
+        if (apiData.data.code == 410) {
+          localStorage.setItem("authentication", "false");
+        }
+        return apiData;
+      })
+    )
+    .catch((err) => {
+      return "error";
+    });
 }
