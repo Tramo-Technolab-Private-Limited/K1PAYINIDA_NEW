@@ -440,12 +440,6 @@ export default function AuthRegisterForm(props: any) {
 
   const formSubmit = async (data: FormValuesProps) => {
     setVerifyLoad(true);
-    let rfcode;
-    if (value2 == "distributor") {
-      rfcode = "MD_" + formValues.refCode;
-    } else if (value2 == "agent") {
-      rfcode = "D_" + formValues.refCode;
-    }
 
     const body = {
       email_OTP:
@@ -461,7 +455,7 @@ export default function AuthRegisterForm(props: any) {
       mobileNumber: getValues("mobile"),
       password: getValues("password"),
       role: value2 == "m_distributor" ? value2 : radioVal,
-      refferalCode: rfcode,
+      refferalCode: formValues.refCode,
       FCM_Token: sessionStorage.getItem("fcm"),
     };
     await fetchLocation();
