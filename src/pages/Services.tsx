@@ -99,12 +99,13 @@ export default function Services(props: any) {
                   ) : superCurrentTab.toLowerCase() == "bill payment" ? (
                     <BillPayment supCategory={tab} />
                   ) : superCurrentTab.toLowerCase() == "aadhaar pay" ? (
-                    // <AadharPay supCategory={tab} />
+                    // <AadharPay />
                     <ServiceUnderUpdate />
                   ) : superCurrentTab.toLowerCase() == "matm" ? (
                     <MATM supCategory={tab} />
                   ) : superCurrentTab.toLowerCase() == "dmt1" ? (
-                    <DMT1 />
+                    // <DMT1 />
+                    <ServiceUnderUpdate />
                   ) : // <ServiceUnderUpdate />
                   superCurrentTab.toLowerCase() == "dmt2" ? (
                     <DMT2 />

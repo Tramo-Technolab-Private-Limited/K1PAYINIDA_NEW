@@ -38,33 +38,30 @@ import Iconify from "src/components/iconify";
 import Label from "src/components/label/Label";
 import { sentenceCase } from "change-case";
 import { useNavigate } from "react-router";
-import { fCurrency } from "src/utils/formatNumber";
+import { fCurrency, fIndianCurrency } from "src/utils/formatNumber";
 import { fetchLocation } from "src/utils/fetchLocation";
 
 type FormValuesProps = {
   transactionType: string;
   User: string;
-  from: {
+  searchby: string;
+  userDetail: {
     firstName: string;
     lastName: string;
-    userCode: string;
-    contact_no: string;
-    _id: string;
-  };
-  to: {
-    firstName: string;
-    lastName: string;
-    userCode: string;
-    contact_no: string;
     _id: string;
   };
   reason: string;
-  transactionid: string;
   amount: string;
   remarks: string;
 };
 
-function FundFlow() {
+type childProps = {
+  userDetail?: any;
+  from?: string;
+  parentHandleClose?: any;
+};
+
+function FundFlow({ userDetail, from, parentHandleClose }: childProps) {
   const { enqueueSnackbar } = useSnackbar();
   const { user, initialize } = useAuthContext();
   const [isLoading, setIsLoading] = useState(false);
@@ -72,49 +69,35 @@ function FundFlow() {
   const [users, setUsers] = useState([]);
   const [isTxnOpen, setIsTxnOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const [successMsg, setSuccessMsg] = useState("");
   const [sdata, setSdata] = useState([]);
   const [pageSize, setPageSize] = useState<any>(10000);
   const [currentPage, setCurrentPage] = useState<any>(1);
   const [pageCount, setPageCount] = useState<any>(0);
   const [Loading, setLoading] = useState(false);
-  const [transactionDetail, setTransactionDetail] = useState({
-    status: "",
-  });
+  const [transactionDetail, setTransactionDetail] = useState([
+    {
+      status: "",
+      createdAt: "",
+      amount: "",
+    },
+  ]);
 
   //confirm modal
   const [openConfirm, setOpenConfirm] = useState(false);
   const handleOpenDetails = () => setOpenConfirm(true);
   const handleCloseDetails = () => {
     setOpenConfirm(false);
+    parentHandleClose();
     reset(defaultValues);
   };
-
-  const navigate = useNavigate();
-  const tableLabels = [
-    { id: "Date&Time", label: "Date & Time" },
-    { id: "TransactionType", label: "Transaction Type" },
-    { id: "Client Ref Id", label: "Client Ref Id" },
-    { id: "From", label: "From" },
-    { id: "to", label: "To" },
-    { id: "amount", label: "Amount" },
-    { id: "status", label: "Status" },
-  ];
 
   const FilterSchema = Yup.object().shape({
     transactionType: Yup.string().required("Transaction Type is required"),
     User: Yup.string().required("Please Select User"),
-    from: Yup.object().shape({
-      _id: Yup.string().when("transactionType", {
-        is: "debit",
-        then: Yup.string().required("please select User"),
-      }),
-    }),
-    to: Yup.object().shape({
-      _id: Yup.string().when("transactionType", {
-        is: "credit",
-        then: Yup.string().required("please select User"),
-      }),
+    userDetail: Yup.object().shape({
+      firstName: Yup.string(),
+      lastName: Yup.string(),
+      _id: Yup.string().required("Please select user"),
     }),
     reason: Yup.string().required("Reason is required"),
     amount: Yup.string().required("Reason is required"),
@@ -124,22 +107,13 @@ function FundFlow() {
   const defaultValues = {
     transactionType: "",
     User: "",
-    from: {
+    searchby: "",
+    userDetail: {
       firstName: "",
       lastName: "",
-      userCode: "",
-      contact_no: "",
-      _id: "",
-    },
-    to: {
-      firstName: "",
-      lastName: "",
-      userCode: "",
-      contact_no: "",
       _id: "",
     },
     reason: "",
-    transactionid: "",
     amount: "",
     remarks: "",
   };
@@ -164,6 +138,12 @@ function FundFlow() {
     searchUsers();
     getTransaction();
   }, []);
+
+  useEffect(() => {
+    setValue("userDetail", userDetail);
+    setValue("User", `${userDetail?.firstName} ${userDetail?.lastName}`);
+  }, [userDetail]);
+
   useEffect(() => {
     setFilteredUser(
       users.filter((item: any) => {
@@ -171,7 +151,12 @@ function FundFlow() {
           item.firstName
             .toLowerCase()
             .startsWith(getValues("User").toLowerCase()) ||
-          item.email.toLowerCase().startsWith(getValues("User").toLowerCase())
+          item.email
+            .toLowerCase()
+            .startsWith(getValues("User").toLowerCase()) ||
+          item.userCode
+            .toLowerCase()
+            .startsWith(getValues("User").toLowerCase())
         ) {
           return item;
         }
@@ -180,20 +165,12 @@ function FundFlow() {
   }, [watch("User")]);
 
   useEffect(() => {
-    resetField("User");
+    !from && resetField("User");
+    resetField("searchby");
+    !from && resetField("userDetail");
     resetField("amount");
     resetField("reason");
     resetField("remarks");
-    setValue("from._id", "");
-    setValue("from.contact_no", "");
-    setValue("from.firstName", "");
-    setValue("from.lastName", "");
-    setValue("from.userCode", "");
-    setValue("to._id", "");
-    setValue("to.contact_no", "");
-    setValue("to.firstName", "");
-    setValue("to.lastName", "");
-    setValue("to.userCode", "");
   }, [watch("transactionType")]);
 
   const searchUsers = () => {
@@ -233,13 +210,12 @@ function FundFlow() {
     };
     Api(`transaction/fund_flow_transaction`, "POST", body, token).then(
       (Response: any) => {
-        console.log("======Transaction==response=====>" + Response);
         if (Response.status == 200) {
           if (Response.data.code == 200) {
             setSdata(Response.data.data.data);
             setPageCount(Response.data.data.totalNumberOfRecords);
           } else {
-            enqueueSnackbar(Response.data.message);
+            enqueueSnackbar(Response.data.message, { variant: "error" });
           }
           setLoading(false);
         } else {
@@ -250,53 +226,59 @@ function FundFlow() {
     );
   };
 
-  const onSubmit = () => handleOpenDetails();
+  const onSubmit = (data: FormValuesProps) => {
+    console.log(data);
+    handleOpenDetails();
+  };
 
-  const confirmTransaction = () => {
+  const confirmTransaction = async () => {
     setIsLoading(true);
     let token = localStorage.getItem("token");
     try {
       let body = {
+        transaction_type: getValues("transactionType"),
+        userId: getValues("userDetail._id"),
         amount: getValues("amount"),
-        from:
-          getValues("transactionType") == "debit"
-            ? getValues("from._id")
-            : user?._id,
-        fromName:
-          getValues("transactionType") == "debit"
-            ? `${getValues("from.firstName")} ${getValues("from.lastName")}`
-            : `${user?.firstName} ${user?.lastName}`,
-        to:
-          getValues("transactionType") == "credit"
-            ? getValues("to._id")
-            : user?._id,
-        toName:
-          getValues("transactionType") == "credit"
-            ? `${getValues("to.firstName")} ${getValues("to.lastName")}`
-            : `${user?.firstName} ${user?.lastName}`,
         reason: getValues("reason"),
         remarks: getValues("remarks"),
-        txnId: "",
       };
-      Api(`agent/downline_fund_flow`, "POST", body, token).then(
+
+      await fetchLocation();
+      await Api(`agent/v2/downline_fund_flow`, "POST", body, token).then(
         (Response: any) => {
-          console.log("======get_CategoryList==response=====>" + Response);
+          console.log(Response);
           if (Response.status == 200) {
             if (Response.data.code == 200) {
               enqueueSnackbar(Response.data.message);
               initialize();
-
-              setSuccessMsg(Response.data.message);
-
-              setTransactionDetail(Response.data.data);
+              setTransactionDetail([
+                {
+                  status: "success",
+                  createdAt: Response.data.data.createdAt,
+                  amount: Response.data.data.from.amount,
+                },
+              ]);
+              setIsLoading(false);
+              setIsTxnOpen(true);
+              handleCloseDetails();
             } else {
               enqueueSnackbar(Response.data.message, { variant: "error" });
               setErrorMsg(Response.data.message);
+              setIsTxnOpen(true);
+              handleCloseDetails();
+              setIsLoading(false);
             }
             setIsTxnOpen(true);
             handleCloseDetails();
             setIsLoading(false);
           } else {
+            setTransactionDetail([
+              {
+                status: "failed",
+                createdAt: Response.data.data.createdAt,
+                amount: Response.data.data.from.amount,
+              },
+            ]);
             setIsLoading(false);
             setErrorMsg("Failed");
             enqueueSnackbar("failed", { variant: "error" });
@@ -311,9 +293,7 @@ function FundFlow() {
     <>
       <RoleBasedGuard hasContent roles={["distributor", "m_distributor"]}>
         <Grid display={"grid"} m={1}>
-          <Typography variant="h3" my={2}>
-            Fund Flow
-          </Typography>
+          <Typography variant="h3">Fund Flow</Typography>
           <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
             <Grid
               display={"grid"}
@@ -333,89 +313,91 @@ function FundFlow() {
                   sx: { textTransform: "capitalize" },
                 }}
               >
-                <MenuItem value={"credit"}>Credit</MenuItem>
-                <MenuItem value={"debit"}>Debit</MenuItem>
+                <MenuItem value={"Credit"}>Credit</MenuItem>
+                <MenuItem value={"Debit"}>Debit</MenuItem>
               </RHFSelect>
+              {/* <RHFSelect
+                name="searchby"
+                label="search by"
+                placeholder="search by"
+                SelectProps={{
+                  native: false,
+                  sx: { textTransform: "capitalize" },
+                }}
+              >
+                <MenuItem value={"Email"}>Email</MenuItem>
+                <MenuItem value={"Username"}>User name</MenuItem>
+                <MenuItem value={"Usercode"}>User code</MenuItem>
+              </RHFSelect> */}
 
-              {getValues("transactionType") && (
-                <Stack sx={{ position: "relative", minWidth: "200px" }}>
-                  <RHFTextField
-                    fullWidth
-                    name="User"
-                    placeholder={
-                      getValues("transactionType") == "credit" ? "To" : "From"
-                    }
-                  />
-                  {filteredUser.length > 0 && watch("User").length > 0 && (
-                    <Stack
-                      sx={{
-                        position: "absolute",
-                        top: 40,
-                        zIndex: 9,
-                        width: "100%",
-                        bgcolor: "white",
-                        border: "1px solid grey",
-                        borderRadius: 2,
-                      }}
-                    >
-                      <Scrollbar sx={{ maxHeight: 400 }}>
-                        {filteredUser.map((item: any) => {
-                          return (
-                            <Stack
-                              flexDirection={"row"}
-                              gap={1}
-                              sx={{
-                                p: 1,
-                                cursor: "pointer",
-                                color: "grey",
-                                "&:hover": { color: "black" },
-                              }}
-                              onClick={() => {
-                                setValue(
-                                  getValues("transactionType") == "credit"
-                                    ? "to"
-                                    : "from",
-                                  item
-                                );
-                                setValue(
-                                  "User",
-                                  `${item.firstName} ${item.lastName}`
-                                );
-                                setFilteredUser([]);
-                              }}
-                            >
-                              <CustomAvatar
-                                src={item?.selfie[0]}
-                                alt={item?.firstName}
-                                name={item?.firstName}
-                              />
-                              <Stack>
-                                <Typography variant="body2">
-                                  {item.firstName} {item.lastName}{" "}
-                                </Typography>{" "}
-                                <Typography variant="body2">
-                                  {item.userCode}
-                                </Typography>{" "}
-                                <Typography variant="body2">
-                                  {item.email}
-                                </Typography>{" "}
-                                <Typography variant="body2">
-                                  Main Balance :{" "}
-                                  {fCurrency(item.main_wallet_amount)}
-                                </Typography>{" "}
-                                <Typography variant="body2">
-                                  AEPS Balance :{" "}
-                                  {fCurrency(item.AEPS_wallet_amount)}
-                                </Typography>{" "}
-                              </Stack>
+              <Stack sx={{ position: "relative", minWidth: "200px" }}>
+                <RHFTextField
+                  fullWidth
+                  name="User"
+                  disabled={!!from}
+                  variant={!!from ? "filled" : "outlined"}
+                  placeholder={"Search user by Email, User Code & First Name"}
+                />
+                {filteredUser.length > 0 && watch("User").length > 0 && (
+                  <Stack
+                    sx={{
+                      position: "absolute",
+                      top: 40,
+                      zIndex: 9999,
+                      width: "100%",
+                      bgcolor: "white",
+                      border: "1px solid grey",
+                      borderRadius: 2,
+                    }}
+                  >
+                    <Scrollbar sx={{ maxHeight: 200 }}>
+                      {filteredUser.map((item: any) => {
+                        return (
+                          <Stack
+                            flexDirection={"row"}
+                            gap={1}
+                            sx={{
+                              p: 1,
+                              cursor: "pointer",
+                              color: "grey",
+                              "&:hover": { color: "black" },
+                            }}
+                            onClick={() => {
+                              setValue("userDetail", item);
+                              setValue(
+                                "User",
+                                `${item?.firstName} ${item?.lastName}`
+                              );
+                              setFilteredUser([]);
+                            }}
+                          >
+                            <CustomAvatar
+                              src={item?.selfie[0]}
+                              alt={item?.firstName}
+                              name={item?.firstName}
+                            />
+                            <Stack>
+                              <Typography variant="body2">
+                                {item.firstName} {item.lastName} (
+                                {item.userCode})
+                              </Typography>{" "}
+                              <Typography variant="body2">
+                                {item.email}
+                              </Typography>{" "}
+                              <Typography variant="body2">
+                                Main :{" "}
+                                {fIndianCurrency(item.main_wallet_amount) || 0}{" "}
+                                / AEPS :{" "}
+                                {fIndianCurrency(item.AEPS_wallet_amount) || 0}
+                              </Typography>{" "}
                             </Stack>
-                          );
-                        })}
-                      </Scrollbar>
-                    </Stack>
-                  )}
-                </Stack>
-              )}
+                          </Stack>
+                        );
+                      })}
+                    </Scrollbar>
+                  </Stack>
+                )}
+              </Stack>
 
               <RHFTextField
                 name="reason"
@@ -447,13 +429,13 @@ function FundFlow() {
               onClose={handleCloseDetails}
               title="Fund Transfer Confirmation"
               content={`Are you sure to Transfer Rs.${getValues("amount")} ${
-                getValues("transactionType") == "debit"
-                  ? `from ${getValues("from.firstName")} ${getValues(
-                      "from.lastName"
+                getValues("transactionType") == "Debit"
+                  ? `from ${getValues("userDetail.firstName")} ${getValues(
+                      "userDetail.lastName"
                     )} to ${user?.firstName} ${user?.lastName}`
                   : `from ${user?.firstName} ${user?.lastName} to ${getValues(
-                      "to.firstName"
-                    )} ${getValues("to.lastName")}`
+                      "userDetail.firstName"
+                    )} ${getValues("userDetail.lastName")}`
               } `}
               action={
                 <LoadingButton
@@ -473,11 +455,10 @@ function FundFlow() {
           isTxnOpen={isTxnOpen}
           handleTxnModal={() => {
             setIsTxnOpen(false);
+            parentHandleClose();
             setErrorMsg("");
-            setSuccessMsg("");
           }}
           errorMsg={errorMsg}
-          successMsg={successMsg}
           transactionDetail={transactionDetail}
         />
       </RoleBasedGuard>

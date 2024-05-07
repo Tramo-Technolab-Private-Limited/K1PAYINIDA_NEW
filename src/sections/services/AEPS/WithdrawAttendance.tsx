@@ -103,6 +103,7 @@ export default function WithdrawAttendance(props: any) {
     handleOpenLoading();
     let token = localStorage.getItem("token");
     let body = {
+      attendanceType: "TRANSACTIONAL",
       serviceType: props.attendance,
       latitude: localStorage.getItem("lat"),
       longitude: localStorage.getItem("long"),

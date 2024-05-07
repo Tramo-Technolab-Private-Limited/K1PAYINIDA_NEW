@@ -36,6 +36,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import DirectFundTransfer from "./DirectFundTransfer";
 import Iconify from "src/components/iconify";
+import ManageFundFlow from "../FundManagement/ManageFundFlow";
 // ----------------------------------------------------------------------
 
 type RowProps = {
@@ -70,6 +71,7 @@ export default function Agent() {
   const [appdata, setAppdata] = useState([]);
   const isMobile = useResponsive("up", "sm");
   const [tempData, setTempData] = useState<any>([]);
+  const [open, setModalEdit] = React.useState(false);
   const [pageSize, setPageSize] = useState<any>(25);
   const [currentPage, setCurrentPage] = useState<any>(1);
   const [TotalCount, setTotalCount] = useState<any>(0);
@@ -88,7 +90,7 @@ export default function Agent() {
     { id: "main_wallet_amount", label: "Current Balance" },
     { id: "maxComm", label: "Member Since" },
     { id: "schemeId", label: "Scheme Id" },
-    { id: "status", label: "Balance"},
+    { id: "status", label: "Balance" },
     { id: "fundtrans", label: "Fund Transfer", align: "center" },
   ];
 
@@ -98,7 +100,7 @@ export default function Agent() {
     mobile: string;
     userCode: string;
     usersearchby: string;
-    User:string;
+    User: string;
   };
 
   const txnSchema = Yup.object().shape({
@@ -123,6 +125,7 @@ export default function Agent() {
         then: Yup.string().required("Email is required field"),
       }),
   });
+
   const defaultValues = {
     category: "",
     status: "",
@@ -130,7 +133,7 @@ export default function Agent() {
     mobile: "",
     shopName: "",
     usersearchby: "",
-    User:"",
+    User: "",
   };
 
   const methods = useForm<FormValuesProps>({
@@ -155,9 +158,9 @@ export default function Agent() {
     if (getValues("User")?.length > 2) searchFromUser(getValues("User"));
   }, [watch("User")]);
 
-  useEffect(()=> {
-    resetField('User')
-  },[watch("usersearchby")])
+  useEffect(() => {
+    resetField("User");
+  }, [watch("usersearchby")]);
 
   const ApprovedList = () => {
     let body = {
@@ -197,7 +200,6 @@ export default function Agent() {
     });
   };
 
-  
   const searchFromUser = (val: string) => {
     let body = {
       searchBy: watch("usersearchby"),
@@ -236,6 +238,7 @@ export default function Agent() {
     setSelectedRow(val);
     ApprovedList();
   };
+
   return (
     <>
       <Stack>
@@ -269,7 +272,7 @@ export default function Agent() {
               // InputLabelProps={{ shrink: true }}
               SelectProps={{
                 native: false,
-                sx: { textTransform: "capitalize",mb:"10px" },
+                sx: { textTransform: "capitalize", mb: "10px" },
               }}
             >
               <MenuItem value={"userCode"}>User Code</MenuItem>
@@ -286,28 +289,28 @@ export default function Agent() {
                   placeholder={"Type here..."}
                 />
                 <Stack flexDirection={"row"} mt={5}>
-                <LoadingButton
-                  variant="contained"
-                  type="submit"
-                  loading={isSubmitting}
-                  onClick={()=> {
-                   setAppdata(tempData) 
-                   handleClose()
-                   reset(defaultValues)
-                  }}
-                >
-                  Search
-                </LoadingButton>
-                <LoadingButton
-              variant="contained"
-              onClick={() => {
-                reset(defaultValues);
-                ApprovedList();
-              }}
-            >
-              Clear
-            </LoadingButton>
-            </Stack>
+                  <LoadingButton
+                    variant="contained"
+                    type="submit"
+                    loading={isSubmitting}
+                    onClick={() => {
+                      setAppdata(tempData);
+                      handleClose();
+                      reset(defaultValues);
+                    }}
+                  >
+                    Search
+                  </LoadingButton>
+                  <LoadingButton
+                    variant="contained"
+                    onClick={() => {
+                      reset(defaultValues);
+                      ApprovedList();
+                    }}
+                  >
+                    Clear
+                  </LoadingButton>
+                </Stack>
                 <Stack
                   sx={{
                     position: "absolute",
@@ -332,7 +335,7 @@ export default function Agent() {
                             }}
                             onClick={() => {
                               setUserList([]);
-                              setTempData( [{...item}])
+                              setTempData([{ ...item }]);
                               setValue(
                                 "User",
                                 `${item.firstName} ${item.lastName}`
@@ -366,11 +369,7 @@ export default function Agent() {
 
               <TableBody>
                 {appdata.map((row) => (
-                  <EcommerceBestSalesmanRow
-                    key={row}
-                    row={row}
-                    FundTransfer={FundTransfer}
-                  />
+                  <EcommerceBestSalesmanRow key={row} row={row} />
                 ))}
               </TableBody>
             </Table>
@@ -405,13 +404,6 @@ export default function Agent() {
           setCurrentPage(1);
         }}
       />
-      <MotionModal
-        open={openFundtrans}
-        onClose={handleClosefunTrans}
-        width={{ xs: "95%", sm: 500 }}
-      >
-        <DirectFundTransfer props={selectedRow} />
-      </MotionModal>
     </>
   );
 }
@@ -420,13 +412,12 @@ export default function Agent() {
 
 type EcommerceBestSalesmanRowProps = {
   row: RowProps;
-  FundTransfer: (row: RowProps) => void;
 };
 
-function EcommerceBestSalesmanRow({
-  row,
-  FundTransfer,
-}: EcommerceBestSalesmanRowProps) {
+function EcommerceBestSalesmanRow({ row }: EcommerceBestSalesmanRowProps) {
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
   return (
     <TableRow>
       <TableCell sx={{ padding: "0px" }}>
@@ -465,14 +456,29 @@ function EcommerceBestSalesmanRow({
       </TableCell>
       <TableCell>{row.schemeId}</TableCell>
       <TableCell align="left">
-          <Typography>Main Balance : {fIndianCurrency(row?.main_wallet_amount || "0")}</Typography>
-          <Typography>AEPS Balance : {fIndianCurrency(row?._id?.AEPS_wallet_amount || "0")}</Typography>
-        </TableCell>
+        <Typography>
+          Main Balance : {fIndianCurrency(row?.main_wallet_amount || "0")}
+        </Typography>
+        <Typography>
+          AEPS Balance : {fIndianCurrency(row?._id?.AEPS_wallet_amount || "0")}
+        </Typography>
+      </TableCell>
       <TableCell align="center">
-        <Button variant="contained" onClick={() => FundTransfer(row)}>
+        <Button variant="contained" onClick={handleOpen}>
           Fund Transfer
         </Button>
       </TableCell>
+      <MotionModal
+        open={open}
+        onClose={handleClose}
+        width={{ xs: "95%", sm: 500 }}
+      >
+        <FundFlow
+          userDetail={row}
+          from={"networkModule"}
+          parentHandleClose={handleClose}
+        />
+      </MotionModal>
     </TableRow>
   );
 }
