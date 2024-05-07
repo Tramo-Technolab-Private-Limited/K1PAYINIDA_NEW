@@ -290,7 +290,6 @@ export default function AuthRegisterForm(props: any) {
     }, 1000);
     if (timerEmail == 0) {
       clearTimeout(time);
-      // setOtpSend(false);
 
       setResendotpEmail(false);
     }
