@@ -131,15 +131,17 @@ type AuthProviderProps = {
 export function AuthProvider({ children }: AuthProviderProps) {
   const siteUrl = process.env.REACT_APP_BASE_URL;
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [location, setLocation] = useState<boolean | null>(null);
+  const [location, setLocation] = useState<boolean | null>(true);
 
   const initialize = useCallback(async () => {
-    let location = await fetchLocation();
-    if (location.coords.latitude && location.coords.longitude) {
-      setLocation(true);
-    } else {
-      setLocation(false);
-    }
+    navigator.geolocation.getCurrentPosition((position) => {
+      if (position.coords.latitude && position.coords.longitude) {
+        setLocation(true);
+      } else {
+        setLocation(false);
+      }
+    });
+
     try {
       const token =
         typeof window !== "undefined" ? localStorage.getItem("token") : "";
