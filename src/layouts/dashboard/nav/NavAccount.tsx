@@ -24,7 +24,7 @@ const StyledRoot = styled("div")(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function NavAccount() {
-  const { user } = useAuthContext();
+  const { user, Api, UploadFileApi } = useAuthContext();
   const navigate = useNavigate();
 
   return (

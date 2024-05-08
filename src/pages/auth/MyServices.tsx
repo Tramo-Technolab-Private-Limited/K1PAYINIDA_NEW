@@ -1,10 +1,11 @@
 import React, { createContext, useEffect, useState } from "react";
+import { useAuthContext } from "src/auth/useAuthContext";
 
-import { Api } from "src/webservices";
 import { Recharge } from "src/routes/elements";
 
 export const Category = createContext({});
 function MyServices(props: any) {
+  const { Api } = useAuthContext();
   const [categoryList, setCategoryList] = useState([]);
   const [superCurrentTab, setSuperCurrentTab] = useState("");
   useEffect(() => {

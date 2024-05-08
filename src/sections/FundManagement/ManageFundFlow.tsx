@@ -22,7 +22,7 @@ import FormProvider, {
   RHFSelect,
   RHFTextField,
 } from "../../components/hook-form";
-import { Api } from "src/webservices";
+
 import { useSnackbar } from "notistack";
 import { LoadingButton } from "@mui/lab";
 import { useAuthContext } from "src/auth/useAuthContext";
@@ -64,6 +64,7 @@ type FormValuesProps = {
 
 export default function ManageFundFlow() {
   const { enqueueSnackbar } = useSnackbar();
+  const { Api } = useAuthContext();
 
   const [sdata, setSdata] = useState([]);
   const [pageSize, setPageSize] = useState<any>(25);
@@ -179,7 +180,7 @@ type childProps = {
 };
 
 const TransactionRow = React.memo(({ row }: childProps) => {
-  const { user } = useAuthContext();
+  const { user, Api, UploadFileApi } = useAuthContext();
   const { copy } = useCopyToClipboard();
   const { enqueueSnackbar } = useSnackbar();
   const [newRow, setNewRow] = useState(row);
