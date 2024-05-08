@@ -95,6 +95,9 @@ export default function AuthLoginForm() {
         }
       });
     } catch (error) {
+      if (error.code == 1) {
+        enqueueSnackbar(`${error.message}. Please allow location !`);
+      }
       reset();
       console.error(error);
     }
