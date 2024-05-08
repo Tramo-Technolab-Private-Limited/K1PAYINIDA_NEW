@@ -346,17 +346,19 @@ export default function AuthRegisterForm(props: any) {
         mobileNumber: data.mobile,
       };
 
-      await Api(`auth/sendOTP`, "POST", body, "").then((Response: any) => {
-        console.log("=============>" + JSON.stringify(Response));
-        if (Response.status == 200) {
-          if (Response.data.code == 200) {
-            enqueueSnackbar(Response.data.message);
-            setgOTP(true);
-          } else {
-            enqueueSnackbar(Response.data.message, { variant: "error" });
+      await Api(`auth/send-user-otp`, "POST", body, "").then(
+        (Response: any) => {
+          console.log("=============>" + JSON.stringify(Response));
+          if (Response.status == 200) {
+            if (Response.data.code == 200) {
+              enqueueSnackbar(Response.data.message);
+              setgOTP(true);
+            } else {
+              enqueueSnackbar(Response.data.message, { variant: "error" });
+            }
           }
         }
-      });
+      );
     } else {
       enqueueSnackbar("Enter correct refcode ");
     }
@@ -375,7 +377,7 @@ export default function AuthRegisterForm(props: any) {
       email: email.toLowerCase(),
       mobileNumber: mobile,
     };
-    Api(`auth/sendOTP`, "POST", body, "").then((Response: any) => {
+    Api(`auth/send-user-otp`, "POST", body, "").then((Response: any) => {
       console.log("=============>" + JSON.stringify(Response));
       if (Response.status == 200) {
         if (Response.data.code == 200) {
@@ -394,7 +396,7 @@ export default function AuthRegisterForm(props: any) {
       email: email.toLowerCase(),
       mobileNumber: mobile,
     };
-    Api(`auth/sendOTP`, "POST", body, "").then((Response: any) => {
+    Api(`auth/send-user-otp`, "POST", body, "").then((Response: any) => {
       console.log("=============>" + JSON.stringify(Response));
       if (Response.status == 200) {
         if (Response.data.code == 200) {
