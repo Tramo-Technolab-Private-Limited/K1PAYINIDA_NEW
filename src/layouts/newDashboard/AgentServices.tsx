@@ -30,7 +30,7 @@ import { useAuthContext } from "src/auth/useAuthContext";
 // ----------------------------------------------------------------------
 
 export default function AgentServices(props: any) {
-  const { user } = useAuthContext();
+  const { user, Api, UploadFileApi } = useAuthContext();
   const navigate = useNavigate();
   const theme = useTheme();
 

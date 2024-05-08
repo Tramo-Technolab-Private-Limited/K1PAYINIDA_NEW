@@ -10,14 +10,16 @@ import {
   Tabs,
   Typography,
 } from "@mui/material";
-import { Api } from "src/webservices";
+
 import WalletTop from "../../assets/dashboardIcon/Wallet.svg";
 import Earned from "../../assets/dashboardIcon/Earned.svg";
 import Incurred from "../../assets/dashboardIcon/Incurred.svg";
 import CustomCard from "./CustomCard";
 import AmountCustomCard from "./AmountCustomCard";
 import ApiDataLoading from "src/components/customFunctions/ApiDataLoading";
+import { useAuthContext } from "src/auth/useAuthContext";
 function TransactionDeatails() {
+  const { user, logout, Api, UploadFileApi } = useAuthContext();
   const [value, setValue] = useState("daily");
   const [transaction, setTransactions] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(false);

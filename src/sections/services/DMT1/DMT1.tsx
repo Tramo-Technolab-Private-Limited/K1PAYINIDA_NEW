@@ -15,7 +15,7 @@ import {
   MenuItem,
   FormHelperText,
 } from "@mui/material";
-import { Api } from "src/webservices";
+
 import { yupResolver } from "@hookform/resolvers/yup";
 import FormProvider, {
   RHFTextField,
@@ -33,6 +33,7 @@ import FastRewindSharpIcon from "@mui/icons-material/FastRewindSharp";
 import RoleBasedGuard from "src/auth/RoleBasedGuard";
 import { fetchLocation } from "src/utils/fetchLocation";
 import ServiceUnderUpdate from "src/pages/ServiceUnderUpdate";
+import { useAuthContext } from "src/auth/useAuthContext";
 // ----------------------------------------------------------------------
 
 type FormValuesProps = {
@@ -81,6 +82,7 @@ const Reducer = (state: any, action: any) => {
 
 export default function DMT1() {
   const navigate = useNavigate();
+  const { Api } = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
   const [remitter, remitterDispatch] = useReducer(Reducer, initialRemitter);
 
@@ -335,6 +337,7 @@ const OtpSubmissionForRegistrantion = ({
   callback,
   handleClose2,
 }: any) => {
+  const { Api } = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -447,6 +450,7 @@ const OtpSubmissionForRegistrantion = ({
 };
 
 const NewRegistration = ({ mobilenumber, handleNewRegistaion }: any) => {
+  const { Api } = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
   const [isLoading, setIsLoading] = useState(false);
 

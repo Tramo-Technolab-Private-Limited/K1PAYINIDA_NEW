@@ -7,10 +7,11 @@ import { DTH } from ".";
 import MobilePrepaid from "./Prepaid";
 import RechargeImg from "../../../assets/images/RechargeTopUp.png";
 import { CategoryContext } from "../../../pages/Services";
-import { Api } from "src/webservices";
+
 import ArrowBackIosNewOutlinedIcon from "@mui/icons-material/ArrowBackIosNewOutlined";
 import { useNavigate } from "react-router";
 import RoleBasedGuard from "src/auth/RoleBasedGuard";
+import { useAuthContext } from "src/auth/useAuthContext";
 // ----------------------------------------------------------------------
 
 export const SubCategoryContext = React.createContext({
@@ -19,6 +20,7 @@ export const SubCategoryContext = React.createContext({
 });
 
 export default function Recharges() {
+  const { Api } = useAuthContext();
   const navigate = useNavigate();
   const [subcategoryId, setSubcategoryId] = useState("");
   const [currentTab, setCurrentTab] = useState("Mobile Prepaid");

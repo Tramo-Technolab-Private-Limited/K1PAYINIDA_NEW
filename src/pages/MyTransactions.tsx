@@ -36,7 +36,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useSnackbar } from "notistack";
 import React from "react";
-import { Api } from "src/webservices";
+
 import Scrollbar from "src/components/scrollbar";
 import { TableHeadCustom, TableNoData } from "src/components/table";
 import Iconify from "src/components/iconify/Iconify";
@@ -102,7 +102,7 @@ export default function MyTransactions() {
   const isMobile = useResponsive("up", "sm");
   const isDesktop = useResponsive("up", "sm");
   const [handleReclaim, setHanfleReClaim] = useState(false);
-  const { user } = useAuthContext();
+  const { user, Api } = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
   const [Loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState<any>(1);
@@ -874,7 +874,7 @@ type childProps = {
 function TransactionRow({ row }: childProps) {
   const theme = useTheme();
   const { copy } = useCopyToClipboard();
-  const { user } = useAuthContext();
+  const { user, Api } = useAuthContext();
   const componentRef = useRef<any>();
   const { enqueueSnackbar } = useSnackbar();
   const [newRow, setNewRow] = useState(row);

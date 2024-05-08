@@ -20,7 +20,7 @@ import PersonalLoanIcon from "src/assets/icons/loan/PersonalLoanIcon";
 import BusinessLoanIcon from "src/assets/icons/loan/BusinessLoanIcon";
 import HomeLoanIcon from "src/assets/icons/loan/HomeLoanIcon";
 import GoldLoanIcon from "src/assets/icons/loan/GoldLoanIcon";
-import { Api, UploadFile } from "src/webservices";
+
 import { CategoryContext } from "src/pages/Services";
 import Compressor from "compressorjs";
 
@@ -51,6 +51,7 @@ import { MotionContainer, varSlide } from "src/components/animate";
 import Iconify from "src/components/iconify/Iconify";
 import { sentenceCase } from "change-case";
 import { fetchLocation } from "src/utils/fetchLocation";
+import { useAuthContext } from "src/auth/useAuthContext";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -95,6 +96,7 @@ type FormValuesProps = {
 };
 
 function Loan() {
+  const { user, logout, Api, UploadFileApi } = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
   const isMobile = useResponsive("up", "sm");
   const categoryContext: any = useContext(CategoryContext);
@@ -584,6 +586,7 @@ export default Loan;
 
 const UploadPan = React.memo(({ data, setStep }: any) => {
   const { user_token, clientRefId } = data;
+  const { user, logout, Api, UploadFileApi } = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
   const [isSubmitLoading, setIsSubmitLoading] = useState(false);
   const [isPanVerify, setIsPanVerify] = useState(false);
@@ -650,7 +653,7 @@ const UploadPan = React.memo(({ data, setStep }: any) => {
     formData.append("panFront", e.target.files[0]);
     formData.append("user_token", data.user_token);
     await fetchLocation();
-    await UploadFile(
+    await UploadFileApi(
       `app/loan/easy_loan_step3/${data.clientRefId}`,
       formData,
       token
@@ -892,6 +895,7 @@ const UploadPan = React.memo(({ data, setStep }: any) => {
 });
 
 const DynamicForm = ({ data, setStep }: any) => {
+  const { Api } = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
   const { user_token, clientRefId, loanSubCategory } = data;
   const [formValues, setFormValues] = useState<any>({});

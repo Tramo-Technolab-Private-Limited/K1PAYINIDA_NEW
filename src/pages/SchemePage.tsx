@@ -4,7 +4,7 @@ import { TextField, Stack, Grid, Tabs, Tab, MenuItem } from "@mui/material";
 
 import { Box } from "@mui/material";
 import { Helmet } from "react-helmet-async";
-import { Api } from "src/webservices";
+
 import ViewAepsTable from "../sections/ViewScheme/ViewAepsTable";
 import ViewMoneyTransferTable from "../sections/ViewScheme/ViewMoneyTransferTable";
 import ViewRechargeTable from "../sections/ViewScheme/ViewRechargeTable";
@@ -21,7 +21,7 @@ import useResponsive from "src/hooks/useResponsive";
 
 export default function ViewAllScheme() {
   const isMobile = useResponsive("up", "sm");
-  const { user } = useAuthContext();
+  const { user, Api } = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
   const [com, setCom] = useState([]);
   const [categoryList, setCategoryList] = useState<any>([]);
