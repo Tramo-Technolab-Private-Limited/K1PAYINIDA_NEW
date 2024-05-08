@@ -15,7 +15,7 @@ import {
   MenuItem,
   FormHelperText,
 } from "@mui/material";
-import { Api } from "src/webservices";
+
 import { yupResolver } from "@hookform/resolvers/yup";
 import FormProvider, {
   RHFTextField,
@@ -32,6 +32,7 @@ import { useNavigate } from "react-router";
 import FastRewindSharpIcon from "@mui/icons-material/FastRewindSharp";
 import RoleBasedGuard from "src/auth/RoleBasedGuard";
 import { fetchLocation } from "src/utils/fetchLocation";
+import { useAuthContext } from "src/auth/useAuthContext";
 // ----------------------------------------------------------------------
 
 type FormValuesProps = {
@@ -80,6 +81,7 @@ const Reducer = (state: any, action: any) => {
 
 export default function DMT() {
   const navigate = useNavigate();
+  const { Api } = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
   const [remitter, remitterDispatch] = useReducer(Reducer, initialRemitter);
 
@@ -339,6 +341,7 @@ const OtpSubmissionForRegistrantion = ({
   handleClose2,
 }: any) => {
   const { enqueueSnackbar } = useSnackbar();
+  const { Api } = useAuthContext();
   const [isLoading, setIsLoading] = useState(false);
 
   const DMTSchema = Yup.object().shape({
@@ -451,6 +454,7 @@ const OtpSubmissionForRegistrantion = ({
 
 const NewRegistration = ({ mobilenumber, handleNewRegistaion }: any) => {
   const { enqueueSnackbar } = useSnackbar();
+  const { Api } = useAuthContext();
   const [isLoading, setIsLoading] = useState(false);
 
   const DMTSchema = Yup.object().shape({

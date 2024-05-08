@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { Api } from "src/webservices";
+
 import { PATH_DASHBOARD } from "src/routes/paths";
 import {
   Button,
@@ -47,7 +47,7 @@ type FormValuesProps = {
 };
 
 export default function BBPSSchemePage() {
-  const { user } = useAuthContext();
+  const { user, Api } = useAuthContext();
   const isMobile = useResponsive("up", "sm");
   const { enqueueSnackbar } = useSnackbar();
   const [currentPage, setCurrentPage] = useState(0);

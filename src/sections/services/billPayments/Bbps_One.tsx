@@ -20,7 +20,7 @@ import FormProvider, {
   RHFTextField,
 } from "../../../components/hook-form";
 import { useEffect, useState } from "react";
-import { Api } from "src/webservices";
+
 import { useSnackbar } from "notistack";
 import { LoadingButton } from "@mui/lab";
 import MenuPopover from "src/components/menu-popover/MenuPopover";
@@ -66,6 +66,7 @@ const style = {
 };
 
 function Bbps_One() {
+  const { Api } = useAuthContext();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -629,7 +630,7 @@ const BbpsBillPayment = ({
   handleToReset,
 }: any) => {
   const { enqueueSnackbar } = useSnackbar();
-  const { user, initialize } = useAuthContext();
+  const { Api, initialize } = useAuthContext();
   const [isParentValid, setIsParentValid] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 

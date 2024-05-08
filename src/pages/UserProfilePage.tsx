@@ -41,7 +41,7 @@ import {
   ProfileGallery,
   ProfileFollowers,
 } from "../sections/profile";
-import { Api } from "src/webservices";
+
 import TramoCertificate from "../assets/icons/K1Certificate.png";
 import { AwsDocSign } from "../components/customFunctions/AwsDocSign";
 import jsPDF from "jspdf";
@@ -53,7 +53,7 @@ import ReactToPrint from "react-to-print";
 export default function UserProfilePage() {
   const { themeStretch } = useSettingsContext();
 
-  const { user } = useAuthContext();
+  const { user, Api, UploadFileApi } = useAuthContext();
 
   const [searchFriends, setSearchFriends] = useState("");
 

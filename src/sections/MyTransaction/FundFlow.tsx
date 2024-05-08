@@ -19,7 +19,7 @@ import {
 import { Helmet } from "react-helmet-async";
 import { useSnackbar } from "notistack";
 import React from "react";
-import { Api } from "src/webservices";
+
 import Scrollbar from "src/components/scrollbar";
 import { TableHeadCustom, TableNoData } from "src/components/table";
 import DateRangePicker, {
@@ -60,7 +60,7 @@ type FormValuesProps = {
 
 export default function FundFlow() {
   const { enqueueSnackbar } = useSnackbar();
-  const { user } = useAuthContext();
+  const { user, Api } = useAuthContext();
   const isMobile = useResponsive("up", "sm");
   const [Loading, setLoading] = useState(false);
   const [superCurrentTab, setSuperCurrentTab] = useState(1);
@@ -452,7 +452,7 @@ type childProps = {
 };
 
 const TransactionRow = React.memo(({ row }: childProps) => {
-  const { user } = useAuthContext();
+  const { user, Api, UploadFileApi } = useAuthContext();
   const { copy } = useCopyToClipboard();
   const { enqueueSnackbar } = useSnackbar();
   const [newRow, setNewRow] = useState(row);
