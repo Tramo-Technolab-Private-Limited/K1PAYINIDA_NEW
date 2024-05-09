@@ -260,8 +260,10 @@ function Bbps_One() {
           handleToReset();
         }
       });
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      if (error.code == 1) {
+        enqueueSnackbar(`${error.message} !`, { variant: "error" });
+      }
     }
   };
 
@@ -754,9 +756,11 @@ const BbpsBillPayment = ({
           }
         }
       );
-    } catch (err) {
+    } catch (error) {
       setIsLoading(false);
-      console.log(err);
+      if (error.code == 1) {
+        enqueueSnackbar(`${error.message} !`, { variant: "error" });
+      }
     }
   };
 
