@@ -110,6 +110,7 @@ const reducer = (state: AuthStateType, action: ActionsType) => {
   if (action.type === Types.LOGOUT) {
     return {
       ...state,
+      isInitialized: true,
       isAuthenticated: false,
       logOut: true,
       user: null,
@@ -265,8 +266,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
               latitude: localStorage.getItem("lat"),
               longitude: localStorage.getItem("long"),
               ip: localStorage.getItem("ip")?.toString(),
-              "user-Agent": localStorage.getItem("user-Agent"),
-              devicetype: localStorage.getItem("devicetype"),
+              "user-Agent": localStorage.getItem("userAgent"),
+              devicetype: localStorage.getItem("deviceType"),
             },
           }
         : {
@@ -277,8 +278,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
               latitude: localStorage.getItem("lat"),
               longitude: localStorage.getItem("long"),
               ip: localStorage.getItem("ip")?.toString(),
-              "user-Agent": localStorage.getItem("user-Agent"),
-              devicetype: localStorage.getItem("devicetype"),
+              "user-Agent": localStorage.getItem("userAgent"),
+              devicetype: localStorage.getItem("deviceType"),
             },
             body: JSON.stringify(body),
           };
@@ -312,8 +313,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         latitude: localStorage.getItem("lat"),
         longitude: localStorage.getItem("long"),
         ip: localStorage.getItem("ip")?.toString(),
-        "user-Agent": localStorage.getItem("user-Agent"),
-        devicetype: localStorage.getItem("devicetype"),
+        "user-Agent": localStorage.getItem("userAgent"),
+        devicetype: localStorage.getItem("deviceType"),
       },
       body: body,
     };

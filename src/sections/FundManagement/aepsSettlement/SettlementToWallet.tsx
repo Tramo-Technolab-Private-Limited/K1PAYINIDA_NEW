@@ -157,8 +157,10 @@ export default React.memo(function SettlementToWallet() {
           }
         }
       );
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      if (error.code == 1) {
+        enqueueSnackbar(`${error.message} !`, { variant: "error" });
+      }
     }
   };
 
