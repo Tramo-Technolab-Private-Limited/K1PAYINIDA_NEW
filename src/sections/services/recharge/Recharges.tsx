@@ -12,6 +12,8 @@ import ArrowBackIosNewOutlinedIcon from "@mui/icons-material/ArrowBackIosNewOutl
 import { useNavigate } from "react-router";
 import RoleBasedGuard from "src/auth/RoleBasedGuard";
 import { useAuthContext } from "src/auth/useAuthContext";
+import ApiDataLoading from "src/components/customFunctions/ApiDataLoading";
+import ServiceUnderUpdate from "src/pages/ServiceUnderUpdate";
 // ----------------------------------------------------------------------
 
 export const SubCategoryContext = React.createContext({
@@ -23,6 +25,7 @@ export default function Recharges() {
   const { Api } = useAuthContext();
   const navigate = useNavigate();
   const [subcategoryId, setSubcategoryId] = useState("");
+  const [isServiceEnable, setIsServiceEnable] = useState(null);
   const [currentTab, setCurrentTab] = useState("Mobile Prepaid");
   const [categoryList, setCategoryList] = useState({
     category_name: "",
@@ -41,12 +44,9 @@ export default function Recharges() {
       if (Response.status == 200) {
         if (Response.data.code == 200) {
           Response?.data?.data?.map((item: any) => {
-            if (item.category_name == "RECHARGES") {
-              setCategoryList({
-                category_name: item.category_name,
-                sub_category: item.sub_category,
-                _id: item._id,
-              });
+            if (item.category_name.toUpperCase() == "RECHARGES") {
+              setIsServiceEnable(item.isEnabled);
+              setCategoryList({ ...item });
               setCurrentTab(item?.sub_category[0]?.sub_category_name);
               setSubcategoryId(item?.sub_category[0]?._id);
             }
@@ -55,6 +55,14 @@ export default function Recharges() {
       }
     });
   }, []);
+
+  if (isServiceEnable == null) {
+    return <ApiDataLoading />;
+  }
+
+  if (!isServiceEnable) {
+    return <ServiceUnderUpdate />;
+  }
 
   return (
     <>
