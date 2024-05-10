@@ -37,6 +37,8 @@ import { LoadingButton } from "@mui/lab";
 import Lottie from "lottie-react";
 import fingerScan from "../../../components/JsonAnimations/fingerprint-scan.json";
 import TransactionModal from "src/components/customFunctions/TrasactionModal";
+import ApiDataLoading from "src/components/customFunctions/ApiDataLoading";
+import ServiceUnderUpdate from "src/pages/ServiceUnderUpdate";
 
 // ----------------------------------------------------------------------
 
@@ -69,6 +71,7 @@ var localTime: any;
 export default function AadharPay() {
   const { user, Api } = useAuthContext();
   const [attendanceTimeout, setAttendanceTimeout] = useState(0);
+  const [isServiceEnable, setIsServiceEnable] = useState(null);
 
   const [postData, setPostData] = useState<any>({
     device: "",
@@ -251,6 +254,29 @@ export default function AadharPay() {
       clearTimeout(localTime);
     }
   }, [user]);
+
+  useEffect(() => {
+    let token = localStorage.getItem("token");
+    Api(`category/get_CategoryList`, "GET", "", token).then((Response: any) => {
+      if (Response.status == 200) {
+        if (Response.data.code == 200) {
+          Response?.data?.data?.map((item: any) => {
+            if (item.category_name.toUpperCase() == "AADHAAR PAY") {
+              setIsServiceEnable(item.isEnabled);
+            }
+          });
+        }
+      }
+    });
+  }, []);
+
+  if (isServiceEnable == null) {
+    return <ApiDataLoading />;
+  }
+
+  if (!isServiceEnable) {
+    return <ServiceUnderUpdate />;
+  }
 
   if (!user?.fingPayAPESRegistrationStatus || !user?.fingPayAEPSKycStatus) {
     return <RegistrationAeps />;

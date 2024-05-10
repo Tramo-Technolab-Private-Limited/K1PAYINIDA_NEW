@@ -52,6 +52,8 @@ import Iconify from "src/components/iconify/Iconify";
 import { sentenceCase } from "change-case";
 import { fetchLocation } from "src/utils/fetchLocation";
 import { useAuthContext } from "src/auth/useAuthContext";
+import ApiDataLoading from "src/components/customFunctions/ApiDataLoading";
+import ServiceUnderUpdate from "src/pages/ServiceUnderUpdate";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -98,6 +100,7 @@ type FormValuesProps = {
 function Loan() {
   const { user, logout, Api, UploadFileApi } = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
+  const [isServiceEnable, setIsServiceEnable] = useState(null);
   const isMobile = useResponsive("up", "sm");
   const categoryContext: any = useContext(CategoryContext);
   const [currentTab, setCurrentTab] = useState("");
@@ -308,6 +311,29 @@ function Loan() {
       }
     }
   };
+
+  useEffect(() => {
+    let token = localStorage.getItem("token");
+    Api(`category/get_CategoryList`, "GET", "", token).then((Response: any) => {
+      if (Response.status == 200) {
+        if (Response.data.code == 200) {
+          Response?.data?.data?.map((item: any) => {
+            if (item.category_name.toUpperCase() == "LOAN") {
+              setIsServiceEnable(item.isEnabled);
+            }
+          });
+        }
+      }
+    });
+  }, []);
+
+  if (isServiceEnable == null) {
+    return <ApiDataLoading />;
+  }
+
+  if (!isServiceEnable) {
+    return <ServiceUnderUpdate />;
+  }
 
   return (
     <div>

@@ -60,6 +60,7 @@ import MotionModal from "src/components/animate/MotionModal";
 import { CaptureDevice } from "src/utils/CaptureDevice";
 import CustomTransactionSlip from "src/components/customFunctions/CustomTransactionSlip";
 import { sentenceCase } from "change-case";
+import ServiceUnderUpdate from "src/pages/ServiceUnderUpdate";
 
 // ----------------------------------------------------------------------
 
@@ -85,6 +86,7 @@ var localTime: any;
 export default function AEPS(props: any) {
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
+  const [isServiceEnable, setIsServiceEnable] = useState(null);
   const { user, initialize, Api } = useAuthContext();
   const componentRef = useRef<any>();
   const [isDeviceScan, setIsDeviceScan] = useState(false);
@@ -550,8 +552,27 @@ export default function AEPS(props: any) {
     getValues("mobileNumber")?.length > 0 && trigger("mobileNumber");
   }, [watch("mobileNumber")]);
 
-  if (isUserHaveBankAccount == null) {
+  useEffect(() => {
+    let token = localStorage.getItem("token");
+    Api(`category/get_CategoryList`, "GET", "", token).then((Response: any) => {
+      if (Response.status == 200) {
+        if (Response.data.code == 200) {
+          Response?.data?.data?.map((item: any) => {
+            if (item.category_name.toUpperCase() == "AEPS") {
+              setIsServiceEnable(item.isEnabled);
+            }
+          });
+        }
+      }
+    });
+  }, []);
+
+  if (isServiceEnable == null || isUserHaveBankAccount == null) {
     return <ApiDataLoading />;
+  }
+
+  if (!isServiceEnable) {
+    return <ServiceUnderUpdate />;
   }
 
   if (!isUserHaveBankAccount) {

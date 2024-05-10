@@ -33,6 +33,8 @@ import FastRewindSharpIcon from "@mui/icons-material/FastRewindSharp";
 import RoleBasedGuard from "src/auth/RoleBasedGuard";
 import { fetchLocation } from "src/utils/fetchLocation";
 import { useAuthContext } from "src/auth/useAuthContext";
+import ApiDataLoading from "src/components/customFunctions/ApiDataLoading";
+import ServiceUnderUpdate from "src/pages/ServiceUnderUpdate";
 // ----------------------------------------------------------------------
 
 type FormValuesProps = {
@@ -83,6 +85,7 @@ export default function DMT() {
   const navigate = useNavigate();
   const { Api } = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
+  const [isServiceEnable, setIsServiceEnable] = useState(null);
   const [remitter, remitterDispatch] = useReducer(Reducer, initialRemitter);
 
   //modal 1
@@ -241,6 +244,29 @@ export default function DMT() {
     setValue("mobileNumber", getValues("mobileNumber").slice(0, 10));
     getValues("mobileNumber").length > 0 && trigger("mobileNumber");
   }, [watch("mobileNumber")]);
+
+  useEffect(() => {
+    let token = localStorage.getItem("token");
+    Api(`category/get_CategoryList`, "GET", "", token).then((Response: any) => {
+      if (Response.status == 200) {
+        if (Response.data.code == 200) {
+          Response?.data?.data?.map((item: any) => {
+            if (item.category_name.toUpperCase() == "MONEY TRANSFER") {
+              setIsServiceEnable(item.isEnabled);
+            }
+          });
+        }
+      }
+    });
+  }, []);
+
+  if (isServiceEnable == null) {
+    return <ApiDataLoading />;
+  }
+
+  if (!isServiceEnable) {
+    return <ServiceUnderUpdate />;
+  }
 
   return (
     <RoleBasedGuard hasContent roles={["agent"]}>
