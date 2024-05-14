@@ -261,9 +261,10 @@ export default function AEPS(props: any) {
 
   const deviceType = [
     { _id: 1, category_name: "MORPHO" },
-    { _id: 2, category_name: "MANTRA" },
-    { _id: 3, category_name: "STARTEK" },
-    { _id: 4, category_name: "SECUGEN" },
+    { _id: 2, category_name: "MORPHO L1" },
+    { _id: 3, category_name: "MANTRA" },
+    { _id: 4, category_name: "STARTEK" },
+    { _id: 5, category_name: "SECUGEN" },
   ];
 
   const TrobleshootTab = [
@@ -702,6 +703,7 @@ export default function AEPS(props: any) {
                           fullWidth
                         >
                           <MenuItem value={"MORPHO"}>MORPHO</MenuItem>
+                          <MenuItem value={"MORPHO L1"}>MORPHO L1</MenuItem>
                           <MenuItem value={"STARTEK"}>STARTEK</MenuItem>
                           <MenuItem value={"MANTRA"}>MANTRA</MenuItem>
                           <MenuItem value={"SECUGEN"}>SECUGEN</MenuItem>
@@ -796,6 +798,10 @@ export default function AEPS(props: any) {
               <MenuItem onClick={handleClosePopover}>
                 <Iconify icon="line-md:download-loop" />
                 MORPHO
+              </MenuItem>
+              <MenuItem onClick={handleClosePopover}>
+                <Iconify icon="line-md:download-loop" />
+                MORPHO L1
               </MenuItem>
 
               <MenuItem onClick={handleClosePopover}>
