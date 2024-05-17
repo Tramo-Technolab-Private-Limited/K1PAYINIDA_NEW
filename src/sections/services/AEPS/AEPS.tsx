@@ -873,6 +873,7 @@ export default function AEPS(props: any) {
                 variant="contained"
                 disabled={!autoClose}
                 onClick={() => {
+                  clearTimeout(timer);
                   CurrentTab.match(/bal/i)
                     ? balanceInq()
                     : CurrentTab.match(/with/i)
