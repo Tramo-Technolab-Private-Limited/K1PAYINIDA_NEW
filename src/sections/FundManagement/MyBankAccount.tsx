@@ -131,7 +131,10 @@ export default function MyBankAccount() {
   const FilterSchema = Yup.object().shape({
     bankName: Yup.string().required("Bank Name is required"),
     accountNumber: Yup.string().required("Account Number is required"),
-    ifsc: Yup.string().required("IFSC code is required"),
+    ifsc: Yup.string()
+      .required("IFSC code is required")
+      .max(11, "Please Enter valid Ifsc code")
+      .matches(/^[A-Za-z0-9]+$/, "Please Enter valid Ifsc code"),
     confirmAccountNumber: Yup.string()
       .required("Confirm Account Number is required")
       .oneOf([Yup.ref("accountNumber"), null], "Account Number must match"),
@@ -360,7 +363,6 @@ export default function MyBankAccount() {
                   <RHFTextField name="bankName" label="Bank Name" {...params} />
                 )}
               />
-
               <RHFTextField
                 name="ifsc"
                 label="IFSC code"
@@ -658,14 +660,20 @@ export default function MyBankAccount() {
               )}
             />
 
-            <RHFTextField
-              name="ifsc"
-              label="IFSC code"
-              placeholder="IFSC code"
-              InputLabelProps={{
-                shrink: watch("ifsc") ? true : false,
-              }}
-            />
+            <Stack>
+              <RHFTextField
+                name="ifsc"
+                label="IFSC code"
+                placeholder="IFSC code"
+                InputLabelProps={{
+                  shrink: watch("ifsc") ? true : false,
+                }}
+              />
+              <Typography variant="caption" sx={{ ml: 1 }}>
+                It is a mandatory field , Please enter a correct and valid IFSC
+                code
+              </Typography>
+            </Stack>
             <RHFTextField
               type="number"
               name="accountNumber"

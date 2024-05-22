@@ -38,6 +38,7 @@ type FormValuesProps = {
   bankName: string;
   deviceName: string;
   remark: string;
+  alternateMobileNumber: string;
 };
 
 export default function RegistrationAeps(props: any) {
@@ -64,7 +65,14 @@ export default function RegistrationAeps(props: any) {
   };
 
   //registration Validation
-  const registrationSchema = Yup.object().shape({});
+  const registrationSchema = Yup.object().shape({
+    alternateMobileNumber: Yup.string()
+      .required("Alternate Mobile Number is required")
+      .matches(
+        /^[0-9]{10}$/,
+        "Alternate Mobile Number must be exactly 10 digits"
+      ),
+  });
   const defaultValues = {
     state: "",
   };
@@ -115,6 +123,10 @@ export default function RegistrationAeps(props: any) {
     handleSubmit: VerifyOtpHandleSubmit,
     formState: { errors: VerifyOtpErrors, isSubmitting: VerifyOtpIsSubmitting },
   } = VerifyOtpmethods;
+
+  const alternateMobileNumber = watch("alternateMobileNumber");
+  const isAlternateMobileNumberValid =
+    !errors.alternateMobileNumber && alternateMobileNumber?.length === 10;
 
   useEffect(() => {
     getState();
@@ -168,6 +180,7 @@ export default function RegistrationAeps(props: any) {
       let body = {
         shopState: data.state,
         merchantState: data.state,
+        alternateMobileNumber: data.alternateMobileNumber,
         Latitude: localStorage.getItem("lat"),
         Longitude: localStorage.getItem("long"),
       };
@@ -519,7 +532,13 @@ export default function RegistrationAeps(props: any) {
             <Typography variant="h4">
               Hi wait, Please register yourself first.
             </Typography>
-
+            <RHFTextField
+              name="alternateMobileNumber"
+              label="Alternate Mobile Number"
+              placeholder="Alternate Mobile Number"
+              type="number"
+              sx={{ width: "250px", margin: "auto" }}
+            />
             <RHFSelect
               name="state"
               label="Select State"
@@ -538,7 +557,7 @@ export default function RegistrationAeps(props: any) {
                 );
               })}
             </RHFSelect>
-            {watch("state") && (
+            {watch("state") && isAlternateMobileNumberValid && (
               <LoadingButton
                 variant="contained"
                 type="submit"
