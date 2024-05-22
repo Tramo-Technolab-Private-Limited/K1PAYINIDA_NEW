@@ -363,21 +363,14 @@ export default function MyBankAccount() {
                   <RHFTextField name="bankName" label="Bank Name" {...params} />
                 )}
               />
-
-              <Stack>
-                <RHFTextField
-                  name="ifsc"
-                  label="IFSC code"
-                  placeholder="IFSC code"
-                  InputLabelProps={{
-                    shrink: watch("ifsc") ? true : false,
-                  }}
-                />
-                <Typography variant="caption" sx={{ ml: 1 }}>
-                  It is a mandatory field , Please enter a correct and valid
-                  IFSC code
-                </Typography>
-              </Stack>
+              <RHFTextField
+                name="ifsc"
+                label="IFSC code"
+                placeholder="IFSC code"
+                InputLabelProps={{
+                  shrink: watch("ifsc") ? true : false,
+                }}
+              />
               <RHFTextField
                 type="number"
                 name="accountNumber"
@@ -667,14 +660,20 @@ export default function MyBankAccount() {
               )}
             />
 
-            <RHFTextField
-              name="ifsc"
-              label="IFSC code"
-              placeholder="IFSC code"
-              InputLabelProps={{
-                shrink: watch("ifsc") ? true : false,
-              }}
-            />
+            <Stack>
+              <RHFTextField
+                name="ifsc"
+                label="IFSC code"
+                placeholder="IFSC code"
+                InputLabelProps={{
+                  shrink: watch("ifsc") ? true : false,
+                }}
+              />
+              <Typography variant="caption" sx={{ ml: 1 }}>
+                It is a mandatory field , Please enter a correct and valid IFSC
+                code
+              </Typography>
+            </Stack>
             <RHFTextField
               type="number"
               name="accountNumber"
