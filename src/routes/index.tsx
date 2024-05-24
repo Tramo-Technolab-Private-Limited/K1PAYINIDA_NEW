@@ -47,6 +47,7 @@ import {
   DMT1,
   LoanScheme,
 } from "./elements";
+import WalletToWallet from "src/sections/FundManagement/WalletToWallet";
 
 // ----------------------------------------------------------------------
 
@@ -184,6 +185,7 @@ export default function Router() {
             { path: "myfundrequest", element: <MyFundRequest /> },
             { path: "managefundflow", element: <ManageFundFlow /> },
             { path: "mynetworkfunds", element: <MyNetwrokFunds /> },
+            { path: "wallettowallet", element: <WalletToWallet /> },
           ],
         },
         { path: "setting", element: <Setting /> },
