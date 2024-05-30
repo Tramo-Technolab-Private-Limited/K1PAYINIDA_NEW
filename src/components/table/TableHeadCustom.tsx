@@ -44,6 +44,8 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   // hide last border
   "&:last-child td, &:last-child th": {
     border: 0,
+    fontWeight: 600,
+    fontSize: 14,
     backgroundColor: theme.palette.grey[400],
     color: theme.palette.common.black,
     padding: 8,
