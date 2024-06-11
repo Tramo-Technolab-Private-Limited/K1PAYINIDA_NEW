@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import * as Yup from "yup";
 // form
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 // @mui
@@ -13,11 +14,14 @@ import {
   StepLabel,
   FormHelperText,
   styled,
+  Card,
   StepIconProps,
   Typography,
   TextField,
+  MenuItem,
 } from "@mui/material";
 // icon
+import dayjs from "dayjs";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import VideoLabelIcon from "@mui/icons-material/VideoLabel";
 import { Icon } from "@iconify/react";
@@ -26,6 +30,7 @@ import { useAuthContext } from "../../../auth/useAuthContext";
 import FormProvider, {
   RHFTextField,
   RHFCodes,
+  RHFSelect,
 } from "../../../components/hook-form";
 import { useSnackbar } from "notistack";
 
@@ -40,14 +45,15 @@ import { LoadingButton } from "@mui/lab";
 import AWS from "aws-sdk";
 import { Watch } from "@mui/icons-material";
 import useResponsive from "src/hooks/useResponsive";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 
 // ----------------------------------------------------------------------
 
 type FormValuesProps = {
   aadhar: string;
-  pan: string;
   fName: string;
   lName: string;
+  pan: string;
   otp1: string;
   otp2: string;
   otp3: string;
@@ -55,6 +61,168 @@ type FormValuesProps = {
   otp5: string;
   otp6: string;
 };
+
+type FormValuesPropsOfline = {
+  namefill: string;
+  aadharnumber: string;
+  distInAadhar: string;
+
+  date: Date | null;
+  cityInAadhar: string;
+  aadharpincode: string;
+  localityInAadhar: string;
+  stateInAadhar: string;
+  addressInAadhar: string;
+  gender: string;
+  nameInAadhaar: string;
+};
+
+const StateName = [
+  {
+    code: "AN",
+    name: "Andaman and Nicobar Islands",
+  },
+  {
+    code: "AP",
+    name: "Andhra Pradesh",
+  },
+  {
+    code: "AR",
+    name: "Arunachal Pradesh",
+  },
+  {
+    code: "AS",
+    name: "Assam",
+  },
+  {
+    code: "BR",
+    name: "Bihar",
+  },
+  {
+    code: "CG",
+    name: "Chandigarh",
+  },
+  {
+    code: "CH",
+    name: "Chhattisgarh",
+  },
+  {
+    code: "DH",
+    name: "Dadra and Nagar Haveli",
+  },
+  {
+    code: "DD",
+    name: "Daman and Diu",
+  },
+  {
+    code: "DL",
+    name: "Delhi",
+  },
+  {
+    code: "GA",
+    name: "Goa",
+  },
+  {
+    code: "GJ",
+    name: "Gujarat",
+  },
+  {
+    code: "HR",
+    name: "Haryana",
+  },
+  {
+    code: "HP",
+    name: "Himachal Pradesh",
+  },
+  {
+    code: "JK",
+    name: "Jammu and Kashmir",
+  },
+  {
+    code: "JH",
+    name: "Jharkhand",
+  },
+  {
+    code: "KA",
+    name: "Karnataka",
+  },
+  {
+    code: "KL",
+    name: "Kerala",
+  },
+  {
+    code: "LD",
+    name: "Lakshadweep",
+  },
+  {
+    code: "MP",
+    name: "Madhya Pradesh",
+  },
+  {
+    code: "MH",
+    name: "Maharashtra",
+  },
+  {
+    code: "MN",
+    name: "Manipur",
+  },
+  {
+    code: "ML",
+    name: "Meghalaya",
+  },
+  {
+    code: "MZ",
+    name: "Mizoram",
+  },
+  {
+    code: "NL",
+    name: "Nagaland",
+  },
+  {
+    code: "OR",
+    name: "Odisha",
+  },
+  {
+    code: "PY",
+    name: "Puducherry",
+  },
+  {
+    code: "PB",
+    name: "Punjab",
+  },
+  {
+    code: "RJ",
+    name: "Rajasthan",
+  },
+  {
+    code: "SK",
+    name: "Sikkim",
+  },
+  {
+    code: "TN",
+    name: "Tamil Nadu",
+  },
+  {
+    code: "TS",
+    name: "Telangana",
+  },
+  {
+    code: "TR",
+    name: "Tripura",
+  },
+  {
+    code: "UP",
+    name: "Uttar Pradesh",
+  },
+  {
+    code: "UK",
+    name: "Uttarakhand",
+  },
+  {
+    code: "WB",
+    name: "West Bengal",
+  },
+];
 
 export default function AadharForm(props: any) {
   const { enqueueSnackbar } = useSnackbar();
@@ -67,10 +235,36 @@ export default function AadharForm(props: any) {
   const [timer, setTimer] = useState(0);
   const [aadharTemp, setAadharTemp] = useState("");
   const [initTxn, setInitTxn] = useState("");
+
+  const [offline, setOffline] = useState(false);
+
+  const today = new Date();
+  const minDate: any = new Date(today.setFullYear(today.getFullYear() - 16));
   const AadharSchema = Yup.object().shape({
     aadhar: Yup.string()
       .matches(/^\d{12}$/, "Aadhar card number must be exactly 12 digits")
       .required("Aadhar card number is required"),
+  });
+
+  const AadharSchemaOfline = Yup.object().shape({
+    aadharnumber: Yup.string()
+      .matches(/^\d{12}$/, "Aadhar card number must be exactly 12 digits")
+      .required("Aadhar card number is required"),
+    distInAadhar: Yup.string().required(),
+    // dob: Yup.string().required(),
+    date: Yup.date()
+      .typeError("please enter a valid date")
+      .required("Please select Date")
+      .max(minDate, "You must be at least 16 years old"),
+    cityInAadhar: Yup.string().required(),
+    aadharpincode: Yup.string()
+      .matches(/^\d{6}$/, "Aadhar card number must be exactly 6 digits")
+      .required(),
+    localityInAadhar: Yup.string().required(),
+    stateInAadhar: Yup.string().required(),
+    addressInAadhar: Yup.string().required(),
+    gender: Yup.string().required(),
+    nameInAadhaar: Yup.string().required(),
   });
 
   const OtpSchema = Yup.object().shape({
@@ -95,6 +289,21 @@ export default function AadharForm(props: any) {
     otp6: "",
   };
 
+  const defaultValuesOfline = {
+    namefill: "",
+    aadharnumber: "",
+    distInAadhar: "",
+    stateInAadhar: "",
+    date: null,
+    cityInAadhar: "",
+    aadharpincode: "",
+    localityInAadhar: "",
+
+    addressInAadhar: "",
+    gender: "",
+    nameInAadhaar: "",
+  };
+
   const method2 = useForm<FormValuesProps>({
     resolver: yupResolver(OtpSchema),
     defaultValues: defaultValues2,
@@ -104,6 +313,12 @@ export default function AadharForm(props: any) {
     mode: "onChange",
     resolver: yupResolver(AadharSchema),
     defaultValues,
+  });
+
+  const methodOfline = useForm<FormValuesPropsOfline>({
+    resolver: yupResolver(AadharSchemaOfline),
+
+    defaultValues: defaultValuesOfline,
   });
 
   AWS.config.update({
@@ -133,6 +348,13 @@ export default function AadharForm(props: any) {
   } = method2;
 
   const {
+    watch: watchOfline,
+    setValue: setValueOfline,
+    handleSubmit: handleSubmitOfline,
+    formState: { errors: error3, isSubmitting: handleSubmitOfline2 },
+  } = methodOfline;
+
+  const {
     reset,
     setValue,
     watch,
@@ -140,6 +362,25 @@ export default function AadharForm(props: any) {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = methods;
+
+  useEffect(() => {
+    AadharOffline();
+  }, []);
+
+  const AadharOffline = () => {
+    let token = localStorage.getItem("token");
+    Api(`auth/aadhaar_status`, "GET", "", token).then((Response: any) => {
+      if (Response.status == 200) {
+        if (Response.data.code == 200) {
+          setOffline(Response?.data?.aadhaarStatusOffline);
+          console.log(
+            "============get =============>",
+            Response.data.aadhaarStatusOffline
+          );
+        }
+      }
+    });
+  };
 
   const onSubmit = async (data: FormValuesProps) => {
     try {
@@ -202,6 +443,47 @@ export default function AadharForm(props: any) {
               setVerifyAadhar(true);
             } else if (Response.data.code == 500) {
               otpReset(defaultValues2);
+
+              enqueueSnackbar(Response.data.err.message, { variant: "error" });
+            } else {
+              enqueueSnackbar(Response.data.err.message, { variant: "error" });
+            }
+          } else {
+            enqueueSnackbar("Failed", { variant: "error" });
+          }
+        }
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const onSubmitOfline = async (data: FormValuesPropsOfline) => {
+    try {
+      let token = localStorage.getItem("token");
+
+      let body = {
+        aadharNumber: data.aadharnumber,
+        distInAadhar: data.distInAadhar,
+        dob: data.date,
+        cityInAadhar: data.cityInAadhar,
+        aadharpincode: data.aadharpincode,
+        localityInAadhar: data.localityInAadhar,
+        state: data.stateInAadhar,
+        addressInAadhar: data.addressInAadhar,
+        gender: data.gender,
+        nameInAadhaar: data.nameInAadhaar,
+      };
+      await Api(`user/KYC/aadhaar_offline`, "POST", body, token).then(
+        (Response: any) => {
+          console.log("=============>" + Response);
+          if (Response.status == 200) {
+            if (Response.data.code == 200) {
+              enqueueSnackbar(Response.data.message);
+              setActiveStep(1);
+              setVerifyAadhar(true);
+            } else if (Response.data.code == 500) {
+              otpReset(defaultValues);
 
               enqueueSnackbar(Response.data.err.message, { variant: "error" });
             } else {
@@ -373,7 +655,156 @@ export default function AadharForm(props: any) {
           ))}
         </Stepper>
       </Stack>
-      {activeStep == 0 ? (
+      {activeStep == 0 && offline ? (
+        <Stack spacing={2.5}>
+          <FormProvider
+            methods={methodOfline}
+            onSubmit={handleSubmitOfline(onSubmitOfline)}
+          >
+            <Grid
+              container
+              spacing={2} // Sets the spacing between grid items
+              sx={{ width: { xs: "100%", sm: "80%", md: "60%", lg: "40%" } }}
+            >
+              <Grid item xs={12} sm={6}>
+                <RHFTextField
+                  name="aadharnumber"
+                  type=""
+                  label="Aadhar Number"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <RHFTextField
+                  name="distInAadhar"
+                  type=""
+                  label="District in Aadhar"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                {/* <RHFTextField name="dob" type="" label="Date of Birth" /> */}
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    label="Date of Birth"
+                    inputFormat="DD/MM/YYYY"
+                    value={dayjs(watchOfline("date"))}
+                    maxDate={new Date()}
+                    onChange={(newValue: any) =>
+                      setValueOfline("date", newValue)
+                    }
+                    renderInput={(params: any) => (
+                      <RHFTextField
+                        name="date"
+                        type="date"
+                        size="small"
+                        autoComplete="off"
+                        onKeyDown={(e: any) => {
+                          e.preventDefault();
+                          return false;
+                        }}
+                        onPaste={(e: any) => {
+                          e.preventDefault();
+                          return false;
+                        }}
+                        {...params}
+                      />
+                    )}
+                  />
+                </LocalizationProvider>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <RHFTextField
+                  name="cityInAadhar"
+                  type=""
+                  label="City in Aadhar"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <RHFTextField
+                  name="aadharpincode"
+                  type=""
+                  label="Aadhar Pincode"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <RHFTextField
+                  name="localityInAadhar"
+                  type=""
+                  label="Locality in Aadhar"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <RHFSelect
+                  name="stateInAadhar"
+                  label="State in Aadhar"
+                  placeholder="State in Aadhar"
+                  SelectProps={{
+                    native: false,
+                    MenuProps: {
+                      PaperProps: {
+                        style: {
+                          maxHeight: "200px",
+                        },
+                      },
+                    },
+                    sx: { textTransform: "capitalize" },
+                  }}
+                >
+                  {StateName.map((item: any, index: any) => (
+                    <MenuItem key={item.name} value={item.name}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+                </RHFSelect>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <RHFTextField
+                  name="addressInAadhar"
+                  type=""
+                  label="Address in Aadhar"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                {/* <RHFTextField name="gender" type="" label="Gender" /> */}
+
+                <RHFSelect
+                  fullWidth
+                  name="gender"
+                  label="Gender"
+                  SelectProps={{
+                    native: false,
+                    sx: { textTransform: "capitalize" },
+                  }}
+                  size="small"
+                >
+                  <MenuItem value="male"> Male</MenuItem>
+                  <MenuItem value="female">Female</MenuItem>
+                  <MenuItem value="others">Others</MenuItem>
+                </RHFSelect>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <RHFTextField
+                  name="nameInAadhaar"
+                  type=""
+                  label="Name in Aadhar"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Stack flexDirection="row" mt={2} gap={2}>
+                  <LoadingButton
+                    variant="contained"
+                    type="submit"
+                    loading={handleSubmitOfline2}
+                    fullWidth
+                    size="medium"
+                  >
+                    Submit
+                  </LoadingButton>
+                </Stack>
+              </Grid>
+            </Grid>
+          </FormProvider>
+        </Stack>
+      ) : activeStep == 0 && !offline ? (
         <Stack>
           <Stack spacing={2.5}>
             <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
@@ -398,14 +829,9 @@ export default function AadharForm(props: any) {
                     <LoadingButton
                       variant="contained"
                       type="submit"
-                      loading={isSubmitting}
+                      loading={handleSubmitOfline2}
                       fullWidth
                       size="medium"
-                      disabled={
-                        watch("aadhar") == "" ||
-                        otpSendSuccess ||
-                        user?.getAadhar
-                      }
                     >
                       Send OTP
                     </LoadingButton>
@@ -436,11 +862,7 @@ export default function AadharForm(props: any) {
                     Aadhar Verification Code
                   </Typography>
 
-                  <Stack>
-                    {/* <Typography variant="subtitle1">
-                    Resend Code {timer !== 0 && `(${timer})`}{" "}
-                  </Typography> */}
-                  </Stack>
+                  <Stack></Stack>
                 </Stack>
 
                 <Stack
@@ -630,13 +1052,11 @@ export default function AadharForm(props: any) {
     </>
   );
 }
-
 function PanCard(props: any) {
   const { enqueueSnackbar } = useSnackbar();
   const { user, UpdateUserDetail, Api } = useAuthContext();
   const [panNumber, setPanNumber] = useState("");
-  // const [fName, setfName] = useState("");
-  // const [lName, setlName] = useState("");
+
   const [panAttempt, setPanAttempt] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
