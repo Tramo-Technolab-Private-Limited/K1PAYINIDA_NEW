@@ -404,7 +404,7 @@ function WalletToWallet() {
                 </LoadingButton>
               </Stack>
             </FormProvider>
-            {userDetail?.userInfo?.role && (
+            {userDetail?.userInfo?.firstName && (
               <Card
                 sx={{
                   maxHeight: "100%",
