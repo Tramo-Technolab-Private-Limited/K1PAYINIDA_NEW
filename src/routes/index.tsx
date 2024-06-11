@@ -47,6 +47,7 @@ import {
   DMT1,
   LoanScheme,
   WalletToWallet,
+  Transfer,
 } from "./elements";
 
 // ----------------------------------------------------------------------
@@ -135,6 +136,7 @@ export default function Router() {
 
             { path: "recharge", element: <Recharge /> },
             { path: "dmt", element: <DMT /> },
+            { path: "transfer", element: <Transfer /> },
             { path: "dmt1", element: <DMT1 /> },
             { path: "dmt2", element: <DMT2 /> },
             { path: "aeps", element: <AEPS /> },

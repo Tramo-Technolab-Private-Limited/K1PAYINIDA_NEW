@@ -51,6 +51,12 @@ const NavConfig = [
             path: PATH_DASHBOARD.service.dmt,
             roles: ["agent"],
           },
+
+          {
+            title: "Transfer",
+            path: PATH_DASHBOARD.service.transfer,
+            roles: ["agent"],
+          },
           {
             title: "DMT1",
             path: PATH_DASHBOARD.service.dmt1,
