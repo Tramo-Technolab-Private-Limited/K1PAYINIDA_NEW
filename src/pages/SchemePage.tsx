@@ -17,6 +17,7 @@ import ApiDataLoading from "../components/customFunctions/ApiDataLoading";
 import { useAuthContext } from "src/auth/useAuthContext";
 import Scrollbar from "src/components/scrollbar/Scrollbar";
 import useResponsive from "src/hooks/useResponsive";
+import ViewTransferTable from "src/sections/ViewScheme/ViewTransferTable";
 // -------------------------------------------------------
 
 export default function ViewAllScheme() {
@@ -48,6 +49,12 @@ export default function ViewAllScheme() {
               (item: any) => item.category_name.toLowerCase() !== "bill payment"
             )
           );
+
+          console.log(
+            "........................................................................",
+            Response
+          );
+
           setSuperCurrentTab(
             user?.role != "m_distributor" && Response.data.data[0].category_name
           );
@@ -192,8 +199,8 @@ export default function ViewAllScheme() {
                   <ViewRechargeTable comData={com} />
                 ) : superCurrentTab.toLowerCase() == "money transfer" ? (
                   <ViewMoneyTransferTable comData={com} />
-                ) : superCurrentTab.toLowerCase() == "aadhaar pay" ? (
-                  <ViewAadharPayTable comData={com} />
+                ) : superCurrentTab.toLowerCase() == "transfer" ? (
+                  <ViewTransferTable comData={com} />
                 ) : superCurrentTab.toLowerCase() == "dmt1" ? (
                   <ViewDmt1Table comData={com} />
                 ) : superCurrentTab.toLowerCase() == "dmt2" ? (
