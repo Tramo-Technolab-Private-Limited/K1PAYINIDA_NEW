@@ -29,6 +29,7 @@ export const PATH_DASHBOARD = {
   service: {
     root: path(ROOTS_DASHBOARD, "/service"),
     recharge: path(ROOTS_DASHBOARD, "/service/recharge"),
+    transfer: path(ROOTS_DASHBOARD, "/service/transfer"),
     dmt: path(ROOTS_DASHBOARD, "/service/dmt"),
     dmt1: path(ROOTS_DASHBOARD, "/service/dmt1"),
     dmt2: path(ROOTS_DASHBOARD, "/service/dmt2"),
@@ -55,6 +56,7 @@ export const PATH_DASHBOARD = {
     mybankaccount: path(ROOTS_DASHBOARD, "/fundmanagement/mybankaccount"),
     aepssettlement: path(ROOTS_DASHBOARD, "/fundmanagement/aepssettlement"),
     myfundrequest: path(ROOTS_DASHBOARD, "/fundmanagement/myfundrequest"),
+    Wallettowallet: path(ROOTS_DASHBOARD, "/fundmanagement/WalletToWallet"),
     managefundflow: path(ROOTS_DASHBOARD, "/fundmanagement/managefundflow"),
     mynetworkfunds: path(ROOTS_DASHBOARD, "/fundmanagement/mynetworkfunds"),
   },

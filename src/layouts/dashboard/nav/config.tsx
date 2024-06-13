@@ -51,6 +51,12 @@ const NavConfig = [
             path: PATH_DASHBOARD.service.dmt,
             roles: ["agent"],
           },
+
+          {
+            title: "Transfer",
+            path: PATH_DASHBOARD.service.transfer,
+            roles: ["agent"],
+          },
           {
             title: "DMT1",
             path: PATH_DASHBOARD.service.dmt1,
@@ -159,6 +165,10 @@ const NavConfig = [
           {
             title: "My Fund Requests",
             path: PATH_DASHBOARD.fundmanagement.myfundrequest,
+          },
+          {
+            title: "Wallet to Wallet Transfer",
+            path: PATH_DASHBOARD.fundmanagement.Wallettowallet,
           },
         ],
       },

@@ -55,6 +55,9 @@ export const Services = Loadable(lazy(() => import("../pages/Services")));
 export const Recharge = Loadable(
   lazy(() => import("../sections/services/recharge/Recharges"))
 );
+export const Transfer = Loadable(
+  lazy(() => import("../sections/services/Transfer/Transfer"))
+);
 export const DMT = Loadable(lazy(() => import("../sections/services/DMT/DMT")));
 export const DMT1 = Loadable(
   lazy(() => import("../sections/services/DMT1/DMT1"))
@@ -110,6 +113,9 @@ export const AEPSsettlement = Loadable(
 );
 export const MyFundRequest = Loadable(
   lazy(() => import("../sections/FundManagement/MyFundRequest"))
+);
+export const WalletToWallet = Loadable(
+  lazy(() => import("../sections/FundManagement/WalletToWallet"))
 );
 export const ManageFundFlow = Loadable(
   lazy(() => import("../sections/FundManagement/ManageFundFlow"))
