@@ -178,8 +178,8 @@ export default function Transferbeneficiary() {
 
   const DMTSchema = Yup.object().shape({
     ifsc: Yup.string().required("IFSC code is required"),
-    accountNumber: Yup.string().required("Account Number is required"),
-    bankName: Yup.string().required("Bank Name is required"),
+    // accountNumber: Yup.string().required("Account Number is required"),
+    // bankName: Yup.string().required("Bank Name is required"),
     beneName: Yup.string().required("Beneficiary Name is required"),
     remitterRelation: Yup.string().required("Relation is required"),
   });
@@ -222,7 +222,7 @@ export default function Transferbeneficiary() {
   const fatchBeneficiary = (val: any) => {
     let token = localStorage.getItem("token");
     getbeneDispatch({ type: "GET_BENE_REQUEST" });
-    Api("moneyTransfer/beneficiary/" + val, "GET", "", token).then(
+    Api("app/transfer/beneficiary/" + val, "GET", "", token).then(
       (Response: any) => {
         if (Response.status == 200) {
           if (Response.data.code == 200) {
@@ -269,14 +269,15 @@ export default function Transferbeneficiary() {
     remitterVerifyDispatch({ type: "VERIFY_FETCH_REQUEST" });
     let token = localStorage.getItem("token");
     let body = {
-      ifsc: getValues("ifsc"),
-      accountNumber: getValues("accountNumber"),
-      bankName: getValues("bankName"),
+      upiAddress: getValues("ifsc"),
+      // accountNumber: getValues("accountNumber"),
+      // bankName: getValues("bankName"),
+
       remitterMobile: remitterContext.remitterMobile,
     };
     await fetchLocation();
     (await trigger(["ifsc", "accountNumber", "bankName"]))
-      ? await Api("moneyTransfer/beneficiary/verify", "POST", body, token).then(
+      ? await Api("app/transfer/beneficiary/verify", "POST", body, token).then(
           (Response: any) => {
             if (Response.status == 200) {
               if (Response.data.code == 200) {
@@ -310,21 +311,27 @@ export default function Transferbeneficiary() {
       let body = {
         remitterMobile: remitterContext.remitterMobile,
         beneficiaryName: data.beneName,
-        ifsc: data.ifsc,
-        accountNumber: data.accountNumber,
+        upiAddress: data.ifsc,
+        // accountNumber: data.accountNumber,
         beneficiaryMobile: data.mobileNumber,
         beneficiaryEmail: data.email,
         relationship: data.remitterRelation,
-        bankName: data.bankName,
+        // bankName: data.bankName,
         isBeneVerified: data.isBeneVerified,
         bankId: data.bankId,
       };
       await fetchLocation();
-      await Api("moneyTransfer/beneficiary", "POST", body, token).then(
+      await Api("app/transfer/beneficiary", "POST", body, token).then(
         (Response: any) => {
           if (Response.status == 200) {
             if (Response.data.code == 200) {
               enqueueSnackbar(Response.data.message);
+
+              console.log(
+                ",,,,,,,,,,,,,,,,,,,,,,,,,,vvvvvvvvvvvvvvvvvvvvvv",
+                Response
+              );
+
               getbeneDispatch({
                 type: "GET_BENE_SUCCESS",
                 payload: [...getBene.data, Response.data.data],
@@ -418,8 +425,8 @@ export default function Transferbeneficiary() {
                       <TableCell sx={{ fontWeight: 800 }}>
                         Beneficiary Name
                       </TableCell>
-                      <TableCell sx={{ fontWeight: 800 }}>A/c No.</TableCell>
-                      <TableCell sx={{ fontWeight: 800 }}>IFSC code</TableCell>
+
+                      <TableCell sx={{ fontWeight: 800 }}>UPI ID</TableCell>
                       <TableCell sx={{ fontWeight: 800 }}>
                         Mobile Number
                       </TableCell>
@@ -490,7 +497,7 @@ export default function Transferbeneficiary() {
                   sm: "repeat(2, 1fr)",
                 }}
               >
-                <RHFAutocomplete
+                {/* <RHFAutocomplete
                   name="bank"
                   disabled={remitterVerify?.beneVerified}
                   onChange={setBankDetail}
@@ -516,24 +523,24 @@ export default function Transferbeneficiary() {
                       }
                     />
                   )}
-                />
+                /> */}
 
                 <RHFTextField
                   name="ifsc"
-                  label="IFSC code"
-                  placeholder="IFSC code"
+                  label="UPI ID"
+                  placeholder="UPI ID"
                   disabled={remitterVerify?.beneVerified}
                   variant={remitterVerify?.beneVerified ? "filled" : "outlined"}
                   InputLabelProps={{ shrink: true }}
                 />
-                <RHFTextField
+                {/* <RHFTextField
                   name="accountNumber"
                   label="Account Number"
                   placeholder="Account Number"
                   disabled={remitterVerify?.beneVerified}
                   variant={remitterVerify?.beneVerified ? "filled" : "outlined"}
                   InputLabelProps={{ shrink: true }}
-                />
+                /> */}
                 <Stack
                   justifyContent={"center"}
                   alignItems={"center"}
@@ -546,7 +553,7 @@ export default function Transferbeneficiary() {
                     disabled={remitterVerify?.beneVerified}
                     loading={remitterVerify?.isLoading}
                   >
-                    verify Account Detail
+                    verify UPI Detail
                   </LoadingButton>
                 </Stack>
                 <RHFTextField
@@ -644,7 +651,7 @@ const BeneList = React.memo(
           remitterMobile: remitterNumber,
         };
         await fetchLocation();
-        await Api("moneyTransfer/beneficiary/verify", "POST", body, token).then(
+        await Api("app/transfer/beneficiary/verify", "POST", body, token).then(
           (Response: any) => {
             if (Response.status == 200) {
               if (Response.data.code == 200) {
@@ -677,7 +684,7 @@ const BeneList = React.memo(
     const deleteBeneficiary = (val: string) => {
       let token = localStorage.getItem("token");
       Api(
-        "moneyTransfer/beneficiary/delete/sendOtp/" + val,
+        "app/transfer/beneficiary/delete/sendOtp/" + val,
         "GET",
         "",
         token
@@ -699,7 +706,7 @@ const BeneList = React.memo(
         beneficiaryId: row._id,
         otp: deleteOtp,
       };
-      Api("moneyTransfer/beneficiary/delete", "POST", body, token).then(
+      Api("app/transfer/beneficiary/delete", "POST", body, token).then(
         (Response: any) => {
           if (Response.status == 200) {
             if (Response.data.code == 200) {
@@ -736,8 +743,8 @@ const BeneList = React.memo(
       <>
         <TableRow hover key={cell._id}>
           <TableCell>{cell.beneName}</TableCell>
-          <TableCell>{cell.accountNumber}</TableCell>
-          <TableCell>{cell.ifsc}</TableCell>
+
+          <TableCell>{cell.upiAddress}</TableCell>
           <TableCell>{cell.mobileNumber}</TableCell>
 
           <TableCell>
