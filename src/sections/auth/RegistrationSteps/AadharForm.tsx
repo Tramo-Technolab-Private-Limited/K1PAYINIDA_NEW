@@ -1075,7 +1075,7 @@ function PanCard(props: any) {
       .max(10)
       .length(10, "Enter Valid PAN Number"),
     fName: Yup.string().required("First Name is  required"),
-    lName: Yup.string().required("Last Name is  required"),
+    lName: Yup.string(),
   });
 
   const methods = useForm<FormValuesProps>({
