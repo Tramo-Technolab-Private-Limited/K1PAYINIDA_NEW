@@ -62,8 +62,6 @@ export default function Transferpay({
   isOpen,
   handleTxnClose,
 }: any) {
-  console.log("..............................beny", beneficiary, remitter);
-
   const { Api } = useAuthContext();
   const { availableLimitForUpiTransfer } = remitter;
   const { bankName, accountNumber, mobileNumber, beneName, upiAddress } =
@@ -149,11 +147,6 @@ export default function Transferpay({
   const transaction = async (data: FormValuesProps) => {
     let token = localStorage.getItem("token");
 
-    console.log(
-      "mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm",
-      beneficiary
-    );
-
     let body = {
       beneficiaryId: beneficiary._id,
       amount: data.payAmount,
@@ -168,18 +161,16 @@ export default function Transferpay({
       (Response: any) => {
         if (Response.status == 200) {
           if (Response.data.code == 200) {
-            Response.data.response.map((element: any) => {
-              enqueueSnackbar(element.message);
-              TextToSpeak(sentenceCase(element.message));
-            });
+            // Response.data.response.map((element: any) => {
+            //   enqueueSnackbar(element.message);
+            //   TextToSpeak(sentenceCase(element.message));
+            // });
 
             handleClose();
             handleOpen1();
             setErrorMsg("");
             initialize();
-            setTransactionDetail(
-              Response.data.response.map((item: any) => item.data)
-            );
+            setTransactionDetail(Response?.data?.data);
           } else {
             enqueueSnackbar(Response.data.message, { variant: "error" });
             setErrorMsg(Response.data.message);
@@ -197,6 +188,7 @@ export default function Transferpay({
 
   return (
     <>
+      {/* transactional user confirm */}
       <MotionModal open={isOpen} width={{ xs: "95%", sm: 400 }}>
         <FormProvider methods={methods} onSubmit={handleSubmit(onsubmit)}>
           <Stack justifyContent={"space-between"} mb={2}>
