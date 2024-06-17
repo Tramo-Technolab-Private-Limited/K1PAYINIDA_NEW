@@ -108,7 +108,7 @@ export default function Transferpay({
       .test(
         "is-greater-than-100",
         "Amount should be greater than 100",
-        (value: any) => +value > 99
+        (value: any) => +value > 1
       )
       .test(
         "is-multiple-of-100",
@@ -229,7 +229,7 @@ export default function Transferpay({
                 variant="contained"
                 sx={{ mt: 1 }}
                 disabled={
-                  !(+watch("payAmount") > 99 ? true : false) ||
+                  !(+watch("payAmount") > 1 ? true : false) ||
                   !(+watch("payAmount") > availableLimitForUpiTransfer
                     ? false
                     : true)
