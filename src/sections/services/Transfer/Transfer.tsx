@@ -147,12 +147,11 @@ export default function Transfer() {
       let token = localStorage.getItem("token");
       remitterDispatch({ type: "REMITTER_FETCH_REQUEST" });
       await Api(
-        "moneyTransfer/remitter/" + data.mobileNumber,
+        "app/transfer/remitter/" + data.mobileNumber,
         "GET",
         "",
         token
       ).then((Response: any) => {
-        console.log("dmt response", Response);
         if (Response.status == 200) {
           if (Response.data.code == 200) {
             remitterDispatch({
@@ -162,7 +161,10 @@ export default function Transfer() {
             reset(defaultValues);
           } else if (Response.data.code == 400) {
             remitterDispatch({ type: "REMITTER_NOT_FOUND" });
-            if (Response.data.data == null) {
+            if (
+              Response.data.data == null ||
+              !Object.keys(Response?.data?.data).length
+            ) {
               openEditModal1();
             } else {
               SendOTP(data.mobileNumber);
@@ -183,7 +185,7 @@ export default function Transfer() {
 
   const SendOTP = (val: any) => {
     let token = localStorage.getItem("token");
-    Api("moneyTransfer/remitter/sendOtp/" + val, "GET", "", token).then(
+    Api("app/transfer/remitter/sendOtp/" + val, "GET", "", token).then(
       (Response: any) => {
         if (Response.data.code == 200) {
           enqueueSnackbar(Response.data.message);
@@ -203,7 +205,7 @@ export default function Transfer() {
     handleClose2();
     remitterDispatch({ type: "REMITTER_FETCH_REQUEST" });
     let token = localStorage.getItem("token");
-    Api("moneyTransfer/remitter/" + val, "GET", "", token).then(
+    Api("app/transfer/remitter/" + val, "GET", "", token).then(
       (Response: any) => {
         console.log("dmt response", Response);
         if (Response.status == 200) {
@@ -214,7 +216,10 @@ export default function Transfer() {
             });
           } else if (Response.data.code == 400) {
             remitterDispatch({ type: "REMITTER_NOT_FOUND" });
-            if (Response.data.data == null) {
+            if (
+              Response.data.data == null ||
+              !Object.keys(Response?.data?.data).length
+            ) {
               openEditModal1();
             } else {
               SendOTP(val);
@@ -251,7 +256,7 @@ export default function Transfer() {
       if (Response.status == 200) {
         if (Response.data.code == 200) {
           Response?.data?.data?.map((item: any) => {
-            if (item.category_name.toUpperCase() == "MONEY TRANSFER") {
+            if (item.category_name.toUpperCase() == "TRANSFER") {
               setIsServiceEnable(item.isEnabled);
             }
           });
@@ -272,7 +277,7 @@ export default function Transfer() {
     <RoleBasedGuard hasContent roles={["agent"]}>
       <RemitterContext.Provider value={remitter.data}>
         <Helmet>
-          <title>Money Transfer |{process.env.REACT_APP_COMPANY_NAME}</title>
+          <title> Transfer |{process.env.REACT_APP_COMPANY_NAME}</title>
         </Helmet>
         <Grid container spacing={2}>
           <Grid item sm={3}>
@@ -408,7 +413,7 @@ const OtpSubmissionForRegistrantion = ({
           data.otp1 + data.otp2 + data.otp3 + data.otp4 + data.otp5 + data.otp6,
       };
       await fetchLocation();
-      await Api("moneyTransfer/remitter/verifyOTP", "POST", body, token).then(
+      await Api("app/transfer/remitter/verifyOTP", "POST", body, token).then(
         (Response: any) => {
           console.log("==============>>> register remmiter Response", Response);
           if (Response.status == 200) {
@@ -533,7 +538,7 @@ const NewRegistration = ({ mobilenumber, handleNewRegistaion }: any) => {
       email: data.remitterEmail || "",
     };
     await fetchLocation();
-    await Api("moneyTransfer/remitter", "POST", body, token).then(
+    await Api("app/transfer/remitter", "POST", body, token).then(
       (Response: any) => {
         console.log("==============>>> register remmiter Response", Response);
         if (Response.status == 200) {

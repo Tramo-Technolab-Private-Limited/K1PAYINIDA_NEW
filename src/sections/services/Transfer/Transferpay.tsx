@@ -63,11 +63,12 @@ export default function Transferpay({
   handleTxnClose,
 }: any) {
   const { Api } = useAuthContext();
-  const { availableLimitForMoneyTransfer } = remitter;
-  const { bankName, accountNumber, mobileNumber, beneName, ifsc } = beneficiary;
+  const { availableLimitForUpiTransfer } = remitter;
+  const { bankName, accountNumber, mobileNumber, beneName, upiAddress } =
+    beneficiary;
   const { enqueueSnackbar } = useSnackbar();
   const { initialize } = useAuthContext();
-  const [mode, setMode] = useState("IMPS");
+  // const [mode, setMode] = useState("IMPS");
   const [errorMsg, setErrorMsg] = useState("");
 
   const [isTxnOpen, setIsTxnOpen] = useState(false);
@@ -107,7 +108,7 @@ export default function Transferpay({
       .test(
         "is-greater-than-100",
         "Amount should be greater than 100",
-        (value: any) => +value > 99
+        (value: any) => +value > 1
       )
       .test(
         "is-multiple-of-100",
@@ -116,8 +117,8 @@ export default function Transferpay({
       )
       .test(
         "is-less-than-max",
-        "Limit Exceed ! available limit is " + availableLimitForMoneyTransfer,
-        (value: any) => (+value > availableLimitForMoneyTransfer ? false : true)
+        "Limit Exceed ! available limit is " + availableLimitForUpiTransfer,
+        (value: any) => (+value > availableLimitForUpiTransfer ? false : true)
       ),
   });
   const defaultValues = {
@@ -145,33 +146,31 @@ export default function Transferpay({
 
   const transaction = async (data: FormValuesProps) => {
     let token = localStorage.getItem("token");
+
     let body = {
       beneficiaryId: beneficiary._id,
       amount: data.payAmount,
       remitterId: remitter._id,
-      mode: mode,
-      note1: "",
-      note2: "",
+      // mode: mode,
+
       nPin:
         data.otp1 + data.otp2 + data.otp3 + data.otp4 + data.otp5 + data.otp6,
     };
     await fetchLocation();
-    await Api("moneytransfer/transaction", "POST", body, token).then(
+    await Api("app/transfer/transaction", "POST", body, token).then(
       (Response: any) => {
         if (Response.status == 200) {
           if (Response.data.code == 200) {
-            Response.data.response.map((element: any) => {
-              enqueueSnackbar(element.message);
-              TextToSpeak(sentenceCase(element.message));
-            });
+            // Response.data.response.map((element: any) => {
+            //   enqueueSnackbar(element.message);
+            //   TextToSpeak(sentenceCase(element.message));
+            // });
 
-            initialize();
-            setTransactionDetail(
-              Response.data.response.map((item: any) => item.data)
-            );
             handleClose();
             handleOpen1();
             setErrorMsg("");
+            initialize();
+            setTransactionDetail(Response?.data?.data);
           } else {
             enqueueSnackbar(Response.data.message, { variant: "error" });
             setErrorMsg(Response.data.message);
@@ -198,17 +197,10 @@ export default function Transferpay({
                 <Typography variant="subtitle2">Beneficiary Name</Typography>
                 <Typography variant="subtitle2">{beneName}</Typography>
               </Stack>
+
               <Stack flexDirection={"row"} justifyContent={"space-between"}>
-                <Typography variant="subtitle2"> Bank Name</Typography>
-                <Typography variant="subtitle2">{bankName}</Typography>
-              </Stack>
-              <Stack flexDirection={"row"} justifyContent={"space-between"}>
-                <Typography variant="subtitle2"> Account Number</Typography>
-                <Typography variant="subtitle2">{accountNumber}</Typography>
-              </Stack>
-              <Stack flexDirection={"row"} justifyContent={"space-between"}>
-                <Typography variant="subtitle2">IFSC</Typography>
-                <Typography variant="subtitle2">{ifsc}</Typography>
+                <Typography variant="subtitle2">UPI ID</Typography>
+                <Typography variant="subtitle2">{upiAddress}</Typography>
               </Stack>
             </Stack>
 
@@ -227,33 +219,7 @@ export default function Transferpay({
             <Typography variant="caption">
               {convertToWords(+watch("payAmount"))}
             </Typography>
-            <FormControl style={{ display: "flex" }}>
-              <RadioGroup
-                aria-labelledby="demo-radio-buttons-group-label"
-                value={mode}
-                onChange={(event, value) => setMode(value)}
-                name="radiobuttonsgroup"
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  marginTop: "10px",
-                }}
-              >
-                <FormControlLabel
-                  sx={{ color: "inherit" }}
-                  name="NEFT"
-                  value="NEFT"
-                  control={<Radio />}
-                  label="NEFT"
-                />
-                <FormControlLabel
-                  value="IMPS"
-                  name="IMPS"
-                  control={<Radio />}
-                  label="IMPS"
-                />
-              </RadioGroup>
-            </FormControl>
+
             <Stack flexDirection={"row"} gap={1}>
               <Button
                 onClick={() => {
@@ -263,9 +229,8 @@ export default function Transferpay({
                 variant="contained"
                 sx={{ mt: 1 }}
                 disabled={
-                  !mode ||
-                  !(+watch("payAmount") > 99 ? true : false) ||
-                  !(+watch("payAmount") > availableLimitForMoneyTransfer
+                  !(+watch("payAmount") > 1 ? true : false) ||
+                  !(+watch("payAmount") > availableLimitForUpiTransfer
                     ? false
                     : true)
                 }
@@ -294,17 +259,10 @@ export default function Transferpay({
           <Typography variant="subtitle1">Beneficiary Name</Typography>
           <Typography variant="body1">{beneName}</Typography>
         </Stack>
+
         <Stack flexDirection={"row"} justifyContent={"space-between"} mt={2}>
-          <Typography variant="subtitle1">Bank Name</Typography>
-          <Typography variant="body1">{bankName}</Typography>
-        </Stack>
-        <Stack flexDirection={"row"} justifyContent={"space-between"} mt={2}>
-          <Typography variant="subtitle1">Account Number</Typography>
-          <Typography variant="body1">{accountNumber}</Typography>
-        </Stack>
-        <Stack flexDirection={"row"} justifyContent={"space-between"} mt={2}>
-          <Typography variant="subtitle1">IFSC code</Typography>
-          <Typography variant="body1">{ifsc}</Typography>
+          <Typography variant="subtitle1"> UPI ID</Typography>
+          <Typography variant="body1">{upiAddress}</Typography>
         </Stack>
         <Stack flexDirection={"row"} justifyContent={"space-between"} mt={2}>
           <Typography variant="subtitle1">Mobile Number</Typography>
@@ -451,7 +409,6 @@ export default function Transferpay({
             handleTxnModal={() => {
               setOpen1(false);
               setErrorMsg("");
-              setMode("");
             }}
             errorMsg={errorMsg}
             transactionDetail={transactionDetail}

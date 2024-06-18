@@ -18,6 +18,18 @@ export type AepsRowProps = {
   masterDistributorCommission: string;
 };
 
+export type TransferRowProps = {
+  _id: string;
+  minSlab: string;
+  maxSlab: string;
+  chargeType: string;
+  agentCharge: string;
+  commissionType: string;
+  distributorCommission: string;
+  masterDistributorCommission: string;
+};
+
+
 export type Dmt1RowProps = {
   _id: string;
   minSlab: string;
