@@ -44,7 +44,7 @@ type FormValuesProps = {
 export default function AttendenceAeps(props: any) {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
-  const { user, UpdateUserDetail, initialize, Api } = useAuthContext();
+  const { user, Api, initialize } = useAuthContext();
   const [scanLoading, setScanLoading] = useState(false);
   const theme = useTheme();
   const [message, setMessage] = useState("");
@@ -108,6 +108,7 @@ export default function AttendenceAeps(props: any) {
   const attendance = async (data: FormValuesProps) => {
     handleOpen();
     const { error, success }: any = await CaptureDevice(data.deviceName);
+    console.log("capture response", error, success);
     handleClose();
     if (!success) {
       enqueueSnackbar(error);
@@ -116,7 +117,6 @@ export default function AttendenceAeps(props: any) {
       return;
     }
     try {
-      await fetchLocation();
       let token = localStorage.getItem("token");
       let body = {
         attendanceType: "DAILY",
@@ -127,12 +127,14 @@ export default function AttendenceAeps(props: any) {
         nationalBankIdentificationNumber: "",
         captureResponse: success,
       };
+      await fetchLocation();
       await Api("aeps/presence", "POST", body, token).then((Response: any) => {
         console.log("==============>>>fatch beneficiary Response", Response);
         if (Response.status == 200) {
           if (Response.data.code == 200) {
             enqueueSnackbar(Response.data.data.message);
             initialize();
+
             setMessage(Response.data.message);
           } else if (Response.data.responseCode == 410) {
             enqueueSnackbar(Response.data.err.message, { variant: "error" });
@@ -152,151 +154,6 @@ export default function AttendenceAeps(props: any) {
         enqueueSnackbar(`${error.message} !`, { variant: "error" });
       }
     }
-  };
-
-  const capture = (data: FormValuesProps) => {
-    handleOpen();
-    var rdUrl = "";
-    if (getValues("deviceName") == "MANTRA") {
-      rdUrl = "https://127.0.0.1:8005/rd/capture";
-    } else if (getValues("deviceName") == "MORPHO") {
-      rdUrl = "http://127.0.0.1:11100/capture";
-    } else if (getValues("deviceName") == "MORPHO L1") {
-      rdUrl = "http://127.0.0.1:11101/capture";
-    } else if (getValues("deviceName") == "STARTEK") {
-      rdUrl = "http://127.0.0.1:11101/rd/capture";
-    } else if (getValues("deviceName") == "SECUGEN") {
-      rdUrl = "http://127.0.0.1:11100/rd/capture";
-    }
-    if (rdUrl == "") {
-      enqueueSnackbar("Device Not Set!!");
-      return;
-    }
-
-    var xhr: any;
-    var ActiveXObject: any;
-    var ua = window.navigator.userAgent;
-    var msie = ua.indexOf("MSIE");
-    if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) {
-      xhr = new ActiveXObject("Microsoft.XMLHTTP");
-    } else {
-      xhr = new XMLHttpRequest();
-    }
-    xhr.open("CAPTURE", rdUrl, true);
-    xhr.setRequestHeader("Content-Type", "text/xml");
-    xhr.setRequestHeader("Accept", "text/xml");
-    if (!xhr) {
-      enqueueSnackbar("CORS not supported");
-      return;
-    }
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState == 4) {
-        var status = xhr.status;
-        if (status == 200) {
-          let xhrR = xhr.response;
-          let parser = new DOMParser();
-          let xml = parser.parseFromString(xhrR, "application/xml");
-          var pidContent = xml.getElementsByTagName("PidData")[0];
-          var responseCode: any = pidContent
-            .getElementsByTagName("Resp")[0]
-            .getAttribute("errCode");
-          var errInfo: any = pidContent
-            .getElementsByTagName("Resp")[0]
-            .getAttribute("errInfo");
-          let device: any = pidContent
-            .getElementsByTagName("DeviceInfo")[0]
-            .getAttribute("dpId");
-          if (responseCode == 0) {
-            var errorCode: any = pidContent
-              .getElementsByTagName("Resp")[0]
-              .getAttribute("errCode");
-            var errInfo: any = pidContent
-              .getElementsByTagName("Resp")[0]
-              .getAttribute("errInfo");
-            var fCount: any = pidContent
-              .getElementsByTagName("Resp")[0]
-              .getAttribute("fCount");
-            var fType: any = pidContent
-              .getElementsByTagName("Resp")[0]
-              .getAttribute("fType");
-            var iCount: any = pidContent
-              .getElementsByTagName("Resp")[0]
-              .getAttribute("iCount");
-            var pCount: any = pidContent
-              .getElementsByTagName("Resp")[0]
-              .getAttribute("pCount");
-            var nmPoints: any = pidContent
-              .getElementsByTagName("Resp")[0]
-              .getAttribute("nmPoints");
-            var qScore: any = pidContent
-              .getElementsByTagName("Resp")[0]
-              .getAttribute("qScore");
-            let dpId: any = pidContent
-              .getElementsByTagName("DeviceInfo")[0]
-              .getAttribute("dpId");
-            let rdsId: any = pidContent
-              .getElementsByTagName("DeviceInfo")[0]
-              .getAttribute("rdsId");
-            let rdsVer: any = pidContent
-              .getElementsByTagName("DeviceInfo")[0]
-              .getAttribute("rdsVer");
-            let dc: any = pidContent
-              .getElementsByTagName("DeviceInfo")[0]
-              .getAttribute("dc");
-            let mi: any = pidContent
-              .getElementsByTagName("DeviceInfo")[0]
-              .getAttribute("mi");
-            let mc: any = pidContent
-              .getElementsByTagName("DeviceInfo")[0]
-              .getAttribute("mc");
-            let ci: any = pidContent
-              .getElementsByTagName("Skey")[0]
-              .getAttribute("ci");
-            let sessionkey: any = pidContent.getElementsByTagName("Skey")[0];
-            let hmac: any = pidContent.getElementsByTagName("Hmac")[0];
-            let pidData: any = pidContent.getElementsByTagName("Data")[0];
-            let pidDataType: any = pidContent
-              .getElementsByTagName("Data")[0]
-              .getAttribute("type");
-            let deviceArr: any = [];
-            deviceArr.push({
-              errcode: errorCode,
-              errinfo: errInfo,
-              fcount: fCount,
-              ftype: fType,
-              icount: iCount,
-              pcount: pCount,
-              nmpoint: nmPoints.trim() + "," + nmPoints.trim(),
-              qscore: qScore.trim() + "," + qScore.trim(),
-              dpid: dpId,
-              rdsid: rdsId,
-              rdsver: rdsVer,
-              dc: dc,
-              mi: mi,
-              mc: mc,
-              ci: ci,
-              skey: sessionkey,
-              hmac: hmac,
-              piddata: pidData,
-              piddatatype: pidDataType,
-            });
-
-            setarrofObj(deviceArr);
-          } else {
-            enqueueSnackbar(errInfo);
-            handleClose();
-          }
-        } else {
-          handleClose();
-        }
-      }
-    };
-    xhr.onerror = function () {
-      enqueueSnackbar("Check If RD Service/Utility is Running");
-    };
-    xhr.send(
-      '<?xml version="1.0"?> <PidOptions ver="1.0"> <Opts fCount="1" fType="2" iCount="0" pCount="0" format="0" pidVer="2.0" timeout="20000" posh="UNKNOWN" env="P" wadh=""/> <CustOpts><Param name="mantrakey" value="" /></CustOpts> </PidOptions>'
-    );
   };
 
   return (
