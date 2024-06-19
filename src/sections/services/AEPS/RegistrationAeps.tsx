@@ -15,6 +15,7 @@ import {
   Modal,
   FormHelperText,
   useTheme,
+  Card,
 } from "@mui/material";
 
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -27,7 +28,6 @@ import { useSnackbar } from "notistack";
 import Lottie from "lottie-react";
 import fingerScan from "../../../components/JsonAnimations/fingerprint-scan.json";
 import { useAuthContext } from "src/auth/useAuthContext";
-import { CaptureDevice } from "../../../utils/CaptureDevice";
 import { fetchLocation } from "src/utils/fetchLocation";
 
 // ----------------------------------------------------------------------
@@ -39,13 +39,20 @@ type FormValuesProps = {
   deviceName: string;
   remark: string;
   alternateMobileNumber: string;
+  aadharCityName: string;
+  aadharDistrictName: string;
+  shopCityName: string;
+  shopDistrict: string;
+  shopAddress: string;
+  merchantAddress2: string;
+  merchantAddress1: string;
 };
 
 export default function RegistrationAeps(props: any) {
   const { enqueueSnackbar } = useSnackbar();
   const { user, UpdateUserDetail, Api } = useAuthContext();
   const theme = useTheme();
-  const [otpVerify, setOtpVerify] = useState(true);
+  const [otpVerify, setOtpVerify] = useState(false);
   const [encodeFPTxnId, setEncodeFPTxnId] = useState("");
   const [primaryKey, setPrimaryKey] = useState("");
   const [indState, setIndState] = useState([]);
@@ -66,19 +73,70 @@ export default function RegistrationAeps(props: any) {
 
   //registration Validation
   const registrationSchema = Yup.object().shape({
+    merchantAddress1: Yup.string()
+      .required("Merchant address 1 is required")
+      .matches(
+        /^[a-zA-Z0-9 ]*$/,
+        "Only alphabets, numbers, and spaces are allowed"
+      ),
+    merchantAddress2: Yup.string()
+      .required("Merchant address 2 is required")
+      .matches(
+        /^[a-zA-Z0-9 ]*$/,
+        "Only alphabets, numbers, and spaces are allowed"
+      ),
+    shopAddress: Yup.string()
+      .required("Shop address is required")
+      .matches(
+        /^[a-zA-Z0-9 ]*$/,
+        "Only alphabets, numbers, and spaces are allowed"
+      ),
     alternateMobileNumber: Yup.string()
       .required("Alternate Mobile Number is required")
       .matches(
         /^[0-9]{10}$/,
         "Alternate Mobile Number must be exactly 10 digits"
       ),
+    aadharCityName: Yup.string()
+      .required("Aadhar City Name is required")
+      .matches(
+        /^[a-zA-Z0-9 ]*$/,
+        "Only alphabets, numbers, and spaces are allowed"
+      ),
+    aadharDistrictName: Yup.string()
+      .required("Aadhar District Name is required")
+      .matches(
+        /^[a-zA-Z0-9 ]*$/,
+        "Only alphabets, numbers, and spaces are allowed"
+      ),
+    shopCityName: Yup.string()
+      .required("Shop City Name is required")
+      .matches(
+        /^[a-zA-Z0-9 ]*$/,
+        "Only alphabets, numbers, and spaces are allowed"
+      ),
+    shopDistrict: Yup.string()
+      .required("Shop District Name is required")
+      .matches(
+        /^[a-zA-Z0-9 ]*$/,
+        "Only alphabets, numbers, and spaces are allowed"
+      ),
   });
   const defaultValues = {
+    merchantAddress1: "",
+    merchantAddress2: "",
     state: "",
+    alternateMobileNumber: "",
+    aadharCityName: "",
+    aadharDistrictName: "",
+    shopAddress: "",
+    shopCityName: "",
+    shopDistrict: "",
   };
   const methods = useForm<FormValuesProps>({
     resolver: yupResolver(registrationSchema),
     defaultValues,
+    mode: "all",
   });
   const {
     reset,
@@ -106,6 +164,15 @@ export default function RegistrationAeps(props: any) {
     formState: { isSubmitting: isSubmittingOtp },
   } = methodsOtp;
 
+  const alternateMobileNumber = watch("alternateMobileNumber");
+  const isAlternateMobileNumberValid =
+    !errors.alternateMobileNumber && alternateMobileNumber?.length === 10;
+
+  const aadharCityName = watch("aadharCityName");
+  const aadharDistrictName = watch("aadharDistrictName");
+  const shopCityName = watch("shopCityName");
+  const shopDistrict = watch("shopDistrict");
+
   //VerifyOtp Validation
   const VerifyOtpSchema = Yup.object().shape({
     otp: Yup.string().required("code is required"),
@@ -124,11 +191,8 @@ export default function RegistrationAeps(props: any) {
     formState: { errors: VerifyOtpErrors, isSubmitting: VerifyOtpIsSubmitting },
   } = VerifyOtpmethods;
 
-  const alternateMobileNumber = watch("alternateMobileNumber");
-  const isAlternateMobileNumberValid =
-    !errors.alternateMobileNumber && alternateMobileNumber?.length === 10;
-
   useEffect(() => {
+    fetchLocation();
     getState();
   }, []);
 
@@ -178,13 +242,19 @@ export default function RegistrationAeps(props: any) {
     try {
       let token = localStorage.getItem("token");
       let body = {
+        merchantAddress1: data.merchantAddress1,
+        merchantAddress2: data.merchantAddress2,
         shopState: data.state,
         merchantState: data.state,
         alternateMobileNumber: data.alternateMobileNumber,
+        merchantCityName: data.aadharCityName,
+        merchantDistrictName: data.aadharDistrictName,
+        shopCity: data.shopCityName,
+        shopAddress: data.shopAddress,
+        shopDistrict: data.shopDistrict,
         Latitude: localStorage.getItem("lat"),
         Longitude: localStorage.getItem("long"),
       };
-      await fetchLocation();
       await Api("aeps/aeps_acc", "POST", body, token).then((Response: any) => {
         console.log("==============>>>fatch beneficiary Response", Response);
         if (Response.status == 200) {
@@ -238,10 +308,6 @@ export default function RegistrationAeps(props: any) {
     }
   };
 
-  useEffect(() => {
-    arrofObj.length && merchantKYC();
-  }, [arrofObj]);
-
   const resendOtp = () => {
     let token = localStorage.getItem("token");
     let id = user?._id;
@@ -262,17 +328,15 @@ export default function RegistrationAeps(props: any) {
   };
 
   const verifyOtpToMerchant = async (data: FormValuesProps) => {
-    setOtpVerify(false);
+    let token = localStorage.getItem("token");
+    let id = user?._id;
     try {
-      let token = localStorage.getItem("token");
-      let id = user?._id;
       let body = {
         merchantLoginId: id,
         otp: data.otp,
         primaryKeyId: primaryKey,
         encodeFPTxnId: encodeFPTxnId,
       };
-      await fetchLocation();
       await Api("aeps/aeps_otp_verify", "POST", body, token).then(
         (Response: any) => {
           console.log("==============>>>fatch beneficiary Response", Response);
@@ -280,11 +344,10 @@ export default function RegistrationAeps(props: any) {
             if (Response.data.data.status) {
               enqueueSnackbar(Response.data.message);
               reset(defaultValues);
-              capture();
+              merchantKYC();
             }
           } else {
             enqueueSnackbar(Response.data.message, { variant: "error" });
-            setOtpVerify(true);
           }
         }
       );
@@ -297,6 +360,15 @@ export default function RegistrationAeps(props: any) {
 
   const merchantKYC = async () => {
     handleOpenLoading();
+    let { error, success }: any = await CaptureDevice(
+      getValuesOtp("deviceName")
+    );
+    if (!success) {
+      enqueueSnackbar(error);
+      handleClose();
+      handleCloseLoading();
+    }
+
     try {
       let token = localStorage.getItem("token");
       let body = {
@@ -305,29 +377,7 @@ export default function RegistrationAeps(props: any) {
         requestRemarks: getValues("remark"),
         primaryKeyId: primaryKey,
         encodeFPTxnId: encodeFPTxnId,
-        captureResponse: {
-          errCode: arrofObj[0].errcode,
-          errInfo: arrofObj[0].errinfo,
-          fCount: arrofObj[0].fcount,
-          fType: arrofObj[0].ftype,
-          iCount: arrofObj[0].icount,
-          iType: null,
-          pCount: arrofObj[0].pcount,
-          pType: "0",
-          nmPoints: arrofObj[0].nmpoint,
-          qScore: arrofObj[0].qscore,
-          dpID: arrofObj[0].dpid,
-          rdsID: arrofObj[0].rdsid,
-          rdsVer: arrofObj[0].rdsver,
-          dc: arrofObj[0].dc,
-          mi: arrofObj[0].mi,
-          mc: arrofObj[0].mc,
-          ci: arrofObj[0].ci,
-          sessionKey: arrofObj[0].skey.textContent,
-          hmac: arrofObj[0].hmac.textContent,
-          PidDatatype: arrofObj[0].piddatatype,
-          Piddata: arrofObj[0].piddata.textContent,
-        },
+        captureResponse: success,
       };
       await fetchLocation();
       await Api("aeps/bio_ekyc", "POST", body, token).then((Response: any) => {
@@ -340,9 +390,7 @@ export default function RegistrationAeps(props: any) {
             }
             handleClose();
             handleCloseLoading();
-            setOtpVerify(true);
           } else {
-            setOtpVerify(true);
             resetOtpVerify(VerifyOtpDefaultValues);
             handleClose();
             handleCloseLoading();
@@ -360,155 +408,182 @@ export default function RegistrationAeps(props: any) {
     }
   };
 
-  //   ********************************jquery start here for capture device ***************************
-
-  const capture = () => {
+  function getRDServiceUrl(deviceName: any) {
     var rdUrl = "";
-    if (getValuesOtp("deviceName") == "MANTRA") {
-      rdUrl = "https://127.0.0.1:8005/rd/capture";
-    } else if (getValuesOtp("deviceName") == "MORPHO") {
+    if (deviceName == "MANTRA") {
+      rdUrl = "http://127.0.0.1:11100/rd/capture";
+    } else if (deviceName == "MORPHO") {
       rdUrl = "http://127.0.0.1:11100/capture";
-    } else if (getValuesOtp("deviceName") == "MORPHO L1") {
+    } else if (deviceName == "MORPHO L1") {
       rdUrl = "http://127.0.0.1:11101/capture";
-    } else if (getValuesOtp("deviceName") == "STARTEK") {
-      rdUrl = "http://127.0.0.1:11101/rd/capture";
-    } else if (getValuesOtp("deviceName") == "SECUGEN") {
+    } else if (deviceName == "STARTEK") {
+      rdUrl = "http://127.0.0.1:11100/rd/capture";
+    } else if (deviceName == "SECUGEN") {
       rdUrl = "http://127.0.0.1:11100/rd/capture";
     }
-    if (rdUrl == "") {
-      setOtpVerify(true);
-      enqueueSnackbar("Device Not Set!!", { variant: "error" });
-      return;
-    }
-    var xhr: any;
-    var ActiveXObject: any;
-    var ua = window.navigator.userAgent;
-    var msie = ua.indexOf("MSIE");
-    if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) {
-      xhr = new ActiveXObject("Microsoft.XMLHTTP");
-    } else {
-      xhr = new XMLHttpRequest();
-    }
+    return rdUrl;
+  }
 
-    xhr.open("CAPTURE", rdUrl, true);
-    xhr.setRequestHeader("Content-Type", "text/xml");
-    xhr.setRequestHeader("Accept", "text/xml");
-    if (!xhr) {
-      setOtpVerify(true);
-      enqueueSnackbar("CORS not supported", { variant: "error" });
-      return;
-    }
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState == 4) {
-        var status = xhr.status;
-        if (status == 200) {
-          let xhrR = xhr.response;
-          let parser = new DOMParser();
-          let xml = parser.parseFromString(xhrR, "application/xml");
-          var pidContent = xml.getElementsByTagName("PidData")[0];
-          var responseCode: any = pidContent
-            .getElementsByTagName("Resp")[0]
-            .getAttribute("errCode");
-          var errInfo: any = pidContent
-            .getElementsByTagName("Resp")[0]
-            .getAttribute("errInfo");
-          let device: any = pidContent
-            .getElementsByTagName("DeviceInfo")[0]
-            .getAttribute("dpId");
-          if (responseCode == 0) {
-            var errorCode: any = pidContent
-              .getElementsByTagName("Resp")[0]
-              .getAttribute("errCode");
-            var errInfo: any = pidContent
-              .getElementsByTagName("Resp")[0]
-              .getAttribute("errInfo");
-            var fCount: any = pidContent
-              .getElementsByTagName("Resp")[0]
-              .getAttribute("fCount");
-            var fType: any = pidContent
-              .getElementsByTagName("Resp")[0]
-              .getAttribute("fType");
-            var iCount: any = pidContent
-              .getElementsByTagName("Resp")[0]
-              .getAttribute("iCount");
-            var pCount: any = pidContent
-              .getElementsByTagName("Resp")[0]
-              .getAttribute("pCount");
-            var nmPoints: any = pidContent
-              .getElementsByTagName("Resp")[0]
-              .getAttribute("nmPoints");
-            var qScore: any = pidContent
-              .getElementsByTagName("Resp")[0]
-              .getAttribute("qScore");
-            let dpId: any = pidContent
-              .getElementsByTagName("DeviceInfo")[0]
-              .getAttribute("dpId");
-            let rdsId: any = pidContent
-              .getElementsByTagName("DeviceInfo")[0]
-              .getAttribute("rdsId");
-            let rdsVer: any = pidContent
-              .getElementsByTagName("DeviceInfo")[0]
-              .getAttribute("rdsVer");
-            let dc: any = pidContent
-              .getElementsByTagName("DeviceInfo")[0]
-              .getAttribute("dc");
-            let mi: any = pidContent
-              .getElementsByTagName("DeviceInfo")[0]
-              .getAttribute("mi");
-            let mc: any = pidContent
-              .getElementsByTagName("DeviceInfo")[0]
-              .getAttribute("mc");
-            let ci: any = pidContent
-              .getElementsByTagName("Skey")[0]
-              .getAttribute("ci");
-            let sessionkey: any = pidContent.getElementsByTagName("Skey")[0];
-            let hmac: any = pidContent.getElementsByTagName("Hmac")[0];
-            let pidData: any = pidContent.getElementsByTagName("Data")[0];
-            let pidDataType: any = pidContent
-              .getElementsByTagName("Data")[0]
-              .getAttribute("type");
-            let deviceArr: any = [];
-            deviceArr.push({
-              errcode: errorCode,
-              errinfo: errInfo,
-              fcount: fCount,
-              ftype: fType,
-              icount: iCount,
-              pcount: pCount,
-              nmpoint: nmPoints.trim() + "," + nmPoints.trim(),
-              qscore: qScore.trim() + "," + qScore.trim(),
-              dpid: dpId,
-              rdsid: rdsId,
-              rdsver: rdsVer,
-              dc: dc,
-              mi: mi,
-              mc: mc,
-              ci: ci,
-              skey: sessionkey,
-              hmac: hmac,
-              piddata: pidData,
-              piddatatype: pidDataType,
-            });
+  function xmlToJson(xml: any): any {
+    var obj: any = {};
 
-            setarrofObj(deviceArr);
-          } else {
-            setOtpVerify(true);
-            enqueueSnackbar(errInfo);
-          }
+    if (xml.nodeType === 1) {
+      // Element node
+      if (xml.attributes.length > 0) {
+        obj["@attributes"] = {};
+        for (var j = 0; j < xml.attributes.length; j++) {
+          var attribute = xml.attributes.item(j);
+          obj["@attributes"][attribute.nodeName] = attribute.nodeValue;
         }
       }
-    };
-    xhr.onerror = function () {
-      setOtpVerify(true);
-      enqueueSnackbar("Check If Morpho Service/Utility is Running", {
-        variant: "error",
-      });
-    };
-    xhr.send(
-      user?.fingPayAEPSKycStatus
-        ? '<?xml version="1.0"?> <PidOptions ver="1.0"> <Opts fCount="1" fType="2" iCount="0" pCount="0" format="0" pidVer="2.0" timeout="20000" posh="UNKNOWN" env="P" wadh=""/> <CustOpts><Param name="mantrakey" value="" /></CustOpts> </PidOptions>'
-        : '<?xml version="1.0"?> <PidOptions ver="1.0"> <Opts fCount="1" fType="2" iCount="0" pCount="0" format="0" pidVer="2.0" timeout="20000" posh="UNKNOWN" env="P" wadh="E0jzJ/P8UopUHAieZn8CKqS4WPMi5ZSYXgfnlfkWjrc="/> <CustOpts><Param name="mantrakey" value="" /></CustOpts> </PidOptions>'
-    );
+    } else if (xml.nodeType === 3) {
+      // Text node
+      obj = xml.nodeValue.trim();
+    }
+
+    // Children
+    if (xml.hasChildNodes()) {
+      for (var i = 0; i < xml.childNodes.length; i++) {
+        var item: any = xml.childNodes.item(i);
+        var nodeName: any = item.nodeName;
+
+        if (typeof obj[nodeName] === "undefined") {
+          obj[nodeName] = xmlToJson(item);
+        } else {
+          if (typeof obj[nodeName].push === "undefined") {
+            var old = obj[nodeName];
+            obj[nodeName] = [];
+            obj[nodeName].push(old);
+          }
+          obj[nodeName].push(xmlToJson(item));
+        }
+      }
+    }
+    return obj;
+  }
+
+  const CaptureDevice = async (val: any) => {
+    return new Promise((resolve, reject) => {
+      try {
+        const rdUrl = getRDServiceUrl(val);
+        if (rdUrl == "") {
+          resolve({ error: "Device Not Set!", success: false });
+        }
+
+        var xhr: any;
+        var ActiveXObject: any;
+        var ua = window.navigator.userAgent;
+        var msie = ua.indexOf("MSIE");
+        if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) {
+          xhr = new ActiveXObject("Microsoft.XMLHTTP");
+        } else {
+          xhr = new XMLHttpRequest();
+        }
+
+        xhr.open("CAPTURE", rdUrl, true);
+        xhr.setRequestHeader("Content-Type", "text/xml");
+        xhr.setRequestHeader("Accept", "text/xml");
+
+        xhr.open("CAPTURE", rdUrl, true);
+        xhr.setRequestHeader("Content-Type", "text/xml");
+        // xhr.setRequestHeader('Accept', 'text/xml');
+        if (!xhr) {
+          resolve({ error: "CORS not supported!!", success: false });
+        }
+
+        xhr.onreadystatechange = async function () {
+          if (xhr.readyState == 4) {
+            var status = xhr.status;
+            if (status == 200) {
+              console.log("status", status);
+              let xhrR = xhr.response;
+              let parser = new DOMParser();
+              var xmlDoc = parser.parseFromString(xhrR, "text/xml");
+              let xml = parser.parseFromString(xhrR, "application/xml");
+              var pidContent = xml.getElementsByTagName("PidData")[0];
+              var responseCode: any = pidContent
+                .getElementsByTagName("Resp")[0]
+                .getAttribute("errCode");
+              var errInfo: any = pidContent
+                .getElementsByTagName("Resp")[0]
+                .getAttribute("errInfo");
+
+              if (responseCode == 0) {
+                var jsonResult = xmlToJson(xmlDoc);
+                console.log(jsonResult);
+                resolve({
+                  error: false,
+                  success: {
+                    errCode:
+                      jsonResult.PidData.Resp["@attributes"].errCode || "",
+                    errInfo:
+                      jsonResult?.PidData.Resp["@attributes"].errInfo || "",
+                    fCount:
+                      jsonResult?.PidData.Resp["@attributes"].fCount || "",
+                    fType: jsonResult?.PidData.Resp["@attributes"].fType || "",
+                    iCount:
+                      jsonResult?.PidData.Resp["@attributes"].iCount || "0",
+                    iType: null,
+                    pCount:
+                      jsonResult?.PidData.Resp["@attributes"].pCount || "0",
+                    pType: "0",
+                    nmPoints:
+                      jsonResult?.PidData.Resp["@attributes"].nmPoints || "",
+                    qScore:
+                      jsonResult?.PidData.Resp["@attributes"].qScore || "",
+                    dpID:
+                      jsonResult?.PidData.DeviceInfo["@attributes"].dpId || "",
+                    rdsID:
+                      jsonResult?.PidData.DeviceInfo["@attributes"].rdsId || "",
+                    rdsVer:
+                      jsonResult?.PidData.DeviceInfo["@attributes"].rdsVer ||
+                      "",
+                    dc: jsonResult?.PidData.DeviceInfo["@attributes"].dc || "",
+                    mi: jsonResult?.PidData.DeviceInfo["@attributes"].mi || "",
+                    mc: jsonResult?.PidData.DeviceInfo["@attributes"].mc || "",
+                    ci: jsonResult?.PidData.Skey["@attributes"].ci || "",
+                    sessionKey: jsonResult?.PidData.Skey["#text"] || "",
+                    hmac: jsonResult?.PidData.Hmac["#text"] || "",
+                    PidDatatype:
+                      jsonResult?.PidData.Data["@attributes"].type || "",
+                    Piddata: jsonResult?.PidData.Data["#text"] || "",
+                    srno:
+                      val == "MORPHO"
+                        ? jsonResult?.PidData?.DeviceInfo?.additional_info
+                            ?.Param["@attributes"]?.value
+                        : val == "MANTRA"
+                        ? jsonResult?.PidData?.DeviceInfo?.additional_info
+                            ?.Param[0]["@attributes"]?.value
+                        : jsonResult?.PidData?.additional_info?.Param[0][
+                            "@attributes"
+                          ]?.value || "",
+                    sysid:
+                      val == "MORPHO"
+                        ? ""
+                        : val == "MANTRA"
+                        ? jsonResult?.PidData?.DeviceInfo?.additional_info
+                            ?.Param[1]["@attributes"]?.value
+                        : jsonResult?.PidData?.additional_info?.Param[1][
+                            "@attributes"
+                          ]?.value,
+                  },
+                });
+              } else {
+                resolve({ error: errInfo, success: false });
+              }
+            }
+          }
+        };
+        xhr.onerror = function () {
+          resolve({ error: "Check If Morpho Service/Utility is Running" });
+        };
+        xhr.send(
+          '<?xml version="1.0"?> <PidOptions ver="1.0"> <Opts fCount="1" fType="2" iCount="0" pCount="0" format="0" pidVer="2.0" timeout="20000" posh="UNKNOWN" env="P" wadh="E0jzJ/P8UopUHAieZn8CKqS4WPMi5ZSYXgfnlfkWjrc="/> <CustOpts><Param name="mantrakey" value="" /></CustOpts> </PidOptions>'
+        );
+      } catch (err) {
+        resolve({ error: err.message, success: false });
+      }
+    });
   };
 
   return (
@@ -532,31 +607,85 @@ export default function RegistrationAeps(props: any) {
             <Typography variant="h4">
               Hi wait, Please register yourself first.
             </Typography>
-            <RHFTextField
-              name="alternateMobileNumber"
-              label="Alternate Mobile Number"
-              placeholder="Alternate Mobile Number"
-              type="number"
-              sx={{ width: "250px", margin: "auto" }}
-            />
-            <RHFSelect
-              name="state"
-              label="Select State"
-              placeholder="Select State"
-              SelectProps={{
-                native: false,
-                sx: { textTransform: "capitalize" },
-              }}
-              sx={{ width: "250px", margin: "auto" }}
-            >
-              {indState.map((item: any) => {
-                return (
-                  <MenuItem key={item._id} value={item.stateId}>
-                    {item.state}
-                  </MenuItem>
-                );
-              })}
-            </RHFSelect>
+            <Card sx={{ p: 1, margin: "auto" }}>
+              <Typography variant="subtitle1">Aadhaar Detail</Typography>
+              <Stack gap={1}>
+                <RHFTextField
+                  name="merchantAddress1"
+                  label="Merchant Address 1"
+                  placeholder="Merchant Address 1"
+                  sx={{ width: "250px", margin: "auto" }}
+                />
+                <RHFTextField
+                  name="merchantAddress2"
+                  label="Merchant Address 2"
+                  placeholder="Merchant Address 2"
+                  sx={{ width: "250px", margin: "auto" }}
+                />
+                <RHFTextField
+                  name="aadharCityName"
+                  label="Aadhar City Name"
+                  placeholder="Aadhar City Name"
+                  sx={{ width: "250px", margin: "auto" }}
+                />
+                <RHFTextField
+                  name="aadharDistrictName"
+                  label="Aadhar District Name"
+                  placeholder="Aadhar District Name"
+                  sx={{ width: "250px", margin: "auto" }}
+                />
+              </Stack>
+            </Card>
+            <Card sx={{ p: 1, margin: "auto" }}>
+              <Typography variant="subtitle1">Shop Detail</Typography>
+              <Stack gap={1}>
+                {" "}
+                <RHFTextField
+                  name="shopAddress"
+                  label="Shop Address "
+                  placeholder="Shop Address "
+                  sx={{ width: "250px", margin: "auto" }}
+                />
+                <RHFTextField
+                  name="alternateMobileNumber"
+                  label="Alternate Mobile Number"
+                  placeholder="Alternate Mobile Number"
+                  type="number"
+                  sx={{ width: "250px", margin: "auto" }}
+                />
+                <RHFTextField
+                  name="shopCityName"
+                  label="Shop City "
+                  placeholder="Shop City "
+                  sx={{ width: "250px", margin: "auto" }}
+                />
+                <RHFTextField
+                  name="shopDistrict"
+                  label="Shop District"
+                  placeholder="Shop District"
+                  sx={{ width: "250px", margin: "auto" }}
+                />
+                <RHFSelect
+                  name="state"
+                  label="Select State"
+                  placeholder="Select State"
+                  SelectProps={{
+                    native: false,
+                    sx: { textTransform: "capitalize" },
+                  }}
+                  sx={{ width: "250px", margin: "auto" }}
+                >
+                  {indState.map((item: any) => {
+                    return (
+                      <MenuItem key={item._id} value={item.stateId}>
+                        {item.state}
+                      </MenuItem>
+                    );
+                  })}
+                </RHFSelect>
+              </Stack>
+            </Card>
+
             {watch("state") && isAlternateMobileNumberValid && (
               <LoadingButton
                 variant="contained"
@@ -602,6 +731,7 @@ export default function RegistrationAeps(props: any) {
               <MenuItem value={"MANTRA"}>MANTRA</MenuItem>
               <MenuItem value={"SECUGEN"}>SECUGEN</MenuItem>
             </RHFSelect>
+
             <RHFTextField
               name="remark"
               label="Remark"
@@ -632,44 +762,34 @@ export default function RegistrationAeps(props: any) {
           methods={VerifyOtpmethods}
           onSubmit={VerifyOtpHandleSubmit(verifyOtpToMerchant)}
         >
-          {otpVerify ? (
-            <Box
-              sx={style}
-              style={{ borderRadius: "20px" }}
-              width={{ xs: "100%", md: 370 }}
-            >
-              <Stack spacing={3}>
-                <Typography variant="subtitle2" textAlign={"center"}>
-                  Mobile Verification Code &nbsp;
-                </Typography>
-                <RHFTextField name="otp" label="OTP" placeholder="OTP" />
+          <Box
+            sx={style}
+            style={{ borderRadius: "20px" }}
+            width={{ xs: "100%", md: 370 }}
+          >
+            <Stack spacing={3}>
+              <Typography variant="subtitle2" textAlign={"center"}>
+                Mobile Verification Code &nbsp;
+              </Typography>
+              <RHFTextField name="otp" label="OTP" placeholder="OTP" />
 
-                <Stack>
-                  <LoadingButton
-                    type="submit"
-                    variant="contained"
-                    loading={VerifyOtpIsSubmitting}
-                    sx={{ width: "fit-content", margin: "auto" }}
-                  >
-                    Submit
-                  </LoadingButton>
-                </Stack>
-                <Stack justifyContent={"end"} flexDirection={"row"}>
-                  <Button size="small" onClick={resendOtp}>
-                    Resend OTP?
-                  </Button>
-                </Stack>
+              <Stack>
+                <LoadingButton
+                  type="submit"
+                  variant="contained"
+                  loading={VerifyOtpIsSubmitting}
+                  sx={{ width: "fit-content", margin: "auto" }}
+                >
+                  Submit
+                </LoadingButton>
               </Stack>
-            </Box>
-          ) : (
-            <Box
-              sx={style}
-              style={{ borderRadius: "20px" }}
-              width={"fit-content"}
-            >
-              <Lottie animationData={fingerScan} />
-            </Box>
-          )}
+              <Stack justifyContent={"end"} flexDirection={"row"}>
+                <Button size="small" onClick={resendOtp}>
+                  Resend OTP?
+                </Button>
+              </Stack>
+            </Stack>
+          </Box>
         </FormProvider>
       </Modal>
       {/* Loading Modal */}
@@ -679,13 +799,7 @@ export default function RegistrationAeps(props: any) {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style} style={{ borderRadius: "20px" }} width={"fit-content"}>
-          <Stack justifyContent={"center"} flexDirection={"row"}>
-            <Icon
-              icon="eos-icons:three-dots-loading"
-              fontSize={100}
-              color={theme.palette.primary.main}
-            />
-          </Stack>
+          <Lottie animationData={fingerScan} />
         </Box>
       </Modal>
     </>

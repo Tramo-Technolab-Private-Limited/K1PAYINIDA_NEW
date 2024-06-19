@@ -85,6 +85,7 @@ export const CaptureDevice = async (val: any) => {
         if (xhr.readyState == 4) {
           var status = xhr.status;
           if (status == 200) {
+            console.log("status", status);
             let xhrR = xhr.response;
             let parser = new DOMParser();
             var xmlDoc = parser.parseFromString(xhrR, "text/xml");
@@ -96,47 +97,78 @@ export const CaptureDevice = async (val: any) => {
             var errInfo: any = pidContent
               .getElementsByTagName("Resp")[0]
               .getAttribute("errInfo");
-            let device: any = pidContent
-              .getElementsByTagName("DeviceInfo")[0]
-              .getAttribute("dpId");
 
             if (responseCode == 0) {
               var jsonResult = xmlToJson(xmlDoc);
-
+              console.log("test device capture", JSON.stringify(jsonResult));
               resolve({
                 error: false,
                 success: {
-                  errCode: jsonResult.PidData.Resp["@attributes"].errCode,
-                  errInfo: jsonResult?.PidData.Resp["@attributes"].errInfo,
-                  fCount: jsonResult?.PidData.Resp["@attributes"].fCount,
-                  fType: jsonResult?.PidData.Resp["@attributes"].fType,
-                  iCount: jsonResult?.PidData.Resp["@attributes"].iCount,
+                  errCode: jsonResult.PidData.Resp["@attributes"].errCode || "",
+                  errInfo:
+                    jsonResult?.PidData.Resp["@attributes"].errInfo || "",
+                  fCount: jsonResult?.PidData.Resp["@attributes"].fCount || "",
+                  fType: jsonResult?.PidData.Resp["@attributes"].fType || "",
+                  iCount: jsonResult?.PidData.Resp["@attributes"].iCount || "0",
                   iType: null,
-                  pCount: jsonResult?.PidData.Resp["@attributes"].pCount,
+                  pCount: jsonResult?.PidData.Resp["@attributes"].pCount || "0",
                   pType: "0",
-                  nmPoints: jsonResult?.PidData.Resp["@attributes"].nmPoints,
-                  qScore: jsonResult?.PidData.Resp["@attributes"].qScore,
-                  dpID: jsonResult?.PidData.DeviceInfo["@attributes"].dpId,
-                  rdsID: jsonResult?.PidData.DeviceInfo["@attributes"].rdsId,
-                  rdsVer: jsonResult?.PidData.DeviceInfo["@attributes"].rdsVer,
-                  dc: jsonResult?.PidData.DeviceInfo["@attributes"].dc,
-                  mi: jsonResult?.PidData.DeviceInfo["@attributes"].mi,
-                  mc: jsonResult?.PidData.DeviceInfo["@attributes"].mc,
-                  ci: jsonResult?.PidData.Skey["@attributes"].ci,
-                  sessionKey: jsonResult?.PidData.Skey["#text"],
-                  hmac: jsonResult?.PidData.Hmac["#text"],
-                  PidDatatype: jsonResult?.PidData.Data["@attributes"].type,
-                  Piddata: jsonResult?.PidData.Data["#text"],
+                  nmPoints:
+                    jsonResult?.PidData.Resp["@attributes"].nmPoints || "",
+                  qScore: jsonResult?.PidData.Resp["@attributes"].qScore || "",
+                  dpID:
+                    jsonResult?.PidData.DeviceInfo["@attributes"].dpId || "",
+                  rdsID:
+                    jsonResult?.PidData.DeviceInfo["@attributes"].rdsId || "",
+                  rdsVer:
+                    jsonResult?.PidData.DeviceInfo["@attributes"].rdsVer || "",
+                  dc: jsonResult?.PidData.DeviceInfo["@attributes"].dc || "",
+                  mi: jsonResult?.PidData.DeviceInfo["@attributes"].mi || "",
+                  mc: jsonResult?.PidData.DeviceInfo["@attributes"].mc || "",
+                  ci: jsonResult?.PidData.Skey["@attributes"].ci || "",
+                  sessionKey: jsonResult?.PidData.Skey["#text"] || "",
+                  hmac: jsonResult?.PidData.Hmac["#text"] || "",
+                  PidDatatype:
+                    jsonResult?.PidData.Data["@attributes"].type || "",
+                  Piddata: jsonResult?.PidData.Data["#text"] || "",
+                  srno:
+                    val == "MORPHO"
+                      ? jsonResult?.PidData?.DeviceInfo?.additional_info?.Param[
+                          "@attributes"
+                        ]?.value
+                      : val == "MANTRA"
+                      ? jsonResult?.PidData?.DeviceInfo?.additional_info
+                          ?.Param[0]["@attributes"]?.value
+                      : jsonResult?.PidData?.additional_info?.Param[0][
+                          "@attributes"
+                        ]?.value || "",
+                  sysid:
+                    val == "MORPHO"
+                      ? ""
+                      : val == "MANTRA"
+                      ? jsonResult?.PidData?.DeviceInfo?.additional_info
+                          ?.Param[1]["@attributes"]?.value
+                      : jsonResult?.PidData?.additional_info?.Param[1][
+                          "@attributes"
+                        ]?.value,
                 },
               });
             } else {
               resolve({ error: errInfo, success: false });
             }
+          } else {
+            resolve({
+              error: "Check If Morpho Service/Utility is Running",
+              success: false,
+            });
           }
         }
       };
       xhr.onerror = function () {
-        resolve({ error: "Check If Morpho Service/Utility is Running" });
+        resolve({
+          error: "Check If Morpho Service/Utility is Running",
+          success: false,
+        });
       };
       xhr.send(
         '<?xml version="1.0"?> <PidOptions ver="1.0"> <Opts fCount="1" fType="2" iCount="0" pCount="0" format="0" pidVer="2.0" timeout="20000" posh="UNKNOWN" env="P" wadh=""/> <CustOpts><Param name="mantrakey" value="" /></CustOpts> </PidOptions>'
@@ -145,4 +177,45 @@ export const CaptureDevice = async (val: any) => {
       resolve({ error: err.message, success: false });
     }
   });
+};
+
+export const DeviceInfo = () => {
+  // var url = "http://127.0.0.1:11101/getDeviceInfo"; // morpho
+  var url = "https://127.0.0.1:8005/rd/info"; // mantra
+
+  var xhr: any;
+  var ActiveXObject: any;
+  var ua: any = window.navigator.userAgent;
+  var msie: any = ua.indexOf("MSIE ");
+
+  if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) {
+    xhr = new ActiveXObject("Microsoft.XMLHTTP");
+    console.log(xhr, "if");
+  } else {
+    xhr = new XMLHttpRequest();
+    console.log(xhr, "else");
+  }
+
+  //
+  xhr.open("DEVICEINFO", url, true);
+
+  xhr.onreadystatechange = function () {
+    // if(xhr.readyState == 1 && count == 0){
+    //	fakeCall();
+    //}
+    if (xhr.readyState == 4) {
+      var status = xhr.status;
+
+      if (status == 200) {
+        alert(xhr.responseText);
+
+        console.log(xhr.responseText);
+      } else {
+        console.log(xhr.response);
+      }
+    }
+  };
+  xhr.send(
+    '<?xml version="1.0"?> <PidOptions ver="1.0"> <Opts fCount="1" fType="2" iCount="0" pCount="0" format="0" pidVer="2.0" timeout="20000" posh="UNKNOWN" env="P" wadh=""/> <CustOpts><Param name="mantrakey" value="" /></CustOpts> </PidOptions>'
+  );
 };
