@@ -95,7 +95,7 @@ export default function DMTRemitterDetail() {
                   Monthly Limit
                 </TableCell>
                 <TableCell>
-                  {remitterContext?.availableLimitForMoneyTransfer}
+                  {remitterContext?.availableLimitForUpiTransfer}
                 </TableCell>
               </TableRow>
             </TableBody>

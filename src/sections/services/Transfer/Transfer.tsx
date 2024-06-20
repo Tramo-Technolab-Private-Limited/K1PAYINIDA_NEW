@@ -256,7 +256,7 @@ export default function Transfer() {
       if (Response.status == 200) {
         if (Response.data.code == 200) {
           Response?.data?.data?.map((item: any) => {
-            if (item.category_name.toUpperCase() == "MONEY TRANSFER") {
+            if (item.category_name.toUpperCase() == "TRANSFER") {
               setIsServiceEnable(item.isEnabled);
             }
           });
