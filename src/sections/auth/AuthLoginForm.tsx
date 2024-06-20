@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as Yup from "yup";
 // form
 import { useForm } from "react-hook-form";
@@ -67,13 +67,16 @@ export default function AuthLoginForm() {
     formState: { errors, isSubmitting, isSubmitSuccessful },
   } = methods;
 
+  useEffect(() => {
+    fetchLocation();
+  }, []);
+
   const onSubmit = async (data: FormValuesProps) => {
     let body = {
       username: data.email.toLocaleLowerCase(),
       password: data.password,
     };
     try {
-      await fetchLocation();
       await Api(`auth/login_in`, "POST", body, "").then((Response: any) => {
         if (Response.status == 200) {
           if (Response.data.code == 200) {
