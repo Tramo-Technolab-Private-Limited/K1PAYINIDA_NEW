@@ -58,12 +58,12 @@ export default function NPinReset(props: any) {
     code4: Yup.string().required("Code is required"),
     code5: Yup.string().required("Code is required"),
     code6: Yup.string().required("Code is required"),
-    otp1: Yup.string().required("Code is required"),
-    otp2: Yup.string().required("Code is required"),
-    otp3: Yup.string().required("Code is required"),
-    otp4: Yup.string().required("Code is required"),
-    otp5: Yup.string().required("Code is required"),
-    otp6: Yup.string().required("Code is required"),
+    // otp1: Yup.string().required("Code is required"),
+    // otp2: Yup.string().required("Code is required"),
+    // otp3: Yup.string().required("Code is required"),
+    // otp4: Yup.string().required("Code is required"),
+    // otp5: Yup.string().required("Code is required"),
+    // otp6: Yup.string().required("Code is required"),
   });
 
   const defaultValues = {
@@ -88,12 +88,12 @@ export default function NPinReset(props: any) {
     code4: "",
     code5: "",
     code6: "",
-    otp1: "",
-    otp2: "",
-    otp3: "",
-    otp4: "",
-    otp5: "",
-    otp6: "",
+    // otp1: "",
+    // otp2: "",
+    // otp3: "",
+    // otp4: "",
+    // otp5: "",
+    // otp6: "",
   };
 
   const defaultValuesCreate = {
@@ -152,11 +152,12 @@ export default function NPinReset(props: any) {
   };
 
   const resendOtp = (email: string, mobile: string) => {
+    let token = localStorage.getItem("token");
     let body = {
-      email: email,
-      mobileNumber: mobile,
+      // email: email,
+      // mobileNumber: mobile,
     };
-    Api(`auth/send_NpinOTP`, "POST", body, "").then((Response: any) => {
+    Api(`auth/resend_NpinOTP`, "POST", body, token).then((Response: any) => {
       console.log("=============>" + JSON.stringify(Response));
       if (Response.status == 200) {
         if (Response.data.code == 200) {
@@ -172,8 +173,8 @@ export default function NPinReset(props: any) {
     console.log("form value", formValues);
     setVerifyLoad(true);
     const body = {
-      emailOtp:
-        data.otp1 + data.otp2 + data.otp3 + data.otp4 + data.otp5 + data.otp6,
+      // emailOtp:
+      //   data.otp1 + data.otp2 + data.otp3 + data.otp4 + data.otp5 + data.otp6,
       mobileOtp:
         data.code1 +
         data.code2 +
@@ -272,7 +273,7 @@ export default function NPinReset(props: any) {
                 Code is required
               </FormHelperText>
             )}
-            <Typography
+            {/* <Typography
               variant="body2"
               sx={{ my: 3 }}
               style={{ textAlign: "left", marginBottom: "0" }}
@@ -286,11 +287,11 @@ export default function NPinReset(props: any) {
               >
                 Resend code
               </Link>
-            </Typography>
-            <RHFCodes
+            </Typography> */}
+            {/* <RHFCodes
               keyName="otp"
               inputs={["otp1", "otp2", "otp3", "otp4", "otp5", "otp6"]}
-            />
+            /> */}
 
             {(!!error2.otp1 ||
               !!error2.otp2 ||

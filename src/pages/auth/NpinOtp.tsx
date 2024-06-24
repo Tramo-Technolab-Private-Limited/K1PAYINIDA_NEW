@@ -32,12 +32,12 @@ type FormValuesProps = {
   code4: string;
   code5: string;
   code6: string;
-  otp1: string;
-  otp2: string;
-  otp3: string;
-  otp4: string;
-  otp5: string;
-  otp6: string;
+  // otp1: string;
+  // otp2: string;
+  // otp3: string;
+  // otp4: string;
+  // otp5: string;
+  // otp6: string;
 };
 
 export default function NpinOtp(props: any) {
@@ -55,12 +55,12 @@ export default function NpinOtp(props: any) {
     code4: Yup.string().required("Code is required"),
     code5: Yup.string().required("Code is required"),
     code6: Yup.string().required("Code is required"),
-    otp1: Yup.string().required("Code is required"),
-    otp2: Yup.string().required("Code is required"),
-    otp3: Yup.string().required("Code is required"),
-    otp4: Yup.string().required("Code is required"),
-    otp5: Yup.string().required("Code is required"),
-    otp6: Yup.string().required("Code is required"),
+    // otp1: Yup.string().required("Code is required"),
+    // otp2: Yup.string().required("Code is required"),
+    // otp3: Yup.string().required("Code is required"),
+    // otp4: Yup.string().required("Code is required"),
+    // otp5: Yup.string().required("Code is required"),
+    // otp6: Yup.string().required("Code is required"),
   });
 
   const defaultValues = {
@@ -118,8 +118,8 @@ export default function NpinOtp(props: any) {
           data.code4 +
           data.code5 +
           data.code6,
-        emailOtp:
-          data.otp1 + data.otp2 + data.otp3 + data.otp4 + data.otp5 + data.otp6,
+        // emailOtp:
+        //   data.otp1 + data.otp2 + data.otp3 + data.otp4 + data.otp5 + data.otp6,
       };
       await Api(`auth/verifyNpin_Otp`, "POST", body, token).then(
         (Response: any) => {
@@ -151,7 +151,7 @@ export default function NpinOtp(props: any) {
             <Typography
               sx={{ color: "text.secondary", mb: 5, textAlign: "center" }}
             >
-              Please verify email address & mobile number associated <br /> with
+              Please verify mobile number associated <br /> with
               your account to create NPIN.
             </Typography>
 
@@ -178,17 +178,17 @@ export default function NpinOtp(props: any) {
                   Code is required
                 </FormHelperText>
               )}
-              <Typography
+              {/* <Typography
                 variant="subtitle2"
                 sx={{ my: 3 }}
                 style={{ textAlign: "left", marginBottom: "0" }}
               >
                 Email Verification Code &nbsp;
-              </Typography>
-              <RHFCodes
+              </Typography> */}
+              {/* <RHFCodes
                 keyName="otp"
                 inputs={["otp1", "otp2", "otp3", "otp4", "otp5", "otp6"]}
-              />
+              /> */}
 
               {(!!errors.otp1 ||
                 !!errors.otp2 ||
@@ -200,7 +200,7 @@ export default function NpinOtp(props: any) {
                   Code is required
                 </FormHelperText>
               )}
-              <Typography
+              {/* <Typography
                 variant="body2"
                 sx={{ my: 3 }}
                 style={{ textAlign: "left", marginBottom: "0" }}
@@ -214,7 +214,7 @@ export default function NpinOtp(props: any) {
                 >
                   Resend code
                 </Link>{" "}
-              </Typography>
+              </Typography> */}
 
               <LoadingButton
                 fullWidth
