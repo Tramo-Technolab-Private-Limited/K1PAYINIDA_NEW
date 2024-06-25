@@ -87,8 +87,8 @@ export default React.memo(function SettlementToBank() {
     amount: Yup.number()
       .required("Amount is required")
       .integer()
-      .min(1000)
-      .max(Number(eligibleSettlementAmount))
+      .min(100)
+      // .max(Number(eligibleSettlementAmount))
       .typeError("Amount is required"),
     bankDetail: Yup.object().shape({
       ifsc: Yup.string(),
@@ -324,17 +324,17 @@ export default React.memo(function SettlementToBank() {
                   // sm: 'repeat(2, 1fr)'
                 }}
               >
-                <Typography variant="subtitle1" textAlign={"center"}>
+                {/* <Typography variant="subtitle1" textAlign={"center"}>
                   Maximum Eligible Settlement Amount for Bank account is{" "}
                   {Number(eligibleSettlementAmount) || 0}
-                </Typography>
-                {Number(eligibleSettlementAmount) < 1000 && (
+                </Typography> */}
+                {Number(eligibleSettlementAmount) < 100 && (
                   <Typography
                     variant="caption"
                     textAlign={"center"}
                     color={"red"}
                   >
-                    Minimum amount for AEPS settlement is 1000
+                    Minimum amount for AEPS settlement is 100
                   </Typography>
                 )}
                 <Stack gap={2}>

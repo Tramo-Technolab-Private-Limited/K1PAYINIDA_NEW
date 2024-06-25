@@ -82,8 +82,8 @@ export default React.memo(function SettlementToWallet() {
     amount: Yup.number()
       .required("Amount is required")
       .integer()
-      .min(500)
-      .max(Number(eligibleSettlementAmount))
+      .min(100)
+      // .max(Number(eligibleSettlementAmount))
       .typeError("Amount is required"),
     otp1: Yup.string().required(),
     otp2: Yup.string().required(),
@@ -231,14 +231,14 @@ export default React.memo(function SettlementToWallet() {
                   // sm: 'repeat(2, 1fr)'
                 }}
               >
-                <Typography variant="subtitle1" textAlign="center">
+                {/* <Typography variant="subtitle1" textAlign="center">
                   Maximum Eligible Settlement Amount for Main Wallet is
                   {Number(eligibleSettlementAmount)}
-                </Typography>
+                </Typography> */}
 
                 {Number(eligibleSettlementAmount) < 500 && (
                   <Typography variant="caption" textAlign="center" color="red">
-                    Minimum amount for AEPS settlement is 500
+                    Minimum amount for AEPS settlement is 100
                   </Typography>
                 )}
 
