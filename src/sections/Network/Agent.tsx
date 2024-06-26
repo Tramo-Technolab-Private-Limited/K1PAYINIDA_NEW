@@ -186,9 +186,7 @@ export default function Agent() {
       if (Response.status == 200) {
         if (Response.data.code == 200) {
           let arr: any = [];
-
           setTotalCount(Response?.data?.count);
-
           arr = Response.data.data.filter((item: any) => {
             return (
               (item.role == "agent" && item.referralCode != "") ||
@@ -206,6 +204,7 @@ export default function Agent() {
     let body = {
       searchBy: watch("usersearchby"),
       searchInput: val,
+      role: "agent",
       finalStatus: "approved",
     };
     {
@@ -264,99 +263,105 @@ export default function Agent() {
           width={{ xs: "95%", sm: 500 }}
         >
           {/* <Box> */}
-          <FormProvider methods={methods} onSubmit={handleSubmit(ApprovedList)}>
-            <RHFSelect
-              fullWidth
-              name="usersearchby"
-              label="User Search By"
-              size="small"
-              placeholder="User Search By"
-              // InputLabelProps={{ shrink: true }}
-              SelectProps={{
-                native: false,
-                sx: { textTransform: "capitalize", mb: "10px" },
-              }}
+          <Stack p={1}>
+            <FormProvider
+              methods={methods}
+              onSubmit={handleSubmit(ApprovedList)}
             >
-              <MenuItem value={"userCode"}>User Code</MenuItem>
-              <MenuItem value={"firstName"}>First Name</MenuItem>
-              <MenuItem value={"shopName"}>Shop Name</MenuItem>
-              <MenuItem value={"contact_no"}>Contact Number</MenuItem>
-              <MenuItem value={"email"}>Email</MenuItem>
-            </RHFSelect>
-            {watch("usersearchby") && (
-              <Stack sx={{ position: "relative", minWidth: "200px" }}>
-                <RHFTextField
-                  fullWidth
-                  name="User"
-                  placeholder={"Type here..."}
-                />
-                <Stack flexDirection={"row"} mt={5}>
-                  <LoadingButton
-                    variant="contained"
-                    type="submit"
-                    loading={isSubmitting}
-                    onClick={() => {
-                      setAppdata(tempData);
-                      handleClose();
-                      reset(defaultValues);
-                    }}
-                  >
-                    Search
-                  </LoadingButton>
-                  <LoadingButton
-                    variant="contained"
-                    onClick={() => {
-                      reset(defaultValues);
-                      ApprovedList();
-                    }}
-                  >
-                    Clear
-                  </LoadingButton>
+              <RHFSelect
+                fullWidth
+                name="usersearchby"
+                label="User Search By"
+                size="small"
+                placeholder="User Search By"
+                // InputLabelProps={{ shrink: true }}
+                SelectProps={{
+                  native: false,
+                  sx: { textTransform: "capitalize", mb: "10px" },
+                }}
+              >
+                <MenuItem value={"userCode"}>User Code</MenuItem>
+                <MenuItem value={"firstName"}>First Name</MenuItem>
+                <MenuItem value={"shopName"}>Shop Name</MenuItem>
+                <MenuItem value={"contact_no"}>Contact Number</MenuItem>
+                <MenuItem value={"email"}>Email</MenuItem>
+              </RHFSelect>
+              {watch("usersearchby") && (
+                <Stack sx={{ position: "relative", minWidth: "200px" }}>
+                  <RHFTextField
+                    fullWidth
+                    name="User"
+                    placeholder={"Type here..."}
+                  />
+                  <Stack flexDirection={"row"} mt={2} gap={1}>
+                    <LoadingButton
+                      variant="contained"
+                      type="submit"
+                      loading={isSubmitting}
+                      onClick={() => {
+                        setAppdata(tempData);
+                        handleClose();
+                        reset(defaultValues);
+                      }}
+                    >
+                      Search
+                    </LoadingButton>
+                    <LoadingButton
+                      variant="contained"
+                      onClick={() => {
+                        reset(defaultValues);
+                        ApprovedList();
+                      }}
+                    >
+                      Clear
+                    </LoadingButton>
+                  </Stack>
+                  {userList.length > 0 && (
+                    <Stack
+                      sx={{
+                        position: "absolute",
+                        top: 40,
+                        zIndex: 9,
+                        width: "100%",
+                        bgcolor: "white",
+                        border: "1px solid grey",
+                        borderRadius: 2,
+                      }}
+                    >
+                      <Scrollbar sx={{ maxHeight: 400 }}>
+                        {userList?.map((item: any) => {
+                          return (
+                            <Typography
+                              sx={{
+                                p: 1,
+                                cursor: "pointer",
+                                color: "grey",
+                                "&:hover": { color: "black" },
+                              }}
+                              onClick={() => {
+                                setUserList([]);
+                                setTempData([{ ...item }]);
+                                setValue(
+                                  "User",
+                                  `${item.firstName} ${item.lastName}`
+                                );
+                              }}
+                              variant="subtitle2"
+                            >
+                              {" "}
+                              {item.userCode
+                                ? `${item.firstName} ${item.lastName} (${item.userCode})`
+                                : `${item.firstName} ${item.lastName}`}
+                            </Typography>
+                          );
+                        })}
+                      </Scrollbar>
+                    </Stack>
+                  )}
                 </Stack>
-                <Stack
-                  sx={{
-                    position: "absolute",
-                    top: 40,
-                    zIndex: 9,
-                    width: "100%",
-                    bgcolor: "white",
-                    border: "1px solid grey",
-                    borderRadius: 2,
-                  }}
-                >
-                  <Scrollbar sx={{ maxHeight: 400 }}>
-                    {userList.length > 0 &&
-                      userList.map((item: any) => {
-                        return (
-                          <Typography
-                            sx={{
-                              p: 1,
-                              cursor: "pointer",
-                              color: "grey",
-                              "&:hover": { color: "black" },
-                            }}
-                            onClick={() => {
-                              setUserList([]);
-                              setTempData([{ ...item }]);
-                              setValue(
-                                "User",
-                                `${item.firstName} ${item.lastName}`
-                              );
-                            }}
-                            variant="subtitle2"
-                          >
-                            {" "}
-                            {item.userCode
-                              ? `${item.firstName} ${item.lastName} (${item.userCode})`
-                              : `${item.firstName} ${item.lastName}`}
-                          </Typography>
-                        );
-                      })}
-                  </Scrollbar>
-                </Stack>
-              </Stack>
-            )}
-          </FormProvider>
+              )}
+            </FormProvider>
+          </Stack>
 
           {/* </Box> */}
         </MotionModal>
