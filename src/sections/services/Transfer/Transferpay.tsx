@@ -107,7 +107,7 @@ export default function Transferpay({
       .required("Amount is required field")
       .test(
         "is-greater-than-100",
-        "Amount should be greater than 100",
+        "Amount should be greater than 1",
         (value: any) => +value > 1
       )
       .test(

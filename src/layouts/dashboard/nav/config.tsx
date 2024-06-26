@@ -82,6 +82,11 @@ const NavConfig = [
             path: PATH_DASHBOARD.service.aadhaarpay,
             roles: ["agent"],
           },
+          {
+            title: "Payments",
+            path: PATH_DASHBOARD.service.payments,
+            roles: ["agent"],
+          },
         ],
       },
       {
