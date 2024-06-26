@@ -25,6 +25,9 @@ import {
   TextField,
   Typography,
   useTheme,
+  Select,
+  IconButton,
+  InputAdornment,
 } from "@mui/material";
 
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -42,6 +45,11 @@ import { useAuthContext } from "src/auth/useAuthContext";
 import Scrollbar from "src/components/scrollbar/Scrollbar";
 import useResponsive from "src/hooks/useResponsive";
 import { fetchLocation } from "src/utils/fetchLocation";
+import PhonePay from "src/assets/icons/Group 1171275312.svg";
+import GooglePay from "src/assets/icons/128px-Google_Pay_Logo.svg.svg";
+import Paytm from "src/assets/icons/paytm-icon.svg";
+import Amazone from "src/assets/icons/Amazon_Pay_logo 1.svg";
+import { size } from "lodash";
 // ----------------------------------------------------------------------
 
 type FormValuesProps = {
@@ -125,12 +133,39 @@ export default function Transferbeneficiary() {
   const { user, UpdateUserDetail, Api } = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
   const isMobile = useResponsive("up", "sm");
+  const [showUpiHandles, setShowUpiHandles] = useState(false);
   const remitterContext: any = useContext(RemitterContext);
   const [tempData, setTempData] = useState<any>();
   const [filteredData, setFilteredData] = useState([]);
+  const [activeTab, setActiveTab] = useState<any>(null);
+  const [upiId, setUpiId] = useState("");
+  const [fieldValue, setFieldValue] = useState("");
 
-  const [addNewBeneLoading, setAddNewBeneLoading] = useState(false);
+  const handleClick1 = () => {
+    setActiveTab("PhonePay");
+  };
 
+  const handleClick2 = () => {
+    setActiveTab("googlepay");
+  };
+
+  const handleClick3 = () => {
+    setActiveTab("paytm");
+  };
+
+  const handleClick4 = () => {
+    setActiveTab("amazone");
+  };
+
+  const handleButtonClick = (text: any) => {
+    setUpiId(text);
+  };
+
+  const handleInputChange = (event: any) => {
+    setFieldValue(event.target.value);
+  };
+
+  const [selectedHandle, setSelectedHandle] = React.useState("");
   const [remitterVerify, remitterVerifyDispatch] = useReducer(
     Reducer,
     initialRemitterVerify
@@ -156,12 +191,30 @@ export default function Transferbeneficiary() {
     setTempData(e);
   };
 
+  const handleUpiChange = (e: any) => {
+    const value = e.target.value;
+    setShowUpiHandles(value.includes("@"));
+    setValue("ifsc", value);
+  };
+
+  const handleUpiHandleClick = (handle: any) => {
+    const currentValue = getValues("ifsc");
+    console.log("jsdlkfjdklsjfklsjdflkdsjflk", handle?.target.value);
+
+    const handleData = handle.target.value;
+    setSelectedHandle(handleData);
+    setValue("ifsc", handle.target.value);
+    setShowUpiHandles(false);
+  };
+
   //modal for add Beneficiary
   const [open, setModalEdit] = React.useState(false);
   const openEditModal = () => setModalEdit(true);
   const handleClose = () => {
     remitterVerifyDispatch({ type: "VERIFY_FETCH_FAILURE" });
     setModalEdit(false);
+    setUpiId("");
+    setFieldValue("");
     reset(defaultValues);
   };
 
@@ -177,11 +230,9 @@ export default function Transferbeneficiary() {
   });
 
   const DMTSchema = Yup.object().shape({
-    ifsc: Yup.string().required("IFSC code is required"),
-    // accountNumber: Yup.string().required("Account Number is required"),
-    // bankName: Yup.string().required("Bank Name is required"),
+    // fieldValue: Yup.string().required("UPI ID is required"),
     beneName: Yup.string().required("Beneficiary Name is required"),
-    remitterRelation: Yup.string().required("Relation is required"),
+    // remitterRelation: Yup.string().required("Relation is required"),
   });
   const defaultValues = {
     bankName: "",
@@ -207,7 +258,7 @@ export default function Transferbeneficiary() {
     getValues,
     trigger,
     handleSubmit,
-    formState: {},
+    formState: { isValid },
   } = methods;
 
   useEffect(() => {
@@ -269,10 +320,10 @@ export default function Transferbeneficiary() {
     remitterVerifyDispatch({ type: "VERIFY_FETCH_REQUEST" });
     let token = localStorage.getItem("token");
     let body = {
-      upiAddress: getValues("ifsc"),
-      // accountNumber: getValues("accountNumber"),
-      // bankName: getValues("bankName"),
-
+      upiAddress:
+        upiId == "other" || upiId == ""
+          ? fieldValue.trim()
+          : fieldValue.trim() + upiId.trim(),
       remitterMobile: remitterContext.remitterMobile,
     };
     await fetchLocation();
@@ -291,6 +342,7 @@ export default function Transferbeneficiary() {
                 UpdateUserDetail({
                   main_wallet_amount: user?.main_wallet_amount - 3,
                 });
+                trigger("beneName");
               } else {
                 remitterVerifyDispatch({ type: "VERIFY_FETCH_FAILURE" });
                 enqueueSnackbar(Response.data.message, { variant: "error" });
@@ -311,11 +363,14 @@ export default function Transferbeneficiary() {
       let body = {
         remitterMobile: remitterContext.remitterMobile,
         beneficiaryName: data.beneName,
-        upiAddress: data.ifsc,
+        upiAddress:
+          upiId == "other" || upiId == ""
+            ? fieldValue.trim()
+            : fieldValue.trim() + upiId.trim(),
         // accountNumber: data.accountNumber,
         beneficiaryMobile: data.mobileNumber,
         beneficiaryEmail: data.email,
-        relationship: data.remitterRelation,
+        relationship: "Other",
         // bankName: data.bankName,
         isBeneVerified: data.isBeneVerified,
         bankId: data.bankId,
@@ -327,10 +382,7 @@ export default function Transferbeneficiary() {
             if (Response.data.code == 200) {
               enqueueSnackbar(Response.data.message);
 
-              console.log(
-                ",,,,,,,,,,,,,,,,,,,,,,,,,,vvvvvvvvvvvvvvvvvvvvvv",
-                Response
-              );
+              console.log(",,,,,,,,,,,,,,,,,,,,,,,,,,", Response);
 
               getbeneDispatch({
                 type: "GET_BENE_SUCCESS",
@@ -376,6 +428,7 @@ export default function Transferbeneficiary() {
     setValue("ifsc", value?.masterIFSC);
     setValue("bankId", value?.ekoBankId);
   }
+
   return (
     <>
       <Grid>
@@ -474,65 +527,255 @@ export default function Transferbeneficiary() {
         <Grid
           item
           xs={12}
-          md={8}
+          md={10}
           style={{
             position: "absolute",
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
           }}
-          width={{ xs: "95%", md: 500 }}
+          width={{ xs: "100%", md: 500 }}
         >
           <Card sx={{ p: 3 }}>
             <FormProvider
               methods={methods}
               onSubmit={handleSubmit(addBeneficiary)}
             >
+              <Stack pb={1}>
+                <Stack justifyContent={"center"} alignItems={"center"}>
+                  <Typography variant="h6">Add Beneficiary</Typography>
+                </Stack>
+                {!getValues("beneName") && (
+                  <Stack flexDirection={"row"} gap={4} pt={1}>
+                    <Stack>
+                      <Stack
+                        onClick={handleClick1}
+                        sx={{
+                          cursor: "pointer",
+                          transition: "300ms ease ",
+                          transform: "scale(1)",
+                          "&:hover": {
+                            transform: "scale(1.2)",
+                            transition: "200ms ease ",
+                          },
+                        }}
+                      >
+                        <img
+                          src={PhonePay}
+                          alt={PhonePay}
+                          style={{
+                            width: 100,
+                            cursor: "pointer",
+                          }}
+                        />
+                      </Stack>
+                    </Stack>
+                    <Stack
+                      onClick={handleClick2}
+                      sx={{
+                        cursor: "pointer",
+                        transition: "300ms ease ",
+                        transform: "scale(1)",
+                        "&:hover": {
+                          transform: "scale(1.2)",
+                          transition: "200ms ease ",
+                        },
+                      }}
+                    >
+                      <img
+                        src={GooglePay}
+                        alt={GooglePay}
+                        style={{
+                          width: 60,
+                          cursor: "pointer",
+                        }}
+                      />
+                    </Stack>
+                    <Stack
+                      onClick={handleClick3}
+                      mt={0.5}
+                      sx={{
+                        cursor: "pointer",
+                        transition: "300ms ease ",
+                        transform: "scale(1)",
+                        "&:hover": {
+                          transform: "scale(1.2)",
+                          transition: "200ms ease ",
+                        },
+                      }}
+                    >
+                      <img
+                        src={Paytm}
+                        alt={Paytm}
+                        style={{
+                          width: 60,
+                          cursor: "pointer",
+                        }}
+                      />
+                    </Stack>
+                    <Stack
+                      onClick={handleClick4}
+                      mt={1}
+                      sx={{
+                        cursor: "pointer",
+                        transition: "300ms ease ",
+                        transform: "scale(1)",
+                        "&:hover": {
+                          transform: "scale(1.2)",
+                          transition: "200ms ease ",
+                        },
+                      }}
+                    >
+                      <img
+                        src={Amazone}
+                        alt={Amazone}
+                        style={{
+                          width: 100,
+                          cursor: "pointer",
+                        }}
+                      />
+                    </Stack>
+                  </Stack>
+                )}
+              </Stack>
+              {!getValues("beneName") && (
+                <>
+                  <Stack>
+                    {activeTab === "PhonePay" && (
+                      <Stack flexDirection={"row"} pb={2}>
+                        <Button
+                          onClick={() => handleButtonClick("@ybl")}
+                          disabled={!!getValues("beneName")}
+                        >
+                          @ybl
+                        </Button>
+                        <Button
+                          disabled={!!getValues("beneName")}
+                          onClick={() => handleButtonClick("@ibl")}
+                        >
+                          @ibl
+                        </Button>
+                        <Button
+                          disabled={!!getValues("beneName")}
+                          onClick={() => handleButtonClick("@axl")}
+                        >
+                          @axl
+                        </Button>
+                        <Button
+                          disabled={!!getValues("beneName")}
+                          onClick={() => handleButtonClick("other")}
+                        >
+                          other
+                        </Button>
+                      </Stack>
+                    )}
+                  </Stack>
+                  <Stack>
+                    {activeTab === "googlepay" && (
+                      <Stack flexDirection={"row"} pb={2}>
+                        <Button
+                          disabled={!!getValues("beneName")}
+                          onClick={() => handleButtonClick("@okicici")}
+                        >
+                          @okicici
+                        </Button>
+                        <Button
+                          disabled={!!getValues("beneName")}
+                          onClick={() => handleButtonClick("@okaxis")}
+                        >
+                          @okaxis
+                        </Button>
+                        <Button
+                          disabled={!!getValues("beneName")}
+                          onClick={() => handleButtonClick("@okhdfcbank")}
+                        >
+                          @okhdfcbank
+                        </Button>
+                        <Button
+                          disabled={!!getValues("beneName")}
+                          onClick={() => handleButtonClick("@oksbi")}
+                        >
+                          @oksbi
+                        </Button>
+                        <Button
+                          disabled={!!getValues("beneName")}
+                          onClick={() => handleButtonClick("other")}
+                        >
+                          other
+                        </Button>
+                      </Stack>
+                    )}
+                  </Stack>
+                  <Stack>
+                    {activeTab === "paytm" && (
+                      <Stack flexDirection={"row"} pb={2}>
+                        <Button
+                          disabled={!!getValues("beneName")}
+                          onClick={() => handleButtonClick("@paytm")}
+                        >
+                          @paytm
+                        </Button>
+                        <Button
+                          disabled={!!getValues("beneName")}
+                          onClick={() => handleButtonClick("@paytm")}
+                        >
+                          @ptsbi
+                        </Button>
+                        <Button
+                          disabled={!!getValues("beneName")}
+                          onClick={() => handleButtonClick("other")}
+                        >
+                          other
+                        </Button>
+                      </Stack>
+                    )}
+                  </Stack>
+                  <Stack>
+                    {activeTab === "amazone" && (
+                      <Stack flexDirection={"row"} pb={2}>
+                        <Button
+                          disabled={!!getValues("beneName")}
+                          onClick={() => handleButtonClick("@paytm")}
+                        >
+                          @apl
+                        </Button>
+                        <Button
+                          disabled={!!getValues("beneName")}
+                          onClick={() => handleButtonClick("other")}
+                        >
+                          other
+                        </Button>
+                      </Stack>
+                    )}
+                  </Stack>
+                </>
+              )}
               <Box
-                rowGap={{ xs: 2, sm: 3 }}
-                columnGap={2}
+                rowGap={{ xs: 2, sm: 2 }}
+                columnGap={1}
                 display="grid"
                 gridTemplateColumns={{
                   xs: "repeat(1, 1fr)",
                   sm: "repeat(2, 1fr)",
                 }}
               >
-                {/* <RHFAutocomplete
-                  name="bank"
-                  disabled={remitterVerify?.beneVerified}
-                  onChange={setBankDetail}
-                  options={getBank?.data}
-                  noOptionsText="No Bank Account"
-                  getOptionLabel={(option: any) => option?.bankName}
-                  renderOption={(props, option) => (
-                    <Box
-                      component="li"
-                      sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
-                      {...props}
-                    >
-                      {option?.bankName}
-                    </Box>
-                  )}
-                  renderInput={(params) => (
-                    <RHFTextField
-                      name="bankName"
-                      label="Bank Name"
-                      {...params}
-                      variant={
-                        remitterVerify?.beneVerified ? "filled" : "outlined"
-                      }
-                    />
-                  )}
-                /> */}
+                <Stack flexDirection="row" gap={1} mt={1}>
+                  <RHFTextField
+                    name="ifsc"
+                    label="UPI ID"
+                    disabled={!!getValues("beneName")}
+                    value={fieldValue}
+                    placeholder="UPI ID"
+                    onChange={handleInputChange}
+                    InputProps={{
+                      endAdornment: upiId !== "other" && (
+                        <InputAdornment position="end">{upiId}</InputAdornment>
+                      ),
+                    }}
+                    fullWidth
+                  />
+                </Stack>
 
-                <RHFTextField
-                  name="ifsc"
-                  label="UPI ID"
-                  placeholder="UPI ID"
-                  disabled={remitterVerify?.beneVerified}
-                  variant={remitterVerify?.beneVerified ? "filled" : "outlined"}
-                  InputLabelProps={{ shrink: true }}
-                />
                 {/* <RHFTextField
                   name="accountNumber"
                   label="Account Number"
@@ -550,7 +793,9 @@ export default function Transferbeneficiary() {
                     variant="contained"
                     size="small"
                     onClick={verifyBene}
-                    disabled={remitterVerify?.beneVerified}
+                    disabled={
+                      remitterVerify?.beneVerified || !upiId || !fieldValue
+                    }
                     loading={remitterVerify?.isLoading}
                   >
                     verify UPI Detail
@@ -563,26 +808,6 @@ export default function Transferbeneficiary() {
                   disabled={remitterVerify?.beneVerified}
                   variant={remitterVerify?.beneVerified ? "filled" : "outlined"}
                 />
-                <RHFSelect
-                  name="remitterRelation"
-                  label="Relation"
-                  placeholder="Relation"
-                  SelectProps={{
-                    native: false,
-                    sx: { textTransform: "capitalize" },
-                  }}
-                >
-                  <MenuItem value="Husband/Wife">Husband/Wife</MenuItem>
-                  <MenuItem value="Brother/Sister">Brother/Sister</MenuItem>
-                  <MenuItem value="Mother/Father">Mother/Father</MenuItem>
-                  <MenuItem value="Son/Daughter">Son/Daughter</MenuItem>
-                  <MenuItem value="Aunt/Uncle">Aunt/Uncle</MenuItem>
-                  <MenuItem value="Niece/Nephew">Niece/Nephew</MenuItem>
-                  <MenuItem value="Friends">Friends</MenuItem>
-                  <MenuItem value="Self">Self</MenuItem>
-                  <MenuItem value="Other">other</MenuItem>
-                </RHFSelect>
-                <Divider />
                 <Divider />
                 <RHFTextField
                   name="mobileNumber"
@@ -600,6 +825,7 @@ export default function Transferbeneficiary() {
                   type="submit"
                   variant="contained"
                   loading={addBene.isLoading}
+                  disabled={!isValid}
                 >
                   Add Beneficiary
                 </LoadingButton>
