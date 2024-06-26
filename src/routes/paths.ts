@@ -36,6 +36,7 @@ export const PATH_DASHBOARD = {
     aeps: path(ROOTS_DASHBOARD, "/service/aeps"),
     billpayment: path(ROOTS_DASHBOARD, "/service/billpayment"),
     aadhaarpay: path(ROOTS_DASHBOARD, "/service/aadhaarpay"),
+    payments: path(ROOTS_DASHBOARD, "/service/payments"),
   },
   transaction: {
     root: path(ROOTS_DASHBOARD, "/transaction"),

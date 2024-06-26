@@ -7,7 +7,7 @@ export const fetchLocation = async () => {
   localStorage.setItem(
     "deviceType",
     userAgent.match(/Android/i)
-      ? "android"
+      ? "android_web"
       : userAgent.match(/mac/i)
       ? "macbook"
       : "windows"

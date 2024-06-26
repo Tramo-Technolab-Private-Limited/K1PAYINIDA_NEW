@@ -48,6 +48,7 @@ import {
   LoanScheme,
   WalletToWallet,
   Transfer,
+  Payments,
 } from "./elements";
 
 // ----------------------------------------------------------------------
@@ -142,6 +143,7 @@ export default function Router() {
             { path: "aeps", element: <AEPS /> },
             { path: "billpayment", element: <BillPayment /> },
             { path: "aadhaarpay", element: <AadhaarPay /> },
+            { path: "payments", element: <Payments /> },
           ],
         },
 

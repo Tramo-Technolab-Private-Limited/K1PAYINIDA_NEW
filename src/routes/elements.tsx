@@ -74,6 +74,9 @@ export const BillPayment = Loadable(
 export const AadhaarPay = Loadable(
   lazy(() => import("../sections/services/aadharpay/AadharPay"))
 );
+export const Payments = Loadable(
+  lazy(() => import("../sections/services/payments/Payments"))
+);
 //Network
 export const Network = Loadable(lazy(() => import("../pages/Network")));
 
