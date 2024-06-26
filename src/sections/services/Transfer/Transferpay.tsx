@@ -20,6 +20,7 @@ import {
   TableRow,
   TableCell,
   TableBody,
+  Grid,
 } from "@mui/material";
 
 // import { useForm } from 'react-hook-form';
@@ -41,6 +42,7 @@ import Label from "src/components/label/Label";
 import Scrollbar from "src/components/scrollbar/Scrollbar";
 import { sentenceCase } from "change-case";
 import { fetchLocation } from "src/utils/fetchLocation";
+import CustomTransactionSlip from "src/components/customFunctions/CustomTransactionSlip";
 
 // ----------------------------------------------------------------------
 
@@ -72,7 +74,7 @@ export default function Transferpay({
   const [errorMsg, setErrorMsg] = useState("");
 
   const [isTxnOpen, setIsTxnOpen] = useState(false);
-  const [transactionDetail, setTransactionDetail] = useState([]);
+  const [transactionDetail, setTransactionDetail] = useState<any>([]);
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -170,7 +172,7 @@ export default function Transferpay({
             handleOpen1();
             setErrorMsg("");
             initialize();
-            setTransactionDetail(Response?.data?.data);
+            setTransactionDetail([{ ...Response.data.data }]);
           } else {
             enqueueSnackbar(Response.data.message, { variant: "error" });
             setErrorMsg(Response.data.message);
@@ -402,7 +404,36 @@ export default function Transferpay({
         </Stack>
       </MotionModal> */}
 
-      <MotionModal open={open1} width={{ xs: "95%", md: 720 }}>
+      <Modal
+        open={open1}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <>
+          <Grid
+            sx={{
+              position: "absolute" as "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              bgcolor: "#ffffff",
+              boxShadow: 4,
+              p: 2,
+              borderRadius: "20px",
+              minWidth: { xs: "95%", md: 720 },
+            }}
+          >
+            <Stack>
+              <CustomTransactionSlip
+                newRow={transactionDetail}
+                handleCloseRecipt={handleClose1}
+              />
+            </Stack>
+          </Grid>
+        </>
+      </Modal>
+
+      {/* <MotionModal open={open1} width={{ xs: "95%", md: 720 }}>
         <Stack flexDirection={"row"} gap={1} mt={1} justifyContent={"center"}>
           <TransactionModal
             isTxnOpen={open1}
@@ -414,7 +445,7 @@ export default function Transferpay({
             transactionDetail={transactionDetail}
           />
         </Stack>
-      </MotionModal>
+      </MotionModal> */}
     </>
   );
 }
