@@ -950,6 +950,8 @@ function TransactionRow({ row }: childProps) {
         ? `moneyTransfer/checkStatus/` + rowFor._id
         : rowFor.categoryName.toLowerCase() == "recharges"
         ? `agents/v1/checkStatus/` + rowFor._id
+        : rowFor.categoryName.toLowerCase() == "transfer"
+        ? `app/transfer/checkStatus/` + rowFor._id
         : rowFor.categoryName.toLowerCase() == "dmt2"
         ? `dmt2/transaction/status/` + rowFor._id
         : rowFor.categoryName.toLowerCase() == "bill payment"
