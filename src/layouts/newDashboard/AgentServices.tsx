@@ -140,7 +140,7 @@ export default function AgentServices(props: any) {
                   </Stack>
                 </Grid>
 
-                <Grid item xs={4} sm={3} md={1.2}>
+                {/* <Grid item xs={4} sm={3} md={1.2}>
                   <Stack
                     sx={{
                       cursor: "pointer",
@@ -162,7 +162,7 @@ export default function AgentServices(props: any) {
                       </Typography>
                     </Stack>
                   </Stack>
-                </Grid>
+                </Grid> */}
 
                 <Grid item xs={4} sm={3} md={1.2}>
                   <Stack

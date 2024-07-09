@@ -62,9 +62,9 @@ export const DMT = Loadable(lazy(() => import("../sections/services/DMT/DMT")));
 export const DMT1 = Loadable(
   lazy(() => import("../sections/services/DMT1/DMT1"))
 );
-export const DMT2 = Loadable(
-  lazy(() => import("../sections/services/DMT2/DMT2"))
-);
+// export const DMT2 = Loadable(
+//   lazy(() => import("../sections/services/DMT2/DMT2"))
+// );
 export const AEPS = Loadable(
   lazy(() => import("../sections/services/AEPS/AEPS"))
 );

@@ -1,6 +1,13 @@
 // @mui
 import { useTheme } from "@mui/material/styles";
-import { Stack, AppBar, Toolbar, IconButton, Divider } from "@mui/material";
+import {
+  Stack,
+  AppBar,
+  Toolbar,
+  IconButton,
+  Divider,
+  Tooltip,
+} from "@mui/material";
 // utils
 import { bgBlur } from "../../../utils/cssStyles";
 // hooks
@@ -21,6 +28,7 @@ import NotificationsPopover from "./NotificationsPopover";
 import Label from "src/components/label/Label";
 import { useAuthContext } from "src/auth/useAuthContext";
 import { fIndianCurrency } from "src/utils/formatNumber";
+import { useState } from "react";
 
 // ----------------------------------------------------------------------
 
@@ -31,7 +39,9 @@ type Props = {
 export default function Header({ onOpenNav }: Props) {
   const theme = useTheme();
 
-  const { user, Api, UploadFileApi } = useAuthContext();
+  const { user, Api, UploadFileApi, initialize } = useAuthContext();
+
+  const [loading, setLoading] = useState(false);
 
   const { themeLayout } = useSettingsContext();
 
@@ -74,17 +84,40 @@ export default function Header({ onOpenNav }: Props) {
         {isTablet ? (
           <>
             <Label variant="soft" color={"primary"} sx={walletStyle}>
-              {`main wallet = ${
+              main wallet =
+              {loading ? (
+                <Iconify icon="eos-icons:three-dots-loading" width={60} />
+              ) : (
                 fIndianCurrency(user?.main_wallet_amount) || 0
-              }`}
+              )}
             </Label>
             {user?.role == "agent" && (
               <Label variant="soft" color={"warning"} sx={walletStyle}>
-                {`AEPS wallet = ${
+                AEPS wallet =
+                {loading ? (
+                  <Iconify icon="eos-icons:three-dots-loading" width={60} />
+                ) : (
                   fIndianCurrency(user?.AEPS_wallet_amount) || 0
-                }`}
+                )}
               </Label>
             )}
+            <Tooltip title="Refresh wallet">
+              <IconButton
+                disabled={loading}
+                onClick={() => {
+                  if (!loading) {
+                    setLoading(true);
+                    setTimeout(async () => {
+                      await initialize();
+                      setLoading(false);
+                    }, 1000);
+                  }
+                }}
+                sx={{ mr: 1, color: "text.primary" }}
+              >
+                <Iconify icon="mage:refresh-reverse" />
+              </IconButton>
+            </Tooltip>
             {/* <NotificationsPopover /> */}
 
             <AccountPopover />
