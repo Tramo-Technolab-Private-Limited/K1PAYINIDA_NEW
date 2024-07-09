@@ -96,10 +96,13 @@ export default function AccountPopover() {
         sx={{ width: 230, p: 0 }}
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
-          <Typography variant="subtitle2" noWrap textOverflow={"ellipsis"}>
+          <Typography variant="subtitle1" noWrap textOverflow={"ellipsis"}>
+            {user?.company_name}
+          </Typography>
+          <Typography variant="body1" noWrap textOverflow={"ellipsis"}>
             {user?.firstName + " " + user?.lastName}
           </Typography>
-          <Typography variant="subtitle2" noWrap textOverflow={"ellipsis"}>
+          <Typography variant="body1" noWrap textOverflow={"ellipsis"}>
             {sentenceCase(user?.role)}{" "}
             <Typography
               component={"span"}
