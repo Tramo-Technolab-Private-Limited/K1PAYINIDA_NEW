@@ -62,11 +62,11 @@ const NavConfig = [
             path: PATH_DASHBOARD.service.dmt1,
             roles: ["agent"],
           },
-          {
-            title: "DMT2",
-            path: PATH_DASHBOARD.service.dmt2,
-            roles: ["agent"],
-          },
+          // {
+          //   title: "DMT2",
+          //   path: PATH_DASHBOARD.service.dmt2,
+          //   roles: ["agent"],
+          // },
           {
             title: "AEPS",
             path: PATH_DASHBOARD.service.aeps,
