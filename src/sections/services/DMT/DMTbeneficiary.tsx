@@ -208,7 +208,12 @@ export default function DMTbeneficiary() {
             enqueueSnackbar(Response.data.message);
             getbeneDispatch({
               type: "GET_BENE_SUCCESS",
-              payload: Response.data.data,
+              payload: remitterContext?.accountNumber
+                ? Response.data.data.filter(
+                    (item: any) =>
+                      item.accountNumber == remitterContext.accountNumber
+                  )
+                : Response.data.data,
             });
           } else {
             getbeneDispatch({ type: "GET_BENE_FAILURE" });

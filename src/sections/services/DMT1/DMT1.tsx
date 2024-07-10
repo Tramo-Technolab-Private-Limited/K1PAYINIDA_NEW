@@ -14,6 +14,14 @@ import {
   Stack,
   MenuItem,
   FormHelperText,
+  Card,
+  TableContainer,
+  Paper,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
 } from "@mui/material";
 
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -35,6 +43,9 @@ import { fetchLocation } from "src/utils/fetchLocation";
 import ServiceUnderUpdate from "src/pages/ServiceUnderUpdate";
 import { useAuthContext } from "src/auth/useAuthContext";
 import ApiDataLoading from "src/components/customFunctions/ApiDataLoading";
+
+import Scrollbar from "src/components/scrollbar/Scrollbar";
+import useResponsive from "src/hooks/useResponsive";
 // ----------------------------------------------------------------------
 
 type FormValuesProps = {
@@ -51,6 +62,9 @@ type FormValuesProps = {
   otp4: string;
   otp5: string;
   otp6: string;
+
+  //search by account number
+  accountNumber: string;
 };
 
 //--------------------------------------------------------------------
@@ -254,6 +268,46 @@ export default function DMT1() {
     });
   }, []);
 
+  const HandleRemitter = (remitterMobile: string, accountNumber: string) => {
+    console.log(remitterMobile, accountNumber);
+    try {
+      let token = localStorage.getItem("token");
+      remitterDispatch({ type: "REMITTER_FETCH_REQUEST" });
+      Api("moneyTransfer/remitter/" + remitterMobile, "GET", "", token).then(
+        (Response: any) => {
+          console.log("dmt response", Response);
+          if (Response.status == 200) {
+            if (Response.data.code == 200) {
+              remitterDispatch({
+                type: "REMITTER_FETCH_SUCCESS",
+                payload: {
+                  ...Response.data.data,
+                  accountNumber: accountNumber,
+                },
+              });
+              reset(defaultValues);
+            } else if (Response.data.code == 400) {
+              remitterDispatch({ type: "REMITTER_NOT_FOUND" });
+              if (Response.data.data == null) {
+                openEditModal1();
+              } else {
+                SendOTP(remitterMobile);
+                openEditModal2();
+              }
+            } else {
+              enqueueSnackbar(Response.data.message, { variant: "error" });
+            }
+          } else {
+            remitterDispatch({ type: "REMITTER_NOT_FOUND" });
+            enqueueSnackbar("Internal Server Error");
+          }
+        }
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   if (isServiceEnable == null) {
     return <ApiDataLoading />;
   }
@@ -324,6 +378,9 @@ export default function DMT1() {
             {remitter.remitterfetch && <DMT1RemitterDetail />}
           </Grid>
           <Grid item xs={12} sm={9}>
+            {!remitter.remitterfetch && (
+              <SearchByAccountNumber SearchRemitter={HandleRemitter} />
+            )}
             {remitter.remitterfetch && <DMT1beneficiary />}
           </Grid>
         </Grid>
@@ -612,6 +669,140 @@ const NewRegistration = ({ mobilenumber, handleNewRegistaion }: any) => {
   );
 };
 
-// ----------------------------------------------------------------------
+const SearchByAccountNumber = React.memo(({ SearchRemitter }: any) => {
+  const isMobile = useResponsive("up", "sm");
+  const { Api } = useAuthContext();
+  const { enqueueSnackbar } = useSnackbar();
+
+  const [beneData, setBeneData] = useState([]);
+
+  const DMTSchema = Yup.object().shape({
+    accountNumber: Yup.string()
+      .typeError("That doesn't look like a Account number")
+      .min(1, "Please enter valid Account Number")
+      .required("A phone number is required"),
+  });
+
+  const defaultValues = {
+    accountNumber: "",
+  };
+
+  const methods = useForm<FormValuesProps>({
+    resolver: yupResolver(DMTSchema),
+    defaultValues,
+    mode: "onChange",
+  });
+
+  const {
+    handleSubmit,
+    formState: { isValid, isSubmitting },
+  } = methods;
+
+  const onSubmit = (data: FormValuesProps) => {
+    let token = localStorage.getItem("token");
+    Api(
+      "moneyTransfer/remitter/accountNumber/" + data.accountNumber,
+      "GET",
+      "",
+      token
+    ).then((Response: any) => {
+      if (Response.data.code == 200) {
+        setBeneData(Response.data.data);
+      } else {
+        enqueueSnackbar(Response.data.message, { variant: "error" });
+        console.log("==============>>> sendOtp message", Response.data.message);
+      }
+    });
+  };
+
+  return (
+    <Card>
+      <Grid container spacing={2} p={3}>
+        <Grid item sm={4}>
+          <Typography variant="h4">Search By Account Number</Typography>
+          <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+            <RHFTextField
+              name="accountNumber"
+              label="Account Number"
+              type="number"
+              InputProps={{
+                endAdornment: isValid && (
+                  <LoadingButton
+                    type="submit"
+                    variant="contained"
+                    loading={isSubmitting}
+                    sx={{ right: "-10px" }}
+                  >
+                    Search
+                  </LoadingButton>
+                ),
+              }}
+            />
+          </FormProvider>
+        </Grid>
+      </Grid>
+      <TableContainer component={Paper}>
+        <Scrollbar
+          sx={
+            isMobile
+              ? { maxHeight: window.innerHeight - 170 }
+              : { maxHeight: window.innerHeight - 470 }
+          }
+        >
+          <Table
+            size="small"
+            stickyHeader
+            aria-label="sticky table"
+            style={{ borderBottom: "1px solid #dadada" }}
+          >
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ fontWeight: 800 }}>Sender Name</TableCell>
+                <TableCell sx={{ fontWeight: 800 }}>A/c No.</TableCell>
+                <TableCell sx={{ fontWeight: 800 }}>Beneficiary Name</TableCell>
+                <TableCell sx={{ fontWeight: 800 }}>Action</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {beneData.map((item: any) => {
+                return item?.beneficiariesDetails?.map((item1: any) => (
+                  <TableRow key={item._id}>
+                    <TableCell>{item.remitterMobile}</TableCell>
+                    <TableCell>{item1.accountNumber}</TableCell>
+                    <TableCell>{item1.beneName}</TableCell>
+                    <TableCell>
+                      <Button
+                        variant="outlined"
+                        sx={{ alignSelf: "center" }}
+                        onClick={() => {
+                          SearchRemitter(
+                            item.remitterMobile,
+                            item1.accountNumber
+                          );
+                        }}
+                      >
+                        Use
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ));
+              })}
+              {/* {beneData?.map((row: any) => (
+                <BeneList
+                  key={row._id}
+                  row={row}
+                  callback={setPayoutData}
+                  remitterNumber={remitterContext.remitterMobile}
+                  deleteBene={deleteBene}
+                  pay={() => setIsOpen(true)}
+                />
+              ))} */}
+            </TableBody>
+          </Table>
+        </Scrollbar>
+      </TableContainer>
+    </Card>
+  );
+});
 
 // ----------------------------------------------------------------------

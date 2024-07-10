@@ -56,6 +56,7 @@ export default function DMTpay({
 }: any) {
   const { availableLimitForMoneyTransfer } = remitter;
   const { bankName, accountNumber, mobileNumber, beneName, ifsc } = beneficiary;
+  console.log(remitter, beneficiary);
   const { enqueueSnackbar } = useSnackbar();
   const { UpdateUserDetail, initialize, Api } = useAuthContext();
   const [mode, setMode] = useState("");
