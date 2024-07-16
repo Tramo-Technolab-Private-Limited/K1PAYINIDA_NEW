@@ -1316,37 +1316,40 @@ function TransactionRow({ row }: childProps) {
                 Re-Claim
               </Button>
             )}
-            {newRow.status !== "success" && newRow.status !== "failed" && (
-              <Tooltip title="Check Status" placement="top">
-                <div style={{ position: "relative" }}>
-                  <IconButton
-                    disabled={loading}
-                    onClick={() => CheckTransactionStatus(newRow)}
-                    color="primary"
-                    aria-label="check transaction status"
-                  >
-                    {loading ? (
-                      <Grid
-                        style={{
-                          position: "absolute",
-                          top: "50%",
-                          left: "50%",
-                          transform: "translate(-50%, -50%)",
-                        }}
-                      >
-                        <CircularProgress
-                          size={20}
-                          thickness={4}
-                          color="primary"
-                        />
-                      </Grid>
-                    ) : (
-                      <CheckStatusIcon />
-                    )}
-                  </IconButton>
-                </div>
-              </Tooltip>
-            )}
+            {user?.role === "agent" &&
+              newRow.status !== "success" &&
+              newRow.status !== "failed" && (
+                <Tooltip title="Check Status" placement="top">
+                  <div style={{ position: "relative" }}>
+                    <IconButton
+                      disabled={loading}
+                      onClick={() => CheckTransactionStatus(newRow)}
+                      color="primary"
+                      aria-label="check transaction status"
+                    >
+                      {loading ? (
+                        <Grid
+                          style={{
+                            position: "absolute",
+                            top: "50%",
+                            left: "50%",
+                            transform: "translate(-50%, -50%)",
+                          }}
+                        >
+                          <CircularProgress
+                            size={20}
+                            thickness={4}
+                            color="primary"
+                          />
+                        </Grid>
+                      ) : (
+                        <CheckStatusIcon />
+                      )}
+                    </IconButton>
+                  </div>
+                </Tooltip>
+              )}
+
             {user?.role === "agent" &&
               newRow?.transactionType == "Product/Service" && (
                 <Tooltip title="View Receipt" placement="top">
