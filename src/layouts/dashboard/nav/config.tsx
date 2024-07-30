@@ -122,6 +122,11 @@ const NavConfig = [
             title: "Download Reports",
             path: PATH_DASHBOARD.transaction.historicalreports,
           },
+          {
+            title: " Summary Reports",
+            roles: ["distributor", "m_distributor"],
+            path: PATH_DASHBOARD.transaction.summaryreports,
+          },
         ],
       },
       {

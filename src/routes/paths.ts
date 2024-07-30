@@ -44,6 +44,7 @@ export const PATH_DASHBOARD = {
     fundflow: path(ROOTS_DASHBOARD, "/transaction/fundflow"),
     walletladger: path(ROOTS_DASHBOARD, "/transaction/walletladger"),
     historicalreports: path(ROOTS_DASHBOARD, "/transaction/reports"),
+    summaryreports: path(ROOTS_DASHBOARD, "/transaction/summaryreports"),
   },
   scheme: {
     root: path(ROOTS_DASHBOARD, "/scheme"),

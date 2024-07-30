@@ -49,6 +49,7 @@ import {
   WalletToWallet,
   Transfer,
   Payments,
+  Summaryreports,
 } from "./elements";
 
 // ----------------------------------------------------------------------
@@ -160,6 +161,7 @@ export default function Router() {
             { path: "fundflow", element: <FundFlow /> },
             { path: "walletladger", element: <WalletLadger /> },
             { path: "reports", element: <Historicalreports /> },
+            { path: "summaryreports", element: <Summaryreports /> },
           ],
         },
         {
