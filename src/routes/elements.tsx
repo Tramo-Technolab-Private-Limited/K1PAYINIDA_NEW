@@ -93,6 +93,9 @@ export const WalletLadger = Loadable(
 export const Historicalreports = Loadable(
   lazy(() => import("../sections/Reports/Reports"))
 );
+export const Summaryreports = Loadable(
+  lazy(() => import("../sections/SummaryReports/SummaryReport"))
+);
 
 //schemes
 export const Scheme = Loadable(lazy(() => import("../pages/SchemePage")));
