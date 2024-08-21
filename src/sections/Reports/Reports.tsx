@@ -52,6 +52,7 @@ import CustomPagination from "src/components/customFunctions/CustomPagination";
 import { TableNoData } from "src/components/table";
 import DownloadIcon from "@mui/icons-material/Download";
 import CheckStatusIcon from "src/assets/icons/transaction/CheckStatusIcon";
+import useResponsive from "src/hooks/useResponsive";
 //aws
 AWS.config.update({
   accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
@@ -61,6 +62,7 @@ AWS.config.update({
 
 function HistoricalDataExport() {
   const { copy } = useCopyToClipboard();
+  const isDesktop = useResponsive("up", "sm");
   const [sdata, setSdata] = React.useState("transactionRecords");
   const [verifyLoding, setVerifyLoading] = React.useState(false);
   const [currentPage, setCurrentPage] = React.useState<any>(1);
@@ -415,28 +417,34 @@ function HistoricalDataExport() {
             disabled
           />{" "}
         </Tabs>
-      </Stack>
-      <Stack direction="row" spacing={2} m={1} justifyContent="flex-end">
-        {tableData?.find((row: any) => row?.status == "Pending") && (
-          <>
-            <Tooltip title="Refresh" placement="top">
-              <IconButton
-                onClick={getTransaction}
-                color="primary"
-                aria-label="check transaction status"
-              >
-                <CheckStatusIcon />
-              </IconButton>
-            </Tooltip>
-          </>
-        )}
-        <LoadingButton variant="contained" size="medium" onClick={handleOpen}>
-          New Request
-        </LoadingButton>
+        <Stack direction="row" spacing={2} m={1} justifyContent="flex-end">
+          {tableData?.find((row: any) => row?.status == "Pending") && (
+            <>
+              <Tooltip title="Refresh" placement="top">
+                <IconButton
+                  onClick={getTransaction}
+                  color="primary"
+                  aria-label="check transaction status"
+                >
+                  <CheckStatusIcon />
+                </IconButton>
+              </Tooltip>
+            </>
+          )}
+          <LoadingButton variant="contained" size="medium" onClick={handleOpen}>
+            New Request
+          </LoadingButton>
+        </Stack>
       </Stack>
       <Grid item xs={12} md={6} lg={8} sx={{ width: "100%" }}>
         <TableContainer component={Paper}>
-          <Scrollbar sx={{ height: "fit-content" }}>
+          <Scrollbar
+            sx={
+              isDesktop
+                ? { maxHeight: window.innerHeight - 220 }
+                : { maxHeight: window.innerHeight - 154 }
+            }
+          >
             <Table
               stickyHeader
               aria-label="sticky table"
