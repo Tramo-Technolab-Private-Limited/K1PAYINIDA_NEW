@@ -126,6 +126,10 @@ export default function DMTbeneficiary() {
   const { enqueueSnackbar } = useSnackbar();
   const isMobile = useResponsive("up", "sm");
   const remitterContext: any = useContext(RemitterContext);
+  const [tempData, setTempData] = useState<any>();
+  const [filteredData, setFilteredData] = useState([]);
+
+  const [addNewBeneLoading, setAddNewBeneLoading] = useState(false);
 
   const [remitterVerify, remitterVerifyDispatch] = useReducer(
     Reducer,
@@ -134,6 +138,21 @@ export default function DMTbeneficiary() {
   const [addBene, addbeneDispatch] = useReducer(Reducer, initialAddBene);
   const [getBene, getbeneDispatch] = useReducer(Reducer, initialgetBene);
   const [getBank, getBankDispatch] = useReducer(Reducer, initialgetBank);
+
+  const handleSearch = (e: any) => {
+    setTempData(e);
+    const text = e.toString().toLowerCase();
+    setFilteredData(
+      getBene?.data.filter((item: any) => {
+        return (
+          item.beneName.toString().toLowerCase().startsWith(text) ||
+          item.accountNumber.toString().toLowerCase().startsWith(text) ||
+          item.ifsc.toString().toLowerCase().startsWith(text) ||
+          item.bankName.toString().toLowerCase().startsWith(text)
+        );
+      })
+    );
+  };
 
   //modal for add Beneficiary
   const [open, setModalEdit] = React.useState(false);
@@ -160,7 +179,7 @@ export default function DMTbeneficiary() {
     accountNumber: Yup.string().required("Account Number is required"),
     bankName: Yup.string().required("Bank Name is required"),
     beneName: Yup.string().required("Beneficiary Name is required"),
-    remitterRelation: Yup.string().required("Relation is required"),
+    // remitterRelation: Yup.string().required("Relation is required"),
   });
   const defaultValues = {
     bankName: "",
@@ -169,7 +188,7 @@ export default function DMTbeneficiary() {
     ifsc: "",
     mobileNumber: "",
     email: "",
-    remitterRelation: "",
+    remitterRelation: "Other",
     isBeneVerified: false,
     bankId: "",
   };
@@ -208,12 +227,7 @@ export default function DMTbeneficiary() {
             enqueueSnackbar(Response.data.message);
             getbeneDispatch({
               type: "GET_BENE_SUCCESS",
-              payload: remitterContext?.accountNumber
-                ? Response.data.data.filter(
-                    (item: any) =>
-                      item.accountNumber == remitterContext.accountNumber
-                  )
-                : Response.data.data,
+              payload: Response.data.data,
             });
           } else {
             getbeneDispatch({ type: "GET_BENE_FAILURE" });
@@ -234,11 +248,7 @@ export default function DMTbeneficiary() {
         if (Response.data.code == 200) {
           getBankDispatch({
             type: "ADD_BANK_SUCCESS",
-            payload: Response.data.data.filter((item: any) => {
-              if (item.ekoBankId) {
-                return item;
-              }
-            }),
+            payload: Response.data.data,
           });
           openEditModal();
           // enqueueSnackbar(Response.data.message);
@@ -250,23 +260,18 @@ export default function DMTbeneficiary() {
   };
 
   const verifyBene = async () => {
-    let token = localStorage.getItem("token");
     remitterVerifyDispatch({ type: "VERIFY_FETCH_REQUEST" });
-    try {
-      await fetchLocation();
-      let body = {
-        ifsc: getValues("ifsc"),
-        accountNumber: getValues("accountNumber"),
-        bankName: getValues("bankName"),
-        remitterMobile: remitterContext.remitterMobile,
-      };
-      (await trigger(["ifsc", "accountNumber", "bankName"]))
-        ? await Api(
-            "moneyTransfer/beneficiary/verify",
-            "POST",
-            body,
-            token
-          ).then((Response: any) => {
+    let token = localStorage.getItem("token");
+    let body = {
+      ifsc: getValues("ifsc").trim(),
+      accountNumber: getValues("accountNumber").trim(),
+      bankName: getValues("bankName"),
+      remitterMobile: remitterContext.remitterMobile,
+    };
+    await fetchLocation();
+    (await trigger(["ifsc", "accountNumber", "bankName"]))
+      ? await Api("moneyTransfer/beneficiary/verify", "POST", body, token).then(
+          (Response: any) => {
             if (Response.status == 200) {
               if (Response.data.code == 200) {
                 remitterVerifyDispatch({
@@ -287,13 +292,9 @@ export default function DMTbeneficiary() {
               remitterVerifyDispatch({ type: "VERIFY_FETCH_FAILURE" });
               enqueueSnackbar("Failed", { variant: "error" });
             }
-          })
-        : remitterVerifyDispatch({ type: "VERIFY_FETCH_FAILURE" });
-    } catch (error) {
-      if (error.code == 1) {
-        enqueueSnackbar(`${error.message} !`, { variant: "error" });
-      }
-    }
+          }
+        )
+      : remitterVerifyDispatch({ type: "VERIFY_FETCH_FAILURE" });
   };
 
   const addBeneficiary = async (data: FormValuesProps) => {
@@ -303,8 +304,8 @@ export default function DMTbeneficiary() {
       let body = {
         remitterMobile: remitterContext.remitterMobile,
         beneficiaryName: data.beneName,
-        ifsc: data.ifsc,
-        accountNumber: data.accountNumber,
+        ifsc: data.ifsc.trim(),
+        accountNumber: data.accountNumber.trim(),
         beneficiaryMobile: data.mobileNumber,
         beneficiaryEmail: data.email,
         relationship: data.remitterRelation,
@@ -362,7 +363,6 @@ export default function DMTbeneficiary() {
     setValue("ifsc", value?.masterIFSC);
     setValue("bankId", value?.ekoBankId);
   }
-
   return (
     <>
       <Grid>
@@ -370,7 +370,18 @@ export default function DMTbeneficiary() {
           <ApiDataLoading />
         ) : (
           <Paper sx={{ width: "100%", overflow: "hidden" }}>
-            <Stack justifyContent={"end"} flexDirection={"row"} mb={1}>
+            <Stack
+              justifyContent={"space-between"}
+              flexDirection={"row"}
+              mb={1}
+              mt={1}
+            >
+              <TextField
+                value={tempData}
+                size="small"
+                onChange={(e) => handleSearch(e.target.value)}
+                label="Search"
+              />
               <LoadingButton
                 variant="contained"
                 size="medium"
@@ -402,21 +413,25 @@ export default function DMTbeneficiary() {
                       <TableCell sx={{ fontWeight: 800 }}>
                         Beneficiary Name
                       </TableCell>
+                      <TableCell sx={{ fontWeight: 800 }}>Bank Name</TableCell>
                       <TableCell sx={{ fontWeight: 800 }}>A/c No.</TableCell>
                       <TableCell sx={{ fontWeight: 800 }}>IFSC code</TableCell>
-                      <TableCell sx={{ fontWeight: 800 }}>
-                        Mobile Number
-                      </TableCell>
                       <TableCell sx={{ fontWeight: 800 }}>
                         Verification
                       </TableCell>
                       <TableCell sx={{ fontWeight: 800, textAlign: "center" }}>
                         Action
                       </TableCell>
+                      <TableCell sx={{ fontWeight: 800, textAlign: "center" }}>
+                        Delete Bene
+                      </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {getBene.data.map((row: any) => (
+                    {(tempData?.length
+                      ? filteredData?.reverse()
+                      : getBene?.data?.reverse()
+                    ).map((row: any) => (
                       <BeneList
                         key={row._id}
                         row={row}
@@ -459,6 +474,25 @@ export default function DMTbeneficiary() {
           width={{ xs: "95%", md: 500 }}
         >
           <Card sx={{ p: 3 }}>
+            {remitterVerify?.beneVerified && (
+              <Stack>
+                <Typography
+                  variant="subtitle1"
+                  textAlign={"center"}
+                  style={{ color: "#00AB55" }}
+                >
+                  Beneficiary verified successfully{" "}
+                </Typography>
+                <Typography
+                  variant="h4"
+                  color="success.main"
+                  textAlign={"center"}
+                >
+                  {watch("beneName")}
+                </Typography>
+              </Stack>
+            )}
+
             <FormProvider
               methods={methods}
               onSubmit={handleSubmit(addBeneficiary)}
@@ -476,8 +510,8 @@ export default function DMTbeneficiary() {
                   name="bank"
                   disabled={remitterVerify?.beneVerified}
                   onChange={setBankDetail}
-                  noOptionsText="No Bank Account"
                   options={getBank?.data}
+                  noOptionsText="No Bank Account"
                   getOptionLabel={(option: any) => option?.bankName}
                   renderOption={(props, option) => (
                     <Box
@@ -538,7 +572,7 @@ export default function DMTbeneficiary() {
                   disabled={remitterVerify?.beneVerified}
                   variant={remitterVerify?.beneVerified ? "filled" : "outlined"}
                 />
-                <RHFSelect
+                {/* <RHFSelect
                   name="remitterRelation"
                   label="Relation"
                   placeholder="Relation"
@@ -556,7 +590,8 @@ export default function DMTbeneficiary() {
                   <MenuItem value="Friends">Friends</MenuItem>
                   <MenuItem value="Self">Self</MenuItem>
                   <MenuItem value="Other">other</MenuItem>
-                </RHFSelect>
+                </RHFSelect> */}
+                <Stack></Stack>
                 <Divider />
                 <Divider />
                 <RHFTextField
@@ -602,7 +637,7 @@ const BeneList = React.memo(
     const { enqueueSnackbar } = useSnackbar();
     const theme = useTheme();
     const [isLoading, setIsLoading] = useState(false);
-    const [cell, setCell] = useState(row);
+    const [cell, setCell] = useState<any>(row);
     const [deleteOtp, setDeleteOtp] = useState("");
     const [varifyStatus, setVarifyStatus] = useState(true);
     const [count, setCount] = useState(0);
@@ -617,6 +652,16 @@ const BeneList = React.memo(
       setModalEdit2(false);
       setDeleteOtp("");
     };
+
+    const [open, setOpen] = useState(false);
+
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+    const handleConfirmDelete = async () => {
+      BeneDelete();
+      setOpen(false);
+    };
+
     const verifyBene = async (val: string) => {
       let token = localStorage.getItem("token");
       try {
@@ -672,6 +717,24 @@ const BeneList = React.memo(
         }
       });
     };
+
+    const BeneDelete = () => {
+      let token = localStorage.getItem("token");
+      Api("moneyTransfer/beneficiary/delete/" + row._id, "GET", "", token).then(
+        (Response: any) => {
+          if (Response.status == 200) {
+            if (Response.data.code == 200) {
+              enqueueSnackbar(Response.data.message);
+              // window.location.reload();
+              setCell([]);
+            } else {
+              enqueueSnackbar(Response.data.message, { variant: "error" });
+            }
+          }
+        }
+      );
+    };
+
     const confirmDeleteBene = () => {
       setIsLoading(true);
       let token = localStorage.getItem("token");
@@ -722,40 +785,67 @@ const BeneList = React.memo(
           <TableCell>{cell.ifsc}</TableCell>
 
           <TableCell>
-            {!cell.isVerified ? (
-              <LoadingButton
-                sx={{ display: "flex", alignItems: "center", width: "105px" }}
-                variant="contained"
-                color="warning"
-                loading={!varifyStatus}
-                onClick={() => {
-                  setVarifyStatus(false);
-                  verifyBene(cell._id);
-                }}
-              >
-                Verify Now
-              </LoadingButton>
-            ) : (
-              <TableCell style={{ color: "#00AB55" }}>
-                <Icon icon="material-symbols:verified" /> Verified
-              </TableCell>
-            )}
+            {cell &&
+              cell.beneName &&
+              cell.bankName &&
+              cell.accountNumber &&
+              cell.ifsc &&
+              (!cell.isVerified ? (
+                <LoadingButton
+                  sx={{ display: "flex", alignItems: "center", width: "105px" }}
+                  variant="contained"
+                  color="warning"
+                  loading={!varifyStatus}
+                  onClick={() => {
+                    setVarifyStatus(false);
+                    verifyBene(cell._id);
+                  }}
+                >
+                  Verify Now
+                </LoadingButton>
+              ) : (
+                <TableCell style={{ color: "#00AB55" }}>
+                  <Icon icon="material-symbols:verified" /> Verified
+                </TableCell>
+              ))}
           </TableCell>
+
           <TableCell>
-            <Stack justifyContent={"center"} flexDirection={"row"}>
-              <Button
-                variant="contained"
-                onClick={() => {
-                  callback(cell);
-                  setToPay(cell._id);
-                  pay();
-                }}
-              >
-                Pay
-              </Button>
-            </Stack>
+            {cell &&
+              cell.beneName &&
+              cell.bankName &&
+              cell.accountNumber &&
+              cell.ifsc && (
+                <Stack justifyContent={"center"} flexDirection={"row"}>
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      callback(cell);
+                      setToPay(cell._id);
+                      pay();
+                    }}
+                  >
+                    Pay
+                  </Button>
+                </Stack>
+              )}
+          </TableCell>
+
+          <TableCell>
+            {cell &&
+              cell.beneName &&
+              cell.bankName &&
+              cell.accountNumber &&
+              cell.ifsc && (
+                <Stack justifyContent={"center"} flexDirection={"row"}>
+                  <Button variant="contained" onClick={handleOpen}>
+                    Delete
+                  </Button>
+                </Stack>
+              )}
           </TableCell>
         </TableRow>
+
         <Modal
           open={open2}
           onClose={handleClose2}
@@ -820,6 +910,42 @@ const BeneList = React.memo(
               >
                 Close
               </Button>
+            </Card>
+          </Grid>
+        </Modal>
+
+        <Modal open={open} onClose={handleClose}>
+          <Grid
+            item
+            xs={12}
+            md={8}
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+            }}
+          >
+            <Card sx={{ p: 3 }}>
+              <Typography variant="h6" component="h2">
+                Confirm Delete
+              </Typography>
+              <Typography variant="body1" sx={{ mt: 2 }}>
+                Are you sure you want to delete this Beneficiary ?
+              </Typography>
+              <Stack
+                direction="row"
+                spacing={2}
+                justifyContent="flex-end"
+                sx={{ mt: 4 }}
+              >
+                <Button onClick={handleClose} color="primary">
+                  No
+                </Button>
+                <Button onClick={handleConfirmDelete} color="primary">
+                  Yes
+                </Button>
+              </Stack>
             </Card>
           </Grid>
         </Modal>
