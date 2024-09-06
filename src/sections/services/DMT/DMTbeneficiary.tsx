@@ -637,7 +637,7 @@ const BeneList = React.memo(
     const { enqueueSnackbar } = useSnackbar();
     const theme = useTheme();
     const [isLoading, setIsLoading] = useState(false);
-    const [cell, setCell] = useState(row);
+    const [cell, setCell] = useState<any>(row);
     const [deleteOtp, setDeleteOtp] = useState("");
     const [varifyStatus, setVarifyStatus] = useState(true);
     const [count, setCount] = useState(0);
@@ -725,7 +725,8 @@ const BeneList = React.memo(
           if (Response.status == 200) {
             if (Response.data.code == 200) {
               enqueueSnackbar(Response.data.message);
-              window.location.reload();
+              // window.location.reload();
+              setCell([]);
             } else {
               enqueueSnackbar(Response.data.message, { variant: "error" });
             }
@@ -784,47 +785,67 @@ const BeneList = React.memo(
           <TableCell>{cell.ifsc}</TableCell>
 
           <TableCell>
-            {!cell.isVerified ? (
-              <LoadingButton
-                sx={{ display: "flex", alignItems: "center", width: "105px" }}
-                variant="contained"
-                color="warning"
-                loading={!varifyStatus}
-                onClick={() => {
-                  setVarifyStatus(false);
-                  verifyBene(cell._id);
-                }}
-              >
-                Verify Now
-              </LoadingButton>
-            ) : (
-              <TableCell style={{ color: "#00AB55" }}>
-                <Icon icon="material-symbols:verified" /> Verified
-              </TableCell>
-            )}
+            {cell &&
+              cell.beneName &&
+              cell.bankName &&
+              cell.accountNumber &&
+              cell.ifsc &&
+              (!cell.isVerified ? (
+                <LoadingButton
+                  sx={{ display: "flex", alignItems: "center", width: "105px" }}
+                  variant="contained"
+                  color="warning"
+                  loading={!varifyStatus}
+                  onClick={() => {
+                    setVarifyStatus(false);
+                    verifyBene(cell._id);
+                  }}
+                >
+                  Verify Now
+                </LoadingButton>
+              ) : (
+                <TableCell style={{ color: "#00AB55" }}>
+                  <Icon icon="material-symbols:verified" /> Verified
+                </TableCell>
+              ))}
           </TableCell>
+
           <TableCell>
-            <Stack justifyContent={"center"} flexDirection={"row"}>
-              <Button
-                variant="contained"
-                onClick={() => {
-                  callback(cell);
-                  setToPay(cell._id);
-                  pay();
-                }}
-              >
-                Pay
-              </Button>
-            </Stack>
+            {cell &&
+              cell.beneName &&
+              cell.bankName &&
+              cell.accountNumber &&
+              cell.ifsc && (
+                <Stack justifyContent={"center"} flexDirection={"row"}>
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      callback(cell);
+                      setToPay(cell._id);
+                      pay();
+                    }}
+                  >
+                    Pay
+                  </Button>
+                </Stack>
+              )}
           </TableCell>
+
           <TableCell>
-            <Stack justifyContent={"center"} flexDirection={"row"}>
-              <Button variant="contained" onClick={handleOpen}>
-                Delete
-              </Button>
-            </Stack>
+            {cell &&
+              cell.beneName &&
+              cell.bankName &&
+              cell.accountNumber &&
+              cell.ifsc && (
+                <Stack justifyContent={"center"} flexDirection={"row"}>
+                  <Button variant="contained" onClick={handleOpen}>
+                    Delete
+                  </Button>
+                </Stack>
+              )}
           </TableCell>
         </TableRow>
+
         <Modal
           open={open2}
           onClose={handleClose2}
