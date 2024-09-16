@@ -422,9 +422,9 @@ export default function DMTbeneficiary() {
                       <TableCell sx={{ fontWeight: 800, textAlign: "center" }}>
                         Action
                       </TableCell>
-                      <TableCell sx={{ fontWeight: 800, textAlign: "center" }}>
+                      {/* <TableCell sx={{ fontWeight: 800, textAlign: "center" }}>
                         Delete Bene
-                      </TableCell>
+                      </TableCell> */}
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -831,7 +831,7 @@ const BeneList = React.memo(
               )}
           </TableCell>
 
-          <TableCell>
+          {/* <TableCell>
             {cell &&
               cell.beneName &&
               cell.bankName &&
@@ -843,7 +843,7 @@ const BeneList = React.memo(
                   </Button>
                 </Stack>
               )}
-          </TableCell>
+          </TableCell> */}
         </TableRow>
 
         <Modal
