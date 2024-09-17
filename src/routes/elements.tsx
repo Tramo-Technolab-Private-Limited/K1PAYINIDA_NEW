@@ -90,6 +90,9 @@ export const FundFlow = Loadable(
 export const WalletLadger = Loadable(
   lazy(() => import("../pages/WalletLadger"))
 );
+export const RefundedSuccess = Loadable(
+  lazy(() => import("../pages/RefundedSuccess"))
+);
 export const Historicalreports = Loadable(
   lazy(() => import("../sections/Reports/Reports"))
 );

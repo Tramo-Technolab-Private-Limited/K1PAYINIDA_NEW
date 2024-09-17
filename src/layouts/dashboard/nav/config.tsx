@@ -119,6 +119,10 @@ const NavConfig = [
             path: PATH_DASHBOARD.transaction.walletladger,
           },
           {
+            title: "Refunded Successfully",
+            path: PATH_DASHBOARD.transaction.RefundedSuccess,
+          },
+          {
             title: "Download Reports",
             path: PATH_DASHBOARD.transaction.historicalreports,
           },

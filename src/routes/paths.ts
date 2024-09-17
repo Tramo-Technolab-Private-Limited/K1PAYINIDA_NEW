@@ -1,5 +1,7 @@
 // ----------------------------------------------------------------------
 
+import { RefundedSuccess } from "./elements";
+
 function path(root: string, sublink: string) {
   return `${root}${sublink}`;
 }
@@ -43,6 +45,7 @@ export const PATH_DASHBOARD = {
     mytransaction: path(ROOTS_DASHBOARD, "/transaction/mytransaction"),
     fundflow: path(ROOTS_DASHBOARD, "/transaction/fundflow"),
     walletladger: path(ROOTS_DASHBOARD, "/transaction/walletladger"),
+    RefundedSuccess: path(ROOTS_DASHBOARD, "/transaction/RefundedSuccess"),
     historicalreports: path(ROOTS_DASHBOARD, "/transaction/reports"),
     summaryreports: path(ROOTS_DASHBOARD, "/transaction/summaryreports"),
   },
