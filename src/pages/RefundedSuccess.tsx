@@ -329,12 +329,12 @@ export default function RefundedSuccess() {
                   />
 
                   <TableBody>
-                    {(sendLoading ? [...Array(12)] : ladgerData).map(
+                    {(sendLoading ? [...Array(12)] : ladgerData)?.map(
                       (row: any) =>
                         sendLoading ? (
                           <WalletLadgerSkeleton />
                         ) : (
-                          <LadgerRow key={row._id} row={row} />
+                          <LadgerRow key={row?._id} row={row} />
                         )
                     )}
                   </TableBody>
