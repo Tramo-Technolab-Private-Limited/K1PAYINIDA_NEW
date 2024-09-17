@@ -50,6 +50,7 @@ import {
   Transfer,
   Payments,
   Summaryreports,
+  RefundedSuccess,
 } from "./elements";
 
 // ----------------------------------------------------------------------
@@ -160,6 +161,7 @@ export default function Router() {
             { path: "mytransaction", element: <MyTransaction /> },
             { path: "fundflow", element: <FundFlow /> },
             { path: "walletladger", element: <WalletLadger /> },
+            { path: "RefundedSuccess", element: <RefundedSuccess /> },
             { path: "reports", element: <Historicalreports /> },
             { path: "summaryreports", element: <Summaryreports /> },
           ],
