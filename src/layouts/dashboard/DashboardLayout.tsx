@@ -20,7 +20,7 @@ export default function DashboardLayout() {
 
   const isDesktop = useResponsive("up", "lg");
 
-  const isNavHorizontal = themeLayout === "horizontal";
+  const isNavHorizontal = themeLayout === "vertical";
 
   const isNavMini = themeLayout === "mini";
   const [open, setOpen] = useState(false);

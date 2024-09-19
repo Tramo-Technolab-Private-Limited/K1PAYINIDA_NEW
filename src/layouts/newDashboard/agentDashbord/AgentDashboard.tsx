@@ -1,6 +1,6 @@
 import React from "react";
 import AgentServices from "../AgentServices";
-import { Box, Grid, Stack } from "@mui/material";
+import { Box, Card, Grid, Stack, Typography } from "@mui/material";
 import DonutView from "../Charts/DonutView";
 import LineView from "../Charts/LineView";
 import TransactionDeatails from "../TransactionDeatails";
@@ -9,45 +9,27 @@ import Scrollbar from "src/components/scrollbar";
 function AgentDashboard() {
   return (
     <Scrollbar>
-      <Stack width={"100%"} p={2} spacing={2}>
-        <AgentServices />
-        <TransactionDeatails />
-        <Box
+      <div style={{ backgroundColor: "#F1D9FF" }}>
+        <Stack maxWidth={"100%"} p={2} spacing={2}>
+          <AgentServices />
+          <TransactionDeatails />
+        </Stack>
+        <Card
           sx={{
-            display: "flex",
-            justifyContent: "center",
-            transform: "scale(1)",
+            bgcolor: "#5C2B78",
+            height: "5vh",
           }}
-          gap={6}
         >
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={6} md={5}>
-              <Stack
-                sx={{
-                  border: "1px dotted",
-                  borderColor: "#C1C1C1",
-                  borderRadius: 4,
-                  borderWidth: 1,
-                }}
-              >
-                <DonutView />
-              </Stack>
-            </Grid>
-            <Grid item xs={12} sm={6} md={7}>
-              <Stack
-                sx={{
-                  border: "1px dotted",
-                  borderColor: "#C1C1C1",
-                  borderRadius: 4,
-                  borderWidth: 1,
-                }}
-              >
-                <LineView />
-              </Stack>
-            </Grid>
-          </Grid>
-        </Box>
-      </Stack>
+          <Stack justifyContent={"space-between"} flexDirection={"row"} p={2}>
+            <Stack></Stack>
+            <Stack>
+              <Typography color="white" variant="caption">
+                News Flash Coming Soon
+              </Typography>
+            </Stack>
+          </Stack>
+        </Card>
+      </div>
     </Scrollbar>
   );
 }

@@ -45,7 +45,7 @@ export default function Header({ onOpenNav }: Props) {
 
   const { themeLayout } = useSettingsContext();
 
-  const isNavHorizontal = themeLayout === "horizontal";
+  const isNavHorizontal = themeLayout === "vertical";
 
   const isNavMini = themeLayout === "mini";
 
