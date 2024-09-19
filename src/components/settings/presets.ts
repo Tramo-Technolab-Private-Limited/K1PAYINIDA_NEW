@@ -36,11 +36,11 @@ export const presets = [
   // BLUE for K1PAY
   {
     name: "Blue",
-    lighter: "#431a9e24",
-    light: "#5631A8",
-    main: "#431A9E",
-    dark: "#2A0184",
-    darker: "#10006B",
+    lighter: "#ECDBF9",
+    light: "#F5EBFC",
+    main: "#3F1457",
+    dark: "#723495",
+    darker: "#5D2B78",
     contrastText: "#FFFFFF",
   },
   // ORANGE

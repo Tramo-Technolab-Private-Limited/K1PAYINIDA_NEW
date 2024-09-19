@@ -1,27 +1,31 @@
-import { Stack, Typography } from "@mui/material";
+import { Stack, Box } from "@mui/material";
 import Chart from "react-apexcharts";
 
 const DonutView = (props: any) => {
-  const series = [44, 55, 13, 43, 22, 55, 13, 43];
-
+  const series = [60, 30, 10];
   const options: any = {
     chart: {
       type: "donut",
-      height: 350,
+      height: 50,
     },
-    contextMenu: {
-      menu: null,
+    labels: ["Success", "Pending", "Failed"],
+    legend: {
+      position: "bottom",
     },
-    labels: [
-      "Recharge",
-      "Bill Payments",
-      "Money Transfer",
-      "Payout",
-      "AEPS",
-      "Aadhar Pay",
-      "mATM",
-      "Indo Nepal",
-    ],
+    colors: ["#4CAF50", "#FFC107", "#F44336"],
+    dataLabels: {
+      enabled: true,
+      formatter: function (val: number, opts: any) {
+        return (
+          opts.w.globals.labels[opts.seriesIndex] + ": " + val.toFixed(0) + "%"
+        );
+      },
+      style: {
+        colors: ["#fff"],
+        fontSize: "14px",
+        fontWeight: "bold",
+      },
+    },
     responsive: [
       {
         breakpoint: 480,
@@ -32,32 +36,62 @@ const DonutView = (props: any) => {
           legend: {
             position: "bottom",
           },
-          fill: {
-            type: "gradient",
-          },
         },
       },
     ],
   };
 
+  const services = [
+    { name: "Bill Payments", color: "#1E90FF" },
+    { name: "Payout", color: "#32CD32" },
+    { name: "Money Transfer", color: "#FF4500" },
+    { name: "AEPS", color: "#FFD700" },
+    { name: "Aadhar Pay", color: "#8A2BE2" },
+    { name: "mATM", color: "#00CED1" },
+    { name: "Indo Nepal", color: "#FF6347" },
+    { name: "Recharge", color: "#4B0082" },
+  ];
+
   return (
-    <Stack>
-      <Stack flexDirection="row" justifyContent="space-between" m={2}>
-        <Typography variant="h6">Services </Typography>
-        <select>
-          <option value="option1">Today</option>
-          <option value="option2">2023</option>
-          <option value="option3">2024</option>
-        </select>
+    <Stack spacing={4}>
+      <Stack spacing={2} mb={2}>
+        <Box
+          display="flex"
+          flexWrap="wrap"
+          gap={2}
+          justifyContent="center"
+          sx={{ maxWidth: "100%", overflowX: "auto" }}
+        >
+          {services.map((service, index) => (
+            <Box
+              key={index}
+              display="flex"
+              alignItems="center"
+              sx={{
+                fontSize: "14px",
+                whiteSpace: "nowrap",
+              }}
+            >
+              <Box
+                sx={{
+                  width: "12px",
+                  height: "12px",
+                  borderRadius: "50%",
+                  backgroundColor: service.color,
+                  marginRight: "8px",
+                }}
+              />
+              {service.name}
+            </Box>
+          ))}
+        </Box>
       </Stack>
-      <Stack>
-        <Chart
-          options={options}
-          series={series}
-          type="donut"
-          height={props.chartHeight}
-        />
-      </Stack>
+      <Chart
+        options={options}
+        series={series}
+        type="donut"
+        height={props.chartHeight || 350}
+      />
     </Stack>
   );
 };

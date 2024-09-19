@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   Box,
+  Button,
   Card,
   Divider,
   Grid,
@@ -18,6 +19,7 @@ import CustomCard from "./CustomCard";
 import AmountCustomCard from "./AmountCustomCard";
 import ApiDataLoading from "src/components/customFunctions/ApiDataLoading";
 import { useAuthContext } from "src/auth/useAuthContext";
+import DonutView from "./Charts/DonutView";
 function TransactionDeatails() {
   const { user, logout, Api, UploadFileApi } = useAuthContext();
   const [value, setValue] = useState("daily");
@@ -109,91 +111,125 @@ function TransactionDeatails() {
     <>
       <Card
         sx={{
-          width: "100%",
-          background: "#F8FAFC",
+          maxWidth: "100%",
         }}
       >
-        <Box sx={{ p: 1, background: "#F6F6F6" }}>
+        <Box sx={{ p: 1 }}>
           <Stack
             direction="row"
             justifyContent="space-between"
             alignItems="center"
           >
-            <Tabs
+            <Typography variant="h5">Business Summary</Typography>
+            {/* <Tabs
               value={value}
               onChange={handleChange}
               aria-label="disabled tabs example"
-            >
-              <Tab value="daily" label="Today" />
-              <Tab value="weekly" label="Weekly" />
-              <Tab value="monthly" label="Monthly" />
-            </Tabs>
+            > */}
+            <Button variant="contained" sx={{ bgcolor: "#5C2B78" }}>
+              Today
+            </Button>
+            {/* <Tab value="daily" label="Today" /> */}
+            {/* <Tab value="weekly" label="Weekly" />
+              <Tab value="monthly" label="Monthly" /> */}
+            {/* </Tabs> */}
           </Stack>
         </Box>
-        <Divider />
+        {/* <Divider /> */}
         {isLoading ? (
           <ApiDataLoading />
         ) : (
           <>
-            <Box
-              sx={{
-                p: 1.5,
-                display: "flex",
-                justifyContent: "center",
-                transform: "scale(1)",
-              }}
-              gap={6}
-            >
-              <Grid container spacing={3}>
-                {transaction.map((item: any) => (
-                  <Grid item xs={12} sm={6} md={4}>
-                    <span onClick={handleClickB}>
-                      <CustomCard
-                        color="FFFFFF"
-                        Status={item?.status}
-                        amount={item?.count}
-                        noOfTransaction={item?.totalAmount}
-                      />
-                    </span>
+            <Stack flexDirection={{ xs: "column", md: "row" }}>
+              <Stack sx={{ mt: 2, width: { xs: "100%", md: "30%" } }}>
+                {" "}
+                <Grid>
+                  <DonutView />
+                </Grid>
+              </Stack>
+
+              <Grid sx={{ width: { xs: "100%", md: "70%" }, mt: 5 }}>
+                <Stack mt={10}>
+                  <Grid container spacing={3}>
+                    {transaction.map((item: any) => (
+                      <Grid item xs={12} sm={6} md={4}>
+                        <span onClick={handleClickB}>
+                          <CustomCard
+                            sx={{ height: "150px" }}
+                            color="FFFFFF"
+                            Status={item?.status}
+                            amount={item?.count}
+                            noOfTransaction={item?.totalAmount}
+                          />
+                        </span>
+                      </Grid>
+                    ))}
                   </Grid>
-                ))}
+
+                  <Grid container spacing={3}>
+                    <Grid item xs={12} sm={6} md={3}>
+                      <AmountCustomCard
+                        sx={{ height: "150px" }}
+                        amountType="Total Transactions"
+                        Amount="20"
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={3}>
+                      <AmountCustomCard
+                        sx={{ height: "150px" }}
+                        amountType="Total Amount"
+                        Amount={2370}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={3}>
+                      <AmountCustomCard
+                        sx={{ height: "150px" }}
+                        amountType="Total Refunded Transactions"
+                        Amount="00"
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={3}>
+                      <AmountCustomCard
+                        sx={{ height: "150px" }}
+                        amountType="Total Commission"
+                        Amount="24.63"
+                      />
+                    </Grid>
+                  </Grid>
+
+                  <Grid container spacing={3} mt={5}>
+                    <Grid item xs={12} sm={6} md={3}>
+                      <AmountCustomCard
+                        sx={{ height: "150px" }}
+                        amountType="Total Success Transactions"
+                        Amount="00"
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={3}>
+                      <AmountCustomCard
+                        sx={{ height: "150px" }}
+                        amountType="Total Pending Transactions"
+                        Amount="1"
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={3}>
+                      <AmountCustomCard
+                        sx={{ height: "150px" }}
+                        amountType="Total Failed Transactions"
+                        Amount="00"
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={3}>
+                      <AmountCustomCard
+                        sx={{ height: "150px" }}
+                        amountType="Total Charges"
+                        Amount="00"
+                      />
+                    </Grid>
+                  </Grid>
+                </Stack>
               </Grid>
-            </Box>
-            <Box
-              sx={{
-                p: 1.5,
-                display: "flex",
-                justifyContent: "center",
-                transform: "scale(1)",
-              }}
-              gap={6}
-            >
-              <Grid container spacing={3}>
-                <Grid item xs={12} sm={6} md={4}>
-                  {/* <span onClick={handleOpen}> */}
-                  <AmountCustomCard
-                    amountType="Wallet Top Up"
-                    Amount="40,00,00,000"
-                    icon={<img src={WalletTop} />}
-                  />
-                  {/* </span> */}
-                </Grid>
-                <Grid item xs={12} sm={6} md={4}>
-                  <AmountCustomCard
-                    amountType="Total Commission Earned"
-                    Amount={totalCommission?.totalCommission}
-                    icon={<img src={Earned} />}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6} md={4}>
-                  <AmountCustomCard
-                    amountType="Charges Incurred"
-                    Amount={totalCharge?.totalCharges}
-                    icon={<img src={Incurred} />}
-                  />
-                </Grid>
-              </Grid>
-            </Box>
+            </Stack>
           </>
         )}
       </Card>

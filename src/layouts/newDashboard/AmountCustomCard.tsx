@@ -11,21 +11,21 @@ import React from "react";
 function AmountCustomCard(props: any) {
   return (
     <>
-      <Card sx={{ background: props.color }}>
+      <Card sx={{ background: "#F4F1F8" }}>
         <Stack m={2.5} flexDirection="row" justifyContent="space-between">
           <Stack>
             <Typography color="000000">{props?.amountType}</Typography>
             <Typography
               sx={{
                 fontSize: "20px",
-                fontWeight: "700",
+                fontWeight: "200",
                 fontStyle: "Public Sans",
                 lineHeight: "23.5px",
                 marginBottom: "10px",
               }}
-              color="000000"
+              color="#5C2B78"
             >
-              ₹{props.Amount}
+              {props.Amount}
             </Typography>
           </Stack>
           <Stack>{props?.icon}</Stack>
