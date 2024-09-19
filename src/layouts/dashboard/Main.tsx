@@ -14,7 +14,7 @@ const SPACING = 8;
 export default function Main({ children, sx, ...other }: BoxProps) {
   const { themeLayout } = useSettingsContext();
 
-  const isNavHorizontal = themeLayout === "horizontal";
+  const isNavHorizontal = themeLayout === "vertical";
 
   const isNavMini = themeLayout === "mini";
 

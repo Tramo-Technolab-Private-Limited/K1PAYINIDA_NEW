@@ -15,15 +15,15 @@ import {
 
 import { useNavigate } from "react-router-dom";
 
-import Recharge from "../../assets/services/RechargeNew.svg";
-import MoneyTransfer from "../../assets/services/MoneyTransferNew.svg";
-import DMT1 from "../../assets/services/DMT1New.svg";
-import DMT2 from "../../assets/services/DMT2New.svg";
-import BillPayment from "../../assets/services/BillPaymentNew.svg";
-import AEPS from "../../assets/services/AEPSNew.svg";
-import MATM from "../../assets/services/MATMNew.svg";
-import AadharPay from "../../assets/services/AadharPayNew.svg";
-import IndoNepal from "../../assets/services/IndoNepalNew.svg";
+import Recharge from "../../assets/icons/Group 35.svg";
+import MoneyTransfer from "../../assets/icons/rupee_843780 1 (Traced).svg";
+import DMT1 from "../../assets/icons/monetizing_1521786 1 (Traced).svg";
+import DMT2 from "../../assets/icons/monetizing_1521786 1 (Traced).svg";
+import BillPayment from "../../assets/icons/invoice_846190 1 (Traced).svg";
+import AEPS from "../../assets/icons/fingerprint-scan_6692271 1 (Traced).svg";
+import MATM from "../../assets/icons/atm-machine_584072 1 (Traced).svg";
+import AadharPay from "../../assets/icons/Group 44.svg";
+import IndoNepal from "../../assets/icons/Group 46.svg";
 
 import { useAuthContext } from "src/auth/useAuthContext";
 
@@ -45,15 +45,23 @@ export default function AgentServices(props: any) {
             sx={{
               width: "100%",
               background: "#F8FAFC",
+              minHeight: "19.5vh",
+              maxHeight: "20vh",
             }}
           >
-            <Box sx={{ p: 1.5, background: "#CCD5E3" }}>
+            <Box sx={{ p: 1.5, background: "#5C2B78" }}>
               <Stack
                 direction="row"
                 justifyContent="space-between"
                 alignItems="center"
               >
-                <Typography gutterBottom variant="h5" ml="3" component="div">
+                <Typography
+                  gutterBottom
+                  variant="h5"
+                  ml="3"
+                  component="div"
+                  color={"#FFFFFF"}
+                >
                   Services
                 </Typography>
               </Stack>
@@ -64,7 +72,7 @@ export default function AgentServices(props: any) {
                 p: 3,
               }}
             >
-              <Grid container spacing={3} justifyContent="center">
+              <Grid container justifyContent="space-between">
                 <Grid item xs={4} sm={3} md={1.2}>
                   <Stack
                     sx={{
@@ -82,13 +90,13 @@ export default function AgentServices(props: any) {
                         src={Recharge}
                         onClick={() => navigate("/auth/service/recharge")}
                       />
-                      <Typography variant="body2" sx={{ color: "#3333CC" }}>
+                      <Typography variant="subtitle1" sx={{ color: "#5C2B78" }}>
                         Recharge
                       </Typography>
                     </Stack>
                   </Stack>
                 </Grid>
-
+                <Divider orientation="vertical" flexItem sx={{ mx: 2 }} />
                 <Grid item xs={4} sm={3} md={1.2}>
                   <Stack
                     sx={{
@@ -107,8 +115,8 @@ export default function AgentServices(props: any) {
                         onClick={() => navigate("/auth/service/dmt")}
                       />
                       <Typography
-                        variant="body2"
-                        sx={{ color: "#3498DB" }}
+                        variant="subtitle1"
+                        sx={{ color: "#5C2B78" }}
                         noWrap
                       >
                         Money Transfer
@@ -116,6 +124,7 @@ export default function AgentServices(props: any) {
                     </Stack>
                   </Stack>
                 </Grid>
+                <Divider orientation="vertical" flexItem sx={{ mx: 2 }} />
                 <Grid item xs={4} sm={3} md={1.2}>
                   <Stack
                     sx={{
@@ -133,13 +142,13 @@ export default function AgentServices(props: any) {
                         src={DMT1}
                         onClick={() => navigate("/auth/service/dmt1")}
                       />
-                      <Typography variant="body2" sx={{ color: "#2ECC71" }}>
+                      <Typography variant="subtitle1" sx={{ color: "#5C2B78" }}>
                         DMT1
                       </Typography>
                     </Stack>
                   </Stack>
                 </Grid>
-
+                {/* <Divider orientation="vertical" flexItem sx={{ mx: 2 }} /> */}
                 {/* <Grid item xs={4} sm={3} md={1.2}>
                   <Stack
                     sx={{
@@ -157,13 +166,13 @@ export default function AgentServices(props: any) {
                         src={DMT2}
                         onClick={() => navigate("/auth/service/dmt2")}
                       />
-                      <Typography variant="body2" sx={{ color: "#9B59B6" }}>
+                      <Typography variant="subtitle1" sx={{ color: "#5C2B78" }}>
                         DMT2
                       </Typography>
                     </Stack>
                   </Stack>
                 </Grid> */}
-
+                <Divider orientation="vertical" flexItem sx={{ mx: 2 }} />
                 <Grid item xs={4} sm={3} md={1.2}>
                   <Stack
                     sx={{
@@ -182,8 +191,8 @@ export default function AgentServices(props: any) {
                         onClick={() => navigate("/auth/service/billpayment")}
                       />
                       <Typography
-                        variant="body2"
-                        sx={{ color: "#F1C40F" }}
+                        variant="subtitle1"
+                        sx={{ color: "#5C2B78" }}
                         noWrap
                       >
                         Bill Payment
@@ -191,6 +200,7 @@ export default function AgentServices(props: any) {
                     </Stack>
                   </Stack>
                 </Grid>
+                <Divider orientation="vertical" flexItem sx={{ mx: 2 }} />
                 <Grid item xs={4} sm={3} md={1.2}>
                   <Stack
                     sx={{
@@ -208,22 +218,23 @@ export default function AgentServices(props: any) {
                         src={AEPS}
                         onClick={() => navigate("/auth/service/aeps")}
                       />
-                      <Typography variant="body2" sx={{ color: "#F39C12" }}>
+                      <Typography variant="subtitle1" sx={{ color: "#5C2B78" }}>
                         AEPS
                       </Typography>
                     </Stack>
                   </Stack>
                 </Grid>
+                <Divider orientation="vertical" flexItem sx={{ mx: 2 }} />
                 <Grid item xs={4} sm={3} md={1.2}>
                   <Stack>
                     <Stack alignItems="center">
                       <img src={MATM} />
-                      <Typography variant="caption" sx={{ color: "#E74C3C" }}>
+                      <Typography variant="subtitle1" sx={{ color: "#5C2B78" }}>
                         MATM
                       </Typography>
                       <Typography
-                        variant="caption"
-                        sx={{ color: "#E74C3C" }}
+                        variant="subtitle1"
+                        sx={{ color: "#5C2B78" }}
                         noWrap
                       >
                         comming soon
@@ -231,6 +242,7 @@ export default function AgentServices(props: any) {
                     </Stack>
                   </Stack>
                 </Grid>
+                <Divider orientation="vertical" flexItem sx={{ mx: 2 }} />
                 <Grid item xs={4} sm={3} md={1.2}>
                   <Stack
                     sx={{
@@ -248,27 +260,27 @@ export default function AgentServices(props: any) {
                         src={AadharPay}
                         onClick={() => navigate("/auth/service/aadhaarpay")}
                       />
-                      <Typography variant="body2" sx={{ color: "#1ABC9C" }}>
+                      <Typography variant="subtitle1" sx={{ color: "#5C2B78" }}>
                         AadharPay
                       </Typography>
                     </Stack>
                   </Stack>
                 </Grid>
-
+                <Divider orientation="vertical" flexItem sx={{ mx: 2 }} />
                 <Grid item xs={4} sm={3} md={1.2}>
                   <Stack>
                     <Stack alignItems="center">
                       <img src={IndoNepal} />
                       <Typography
-                        variant="caption"
-                        sx={{ color: "#FF6B81" }}
+                        variant="subtitle1"
+                        sx={{ color: "#5C2B78" }}
                         noWrap
                       >
                         Indo Nepal
                       </Typography>
                       <Typography
-                        variant="caption"
-                        sx={{ color: "#FF6B81" }}
+                        variant="subtitle1"
+                        sx={{ color: "#5C2B78" }}
                         noWrap
                       >
                         comming soon
