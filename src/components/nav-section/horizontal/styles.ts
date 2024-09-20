@@ -21,22 +21,19 @@ export const StyledItem = styled(ListItemButton, {
 
   const activeStyle = {
     color: theme.palette.primary.main,
-    backgroundColor: alpha(
-      theme.palette.primary.main,
-      theme.palette.action.selectedOpacity
-    ),
+    backgroundColor: theme.palette.common.white,
     ...(!isLight && {
       color: theme.palette.primary.light,
     }),
   };
 
   const activeSubStyle = {
-    color: theme.palette.text.primary,
+    color: theme.palette.common.white,
     backgroundColor: "transparent",
   };
 
   const hoverStyle = {
-    color: theme.palette.text.primary,
+    color: theme.palette.common.white,
     backgroundColor: theme.palette.action.hover,
   };
 
@@ -45,7 +42,7 @@ export const StyledItem = styled(ListItemButton, {
     display: "inline-flex",
     textTransform: "capitalize",
     padding: theme.spacing(0, 0.75),
-    color: theme.palette.text.secondary,
+    color: theme.palette.common.white,
     borderRadius: theme.shape.borderRadius,
     height: NAV.H_DASHBOARD_ITEM_HORIZONTAL,
     "&:hover": hoverStyle,
@@ -55,6 +52,10 @@ export const StyledItem = styled(ListItemButton, {
       margin: 0,
       paddingRight: 0,
       paddingLeft: theme.spacing(1),
+      "&:hover": {
+        color: theme.palette.primary.main,
+        backgroundColor: theme.palette.common.white,
+      },
     }),
     // Active item
     ...(active && {
@@ -102,6 +103,8 @@ export const StyledPopover = styled(Popover)(({ theme }) => ({
     marginTop: theme.spacing(0.5),
     boxShadow: theme.customShadows.dropdown,
     borderRadius: Number(theme.shape.borderRadius) * 1.5,
-    ...bgBlur({ color: theme.palette.background.default }),
+    color: theme.palette.primary.main,
+    backgroundColor: theme.palette.primary.main,
+    // ...bgBlur({ color: theme.palette.background.default }),
   },
 }));
