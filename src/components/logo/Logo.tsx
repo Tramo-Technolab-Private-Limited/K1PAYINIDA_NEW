@@ -3,7 +3,7 @@ import { Link as RouterLink } from "react-router-dom";
 // @mui
 import { useTheme } from "@mui/material/styles";
 import { Box, Link, BoxProps } from "@mui/material";
-import K1LOGO from "../../assets/logo/K1LOGO.svg";
+import K1LOGO from "../../assets/logo/Layer 1.svg";
 import NEOLOGO from "../../assets/logo/NEOLOGO.svg";
 import NRUPEELOGO from "../../assets/logo/NRUPEELOGO.svg";
 import PAYJUSTLOGO from "../../assets/logo/PAYJUSTLOGO.svg";

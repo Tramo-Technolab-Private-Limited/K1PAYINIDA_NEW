@@ -45,11 +45,9 @@ export default function AgentServices(props: any) {
             sx={{
               width: "100%",
               background: "#F8FAFC",
-              minHeight: "19.5vh",
-              maxHeight: "20vh",
             }}
           >
-            <Box sx={{ p: 1.5, background: "#5C2B78" }}>
+            <Box sx={{ p: 1, background: "#5C2B78", height: "5%" }}>
               <Stack
                 direction="row"
                 justifyContent="space-between"
@@ -69,7 +67,7 @@ export default function AgentServices(props: any) {
             <Divider />
             <Box
               sx={{
-                p: 3,
+                p: 1,
               }}
             >
               <Grid container justifyContent="space-between">

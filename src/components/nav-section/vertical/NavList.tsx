@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 // @mui
-import { Collapse } from '@mui/material';
+import { Collapse } from "@mui/material";
 // hooks
-import useActiveLink from '../../../hooks/useActiveLink';
+import useActiveLink from "../../../hooks/useActiveLink";
 //
-import { NavListProps } from '../types';
-import NavItem from './NavItem';
+import { NavListProps } from "../types";
+import NavItem from "./NavItem";
 
 // ----------------------------------------------------------------------
 
