@@ -7,6 +7,7 @@ import {
   IconButton,
   Divider,
   Tooltip,
+  Grid,
 } from "@mui/material";
 // utils
 import { bgBlur } from "../../../utils/cssStyles";
@@ -169,6 +170,7 @@ export default function Header({ onOpenNav }: Props) {
           px: { lg: 5 },
         }}
         variant="dense"
+        style={{ backgroundColor: "#F1D9FF" }}
       >
         {renderContent}
       </Toolbar>
