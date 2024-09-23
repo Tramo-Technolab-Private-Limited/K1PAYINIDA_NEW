@@ -29,12 +29,10 @@ function TransactionDeatails() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const [totalCommission, setTotalCommission] = useState({
-    totalCommission: "",
-  });
-  const [totalCharge, setTotalCharge] = useState<any>({
-    totalCharge: "",
-  });
+  const [totalSuccess, setTotalSuccess] = useState<any>([]);
+  const [totalFail, setTotalFail] = useState<any>([]);
+  const [totalpending, settotalPending] = useState<any>([]);
+  const [totalCharge, settotalCharges] = useState<any>([]);
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
@@ -54,18 +52,20 @@ function TransactionDeatails() {
   };
   useEffect(() => {
     getTransactionList();
-    getTotalCommission();
-    getTotalCharge();
+    getTotalSuccess();
+    getTotalFail();
+    getTotalPending();
+    getTotalCharges();
   }, [value]);
 
   const getTransactionList = () => {
     setIsLoading(true);
     let token = localStorage.getItem("token");
-    Api(`user/dashboard/transactionVolume/${value}`, "GET", "", token).then(
+    Api(`user/dashboard/totalTransactions`, "GET", "", token).then(
       (Response: any) => {
         if (Response.status == 200) {
           if (Response.data.code == 200) {
-            setTransactions(Response?.data?.data);
+            setTransactions(Response?.data?.totalTransactions);
             setIsLoading(false);
           }
           setIsLoading(false);
@@ -74,29 +74,52 @@ function TransactionDeatails() {
     );
   };
 
-  const getTotalCommission = () => {
+  const getTotalSuccess = () => {
     let token = localStorage.getItem("token");
-    Api(`user/dashboard/totalCommission/${value}`, "GET", "", token).then(
+    Api(`user/dashboard/totalSuccessTransaction`, "GET", "", token).then(
       (Response: any) => {
         if (Response.status == 200) {
           if (Response.data.code == 200) {
-            setTotalCommission({
-              totalCommission: Response?.data?.totalCommission,
-            });
+            setTotalSuccess(Response?.data?.totalTransactions);
+            console.log("totalRefunded====================", Response);
           }
         }
       }
     );
   };
-  const getTotalCharge = () => {
+  const getTotalFail = () => {
     let token = localStorage.getItem("token");
-    Api(`user/dashboard/totalCharges/${value}`, "GET", "", token).then(
+    Api(`user/dashboard/totalFailedTransaction`, "GET", "", token).then(
       (Response: any) => {
         if (Response.status == 200) {
           if (Response.data.code == 200) {
-            setTotalCharge({
-              totalCharge: Response?.data?.totalCharges,
-            });
+            setTotalFail(Response?.data?.totalTransactions);
+          }
+        }
+      }
+    );
+  };
+
+  const getTotalPending = () => {
+    let token = localStorage.getItem("token");
+    Api(`user/dashboard/totalPendingTransaction`, "GET", "", token).then(
+      (Response: any) => {
+        if (Response.status == 200) {
+          if (Response.data.code == 200) {
+            settotalPending(Response?.data?.totalTransactions);
+          }
+        }
+      }
+    );
+  };
+
+  const getTotalCharges = () => {
+    let token = localStorage.getItem("token");
+    Api(`user/dashboard/totalPendingTransaction`, "GET", "", token).then(
+      (Response: any) => {
+        if (Response.status == 200) {
+          if (Response.data.code == 200) {
+            settotalCharges(Response?.data?.totalTransactions);
           }
         }
       }
@@ -150,7 +173,7 @@ function TransactionDeatails() {
 
               <Grid sx={{ width: { xs: "100%", md: "70%" }, mt: 5 }}>
                 <Stack mt={10}>
-                  <Grid container spacing={3}>
+                  {/* <Grid container spacing={3}>
                     {transaction.map((item: any) => (
                       <Grid item xs={12} sm={6} md={4}>
                         <span onClick={handleClickB}>
@@ -164,14 +187,14 @@ function TransactionDeatails() {
                         </span>
                       </Grid>
                     ))}
-                  </Grid>
+                  </Grid> */}
 
                   <Grid container spacing={3}>
                     <Grid item xs={12} sm={6} md={3}>
                       <AmountCustomCard
                         sx={{ height: "150px" }}
                         amountType="Total Transactions"
-                        Amount="20"
+                        Amount={transaction}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
@@ -185,7 +208,7 @@ function TransactionDeatails() {
                       <AmountCustomCard
                         sx={{ height: "150px" }}
                         amountType="Total Refunded Transactions"
-                        Amount="00"
+                        Amount="8"
                       />
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
@@ -202,28 +225,28 @@ function TransactionDeatails() {
                       <AmountCustomCard
                         sx={{ height: "150px" }}
                         amountType="Total Success Transactions"
-                        Amount="00"
+                        Amount={totalSuccess}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
                       <AmountCustomCard
                         sx={{ height: "150px" }}
                         amountType="Total Pending Transactions"
-                        Amount="1"
+                        Amount={totalpending}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
                       <AmountCustomCard
                         sx={{ height: "150px" }}
                         amountType="Total Failed Transactions"
-                        Amount="00"
+                        Amount={totalFail}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
                       <AmountCustomCard
                         sx={{ height: "150px" }}
                         amountType="Total Charges"
-                        Amount="00"
+                        Amount={totalCharge}
                       />
                     </Grid>
                   </Grid>
