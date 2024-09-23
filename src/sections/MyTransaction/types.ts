@@ -88,6 +88,9 @@ export type TransactionProps = {
     key3: string;
   };
   mobileNumber: string;
+  bbpsBillFetchData: {
+    billNumber: number;
+  };
   createdAt: string;
   modeOfPayment: string;
   _id: string;

@@ -96,6 +96,7 @@ type FormValuesProps = {
   code8: string;
   code9: string;
   code10: string;
+  bbpsBillFetchData: any;
 };
 
 export default function MyTransactions() {
@@ -505,6 +506,7 @@ export default function MyTransactions() {
                   client_ref_Id: item?.client_ref_Id,
                   transactionType: item?.transactionType,
                   productName: item?.productName,
+
                   categoryName: item?.categoryName,
                   "User Name":
                     user?._id === item?.agentDetails?.id?._id
@@ -1188,8 +1190,10 @@ function TransactionRow({ row }: childProps) {
         <StyledTableCell sx={{ width: 200 }}>
           <Typography variant="body2">{newRow?.operator?.key1}</Typography>
           <Typography variant="body2">
-            {newRow?.productName == "Money Transfer"
+            {newRow?.productName === "Money Transfer"
               ? newRow?.moneyTransferBeneficiaryDetails?.beneName
+              : newRow?.categoryName === "BILL PAYMENT"
+              ? newRow?.bbpsBillFetchData?.billNumber
               : newRow?.operator?.key2}
           </Typography>
           <Typography variant="body2">{newRow?.operator?.key3}</Typography>
