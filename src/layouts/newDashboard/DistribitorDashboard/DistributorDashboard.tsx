@@ -36,7 +36,7 @@ function DistributorDashboard() {
         }
       >
         <Stack width={"100%"} p={2} spacing={2}>
-          <TransactionDeatails />
+          {/* <TransactionDeatails /> */}
 
           <Box
             sx={{
