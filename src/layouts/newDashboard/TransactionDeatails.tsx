@@ -24,11 +24,13 @@ function TransactionDeatails() {
   const { user, logout, Api, UploadFileApi } = useAuthContext();
   const [value, setValue] = useState("daily");
   const [transaction, setTransactions] = useState<any>([]);
+  const [refund, settotalRefund] = useState<any>([]);
+  const [Commission, settotalComission] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-
+  const [volume, settotalvolume] = useState([]);
   const [totalSuccess, setTotalSuccess] = useState<any>([]);
   const [totalFail, setTotalFail] = useState<any>([]);
   const [totalpending, settotalPending] = useState<any>([]);
@@ -56,6 +58,8 @@ function TransactionDeatails() {
     getTotalFail();
     getTotalPending();
     getTotalCharges();
+    getTotalRefund();
+    getTotalComission();
   }, [value]);
 
   const getTransactionList = () => {
@@ -66,6 +70,8 @@ function TransactionDeatails() {
         if (Response.status == 200) {
           if (Response.data.code == 200) {
             setTransactions(Response?.data?.totalTransactions);
+            settotalvolume(Response?.data?.volume);
+            console.log("totalTransactions=-=======", Response);
             setIsLoading(false);
           }
           setIsLoading(false);
@@ -81,7 +87,6 @@ function TransactionDeatails() {
         if (Response.status == 200) {
           if (Response.data.code == 200) {
             setTotalSuccess(Response?.data?.totalTransactions);
-            console.log("totalRefunded====================", Response);
           }
         }
       }
@@ -120,6 +125,32 @@ function TransactionDeatails() {
         if (Response.status == 200) {
           if (Response.data.code == 200) {
             settotalCharges(Response?.data?.totalTransactions);
+          }
+        }
+      }
+    );
+  };
+
+  const getTotalRefund = () => {
+    let token = localStorage.getItem("token");
+    Api(`user/dashboard/totalRefunded`, "GET", "", token).then(
+      (Response: any) => {
+        if (Response.status == 200) {
+          if (Response.data.code == 200) {
+            settotalRefund(Response?.data?.totalTransactions);
+          }
+        }
+      }
+    );
+  };
+
+  const getTotalComission = () => {
+    let token = localStorage.getItem("token");
+    Api(`user/dashboard/totalCommission/daily`, "GET", "", token).then(
+      (Response: any) => {
+        if (Response.status == 200) {
+          if (Response.data.code == 200) {
+            settotalComission(Response?.data?.totalCommission);
           }
         }
       }
@@ -201,21 +232,21 @@ function TransactionDeatails() {
                       <AmountCustomCard
                         sx={{ height: "150px" }}
                         amountType="Total Amount"
-                        Amount={2370}
+                        Amount={volume}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
                       <AmountCustomCard
                         sx={{ height: "150px" }}
                         amountType="Total Refunded Transactions"
-                        Amount="8"
+                        Amount={refund}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
                       <AmountCustomCard
                         sx={{ height: "150px" }}
                         amountType="Total Commission"
-                        Amount="24.63"
+                        Amount={Commission}
                       />
                     </Grid>
                   </Grid>
