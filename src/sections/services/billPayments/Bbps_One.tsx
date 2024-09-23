@@ -804,7 +804,7 @@ const BbpsBillPayment = ({
             variant="contained"
             size="medium"
             sx={{ whiteSpace: "nowrap" }}
-            disabled={isParentValid || !isValid}
+            disabled={!isValid || isParentValid}
             onClick={handleOpen}
           >
             Pay Now
