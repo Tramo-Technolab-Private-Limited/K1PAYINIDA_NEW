@@ -5,6 +5,7 @@ import DonutView from "../Charts/DonutView";
 import LineView from "../Charts/LineView";
 import TransactionDeatails from "../TransactionDeatails";
 import Scrollbar from "src/components/scrollbar";
+import Marquee from "react-fast-marquee";
 
 function AgentDashboard() {
   return (
@@ -14,21 +15,29 @@ function AgentDashboard() {
           <AgentServices />
           <TransactionDeatails />
         </Stack>
-        <Card
+        <Box
           sx={{
             bgcolor: "#5C2B78",
             height: "5vh",
+            position: "fixed",
+            bottom: 2,
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: "100%",
+            zIndex: 1000,
           }}
         >
-          <Stack justifyContent={"space-between"} flexDirection={"row"} p={2}>
-            <Stack></Stack>
-            <Stack>
-              <Typography color="white" variant="caption">
-                News Flash Coming Soon
+          <Stack justifyContent={"space-between"} flexDirection={"row"} p={1}>
+            <Marquee style={{ width: "100%" }}>
+              <Typography color="white" variant="h6">
+                We're working hard to bring you an amazing experience. Our team
+                is dedicated to developing innovative features that will enhance
+                your journey with us. We can’t wait to share what we’ve been
+                building!
               </Typography>
-            </Stack>
+            </Marquee>
           </Stack>
-        </Card>
+        </Box>
       </div>
     </Scrollbar>
   );

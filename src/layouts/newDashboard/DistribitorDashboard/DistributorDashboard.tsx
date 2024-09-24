@@ -23,179 +23,43 @@ import MonochromePieChart from "../Charts/MonochromePie";
 import TransactionDeatails from "../TransactionDeatails";
 import Scrollbar from "src/components/scrollbar";
 import useResponsive from "src/hooks/useResponsive";
+import TodayData from "./TodayData";
 
 function DistributorDashboard() {
   const isMobile = useResponsive("up", "sm");
+  const [selectedTab, setSelectedTab] = useState(0);
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setSelectedTab(newValue);
+  };
   return (
-    <>
-      <Scrollbar
-        sx={
-          isMobile
-            ? { maxHeight: window.innerHeight - 134 }
-            : { maxHeight: window.innerHeight - 170 }
-        }
-      >
-        <Stack width={"100%"} p={2} spacing={2}>
-          {/* <TransactionDeatails /> */}
-
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              transform: "scale(1)",
-            }}
-            gap={6}
+    <Scrollbar>
+      <Stack>
+        <Card sx={{ p: 1, bgcolor: "#F2F2F2DD" }}>
+          {/* Tabs */}
+          <Tabs
+            value={selectedTab}
+            onChange={handleTabChange}
+            centered
+            textColor="primary"
+            indicatorColor="primary"
           >
-            <Grid container spacing={3}>
-              <Grid item xs={12} sm={6} md={6}>
-                <Stack
-                  sx={{
-                    border: "1px dotted",
-                    borderColor: "#C1C1C1",
-                    borderRadius: 4,
-                    borderWidth: 1,
-                    padding: 3,
-                  }}
-                >
-                  <Stack spacing={2}>
-                    <AmountCustomCard
-                      amountType="Main"
-                      Amount="40,00,00,000"
-                      icon={<img src={Main} />}
-                      color="#F3F3F3"
-                    />
-
-                    <AmountCustomCard
-                      amountType="AEPS"
-                      Amount="40,00,00,000"
-                      icon={<img src={AEPS} />}
-                      color="#F3F3F3"
-                    />
-                  </Stack>
-                </Stack>
-              </Grid>
-              <Grid item xs={12} sm={6} md={6}>
-                <Stack
-                  sx={{
-                    border: "1px dotted",
-                    borderColor: "#C1C1C1",
-                    borderRadius: 4,
-                    borderWidth: 1,
-                  }}
-                >
-                  <DonutView chartHeight="220px" />
-                </Stack>
-              </Grid>
-            </Grid>
-          </Box>
-
-          <Card
-            sx={{
-              width: "100%",
-              background: "#F8FAFC",
-            }}
-          >
-            <Box
-              sx={{
-                p: 1.5,
-                display: "flex",
-                justifyContent: "space-between", // Change this line
-                flexDirection: "column",
-              }}
-            >
-              <Typography sx={{ fontWeight: 700 }}>
-                Top 5 Performers{" "}
-              </Typography>
-              <Stack p={1}>
-                <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6} md={2.4}>
-                    <CustomCard
-                      color="FFFFFF"
-                      Status="Success"
-                      icon={<img src={SuccessNew} />}
-                      footerColor="#000000"
-                      amount="1000000"
-                      noOfTransaction="2033"
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={2.4}>
-                    <CustomCard
-                      Status="Failed"
-                      icon={<img src={FailedNew} />}
-                      footerColor="#000000"
-                      amount="1000000"
-                      noOfTransaction="2033"
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={2.4}>
-                    <CustomCard
-                      Status="Failed"
-                      icon={<img src={FailedNew} />}
-                      footerColor="#000000"
-                      amount="1000000"
-                      noOfTransaction="2033"
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={2.4}>
-                    <CustomCard
-                      Status="Failed"
-                      icon={<img src={FailedNew} />}
-                      footerColor="#000000"
-                      amount="1000000"
-                      noOfTransaction="2033"
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={2.4}>
-                    <CustomCard
-                      Status="Failed"
-                      icon={<img src={FailedNew} />}
-                      footerColor="#000000"
-                      amount="1000000"
-                      noOfTransaction="2033"
-                    />
-                  </Grid>
-                </Grid>
-              </Stack>
-            </Box>
-          </Card>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              transform: "scale(1)",
-            }}
-            gap={6}
-          >
-            <Grid container spacing={3}>
-              <Grid item xs={12} sm={6} md={5}>
-                <Stack
-                  sx={{
-                    border: "1px dotted",
-                    borderColor: "#C1C1C1",
-                    borderRadius: 4,
-                    borderWidth: 1,
-                  }}
-                >
-                  <MonochromePieChart chartHeight="340" />
-                </Stack>
-              </Grid>
-              <Grid item xs={12} sm={6} md={7}>
-                <Stack
-                  sx={{
-                    border: "1px dotted",
-                    borderColor: "#C1C1C1",
-                    borderRadius: 4,
-                    borderWidth: 1,
-                  }}
-                >
-                  <LineView chartHeight="300" />
-                </Stack>
-              </Grid>
-            </Grid>
-          </Box>
-        </Stack>
-      </Scrollbar>
-    </>
+            <Tab label="Today" />
+            <Tab label="7 Days" />
+            <Tab label="30 Days" />
+          </Tabs>
+        </Card>
+        <Box sx={{ p: 2 }} bgcolor={"#F1D9FF"}>
+          {selectedTab === 0 && <TodayData />}
+          {selectedTab === 1 && (
+            <Typography variant="body1">Comming Soon for 7 Days</Typography>
+          )}
+          {selectedTab === 2 && (
+            <Typography variant="body1">Comming Soon for 30 Days</Typography>
+          )}
+        </Box>
+      </Stack>
+    </Scrollbar>
   );
 }
 
