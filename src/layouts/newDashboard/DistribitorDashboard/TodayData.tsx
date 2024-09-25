@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Avatar,
   Box,
@@ -26,11 +26,36 @@ import Scrollbar from "src/components/scrollbar/Scrollbar";
 import styled from "styled-components";
 import Marquee from "react-fast-marquee";
 import { WidthFull } from "@mui/icons-material";
+import { useAuthContext } from "src/auth/useAuthContext";
+import { useSnackbar } from "notistack";
 
 export default function TodayData() {
   const isMobile = useMediaQuery("(max-width:600px)");
 
   const [value, setValue] = React.useState(0);
+
+  const { user, Api } = useAuthContext();
+  const { enqueueSnackbar } = useSnackbar();
+  const [message, setMessage] = useState([]);
+
+  useEffect(() => {
+    GetMessage();
+  }, []);
+
+  const GetMessage = () => {
+    let token = localStorage.getItem("token");
+    Api(`admin/flash_news?role=${"distributor"}`, "GET", "", token).then(
+      (Response: any) => {
+        if (Response.status == 200) {
+          if (Response.data.code == 200) {
+            setMessage(Response.data.data);
+          } else {
+            enqueueSnackbar(Response.data.message, { variant: "error" });
+          }
+        }
+      }
+    );
+  };
 
   const demoImageUrl = "";
   const name = "Balaji Enterprises";
@@ -484,10 +509,7 @@ export default function TodayData() {
             <Stack justifyContent={"space-between"} flexDirection={"row"} p={1}>
               <Marquee style={{ width: "100%" }}>
                 <Typography color="white" variant="h6">
-                  We're working hard to bring you an amazing experience. Our
-                  team is dedicated to developing innovative features that will
-                  enhance your journey with us. We can’t wait to share what
-                  we’ve been building!
+                  {message}
                 </Typography>
               </Marquee>
             </Stack>
