@@ -96,13 +96,13 @@ export default function TodayData() {
           sx={{
             p: 2,
             width: "100%",
-            height: isMobile ? "100%" : "auto",
-            overflowY: "auto",
+            // height: { xs: "100%", md: "auto" },
+            // overflowY: { xs: "auto", md: "unset" },
           }}
         >
           <Card sx={{ p: 2 }}>
             <Stack
-              direction={isMobile ? "column" : "row"}
+              flexDirection={{ xs: "column", md: "row" }}
               justifyContent="space-between"
               alignItems="flex-start"
               spacing={2}
@@ -203,7 +203,7 @@ export default function TodayData() {
 
             {/* Second Row */}
             <Stack
-              direction={isMobile ? "column" : "row"}
+              flexDirection={{ xs: "column", md: "row" }}
               justifyContent="space-between"
               alignItems="flex-start"
               spacing={2}
@@ -291,7 +291,6 @@ export default function TodayData() {
                 height: 170,
                 p: 2,
                 mt: 1,
-                position: "relative", // Add position relative to the Card
               }}
             >
               <Typography variant="h6">Agent (45678)</Typography>
@@ -398,7 +397,7 @@ export default function TodayData() {
           <Card sx={{ mt: 1, p: 1, bgcolor: "#F8FAFC" }}>
             <Typography variant="h6">Top 5 Agents</Typography>
             <Stack
-              flexDirection={"row"}
+              flexDirection={{ xs: "column", md: "row" }}
               mt={3}
               justifyContent={"space-between"}
             >
