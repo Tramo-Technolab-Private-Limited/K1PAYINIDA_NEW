@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import AgentServices from "../AgentServices";
 import { Box, Card, Grid, Stack, Typography } from "@mui/material";
 import DonutView from "../Charts/DonutView";
@@ -6,8 +6,33 @@ import LineView from "../Charts/LineView";
 import TransactionDeatails from "../TransactionDeatails";
 import Scrollbar from "src/components/scrollbar";
 import Marquee from "react-fast-marquee";
+import { useAuthContext } from "src/auth/useAuthContext";
+import { useSnackbar } from "notistack";
 
 function AgentDashboard() {
+  const { user, Api } = useAuthContext();
+  const { enqueueSnackbar } = useSnackbar();
+  const [message, setMessage] = useState([]);
+
+  useEffect(() => {
+    GetMessage();
+  }, []);
+
+  const GetMessage = () => {
+    let token = localStorage.getItem("token");
+    Api(`admin/flash_news?role=${"agent"}`, "GET", "", token).then(
+      (Response: any) => {
+        if (Response.status == 200) {
+          if (Response.data.code == 200) {
+            setMessage(Response.data.data);
+          } else {
+            enqueueSnackbar(Response.data.message, { variant: "error" });
+          }
+        }
+      }
+    );
+  };
+
   return (
     <Scrollbar>
       <div style={{ backgroundColor: "#F1D9FF" }}>
@@ -30,10 +55,7 @@ function AgentDashboard() {
           <Stack justifyContent={"space-between"} flexDirection={"row"} p={1}>
             <Marquee style={{ width: "100%" }}>
               <Typography color="white" variant="h6">
-                We're working hard to bring you an amazing experience. Our team
-                is dedicated to developing innovative features that will enhance
-                your journey with us. We can’t wait to share what we’ve been
-                building!
+                {message}
               </Typography>
             </Marquee>
           </Stack>
