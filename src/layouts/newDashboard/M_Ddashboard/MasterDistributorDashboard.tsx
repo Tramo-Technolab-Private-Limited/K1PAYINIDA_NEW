@@ -25,7 +25,7 @@ import Scrollbar from "src/components/scrollbar";
 import useResponsive from "src/hooks/useResponsive";
 import TodayData from "./TodayData";
 
-function DistributorDashboard() {
+function MaterDistributor() {
   const isMobile = useResponsive("up", "sm");
   const [selectedTab, setSelectedTab] = useState(0);
 
@@ -63,4 +63,4 @@ function DistributorDashboard() {
   );
 }
 
-export default DistributorDashboard;
+export default MaterDistributor;
