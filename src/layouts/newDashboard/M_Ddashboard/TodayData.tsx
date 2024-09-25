@@ -91,7 +91,8 @@ export default function TodayData() {
 
   return (
     <>
-      {/* <Box
+      <Scrollbar>
+        {/* <Box
         sx={{
           p: 2,
           width: "100%",
@@ -99,563 +100,592 @@ export default function TodayData() {
           overflowY: "auto",
         }}
       > */}
-      <Card sx={{ p: 2 }}>
-        <Stack
-          direction={isMobile ? "column" : "row"}
-          justifyContent="space-between"
-          alignItems="flex-start"
-          spacing={2}
+        <Card sx={{ p: 2 }}>
+          <Stack
+            direction={isMobile ? "column" : "row"}
+            justifyContent="space-between"
+            alignItems="flex-start"
+            spacing={2}
+            sx={{
+              flexWrap: "wrap",
+            }}
+          >
+            {/* Success Card */}
+            <Card
+              sx={{
+                width: { xs: "100%", sm: "30%" },
+                height: 150,
+                p: 2,
+                mb: 2,
+              }}
+            >
+              <Stack flexDirection={"row"} gap={1}>
+                <img src={Icon1} alt="Icon1" style={{ width: 40 }} />
+                <Typography variant="h4">Success</Typography>
+              </Stack>
+              <Stack mt={1}>
+                <Typography>Transaction Vol.</Typography>
+                <Typography variant="subtitle1">₹ 10,00,00,000.00</Typography>
+              </Stack>
+              <Stack pl={3}>
+                <Box sx={{ bgcolor: "#36B37E", p: 1 }}>
+                  <Stack flexDirection={"row"} justifyContent={"space-between"}>
+                    <Typography color={"white"}>Transaction Count</Typography>
+                    <Typography color={"white"}>2100</Typography>
+                  </Stack>
+                </Box>
+              </Stack>
+            </Card>
+
+            {/* Pending Card */}
+            <Card
+              sx={{
+                width: { xs: "100%", sm: "30%" },
+                height: 150,
+                p: 2,
+                mb: 2,
+              }}
+            >
+              <Stack flexDirection={"row"} gap={1}>
+                <img src={Icon2} alt="Icon2" style={{ width: 40 }} />
+                <Typography variant="h4">Pending</Typography>
+              </Stack>
+              <Stack mt={1}>
+                <Typography>Transaction Vol.</Typography>
+                <Typography variant="subtitle1">₹ 10,00,00,000.00</Typography>
+              </Stack>
+              <Stack pl={3}>
+                <Box sx={{ bgcolor: "#FFAB00", p: 1 }}>
+                  <Stack flexDirection={"row"} justifyContent={"space-between"}>
+                    <Typography color={"white"}>Transaction Count</Typography>
+                    <Typography color={"white"}>2100</Typography>
+                  </Stack>
+                </Box>
+              </Stack>
+            </Card>
+
+            {/* Failed Card */}
+            <Card
+              sx={{
+                width: { xs: "100%", sm: "30%" },
+                height: 150,
+                p: 2,
+                mb: 2,
+              }}
+            >
+              <Stack flexDirection={"row"} gap={1}>
+                <img src={Icon3} alt="Icon3" style={{ width: 40 }} />
+                <Typography variant="h4">Failed</Typography>
+              </Stack>
+              <Stack mt={1}>
+                <Typography>Transaction Vol.</Typography>
+                <Typography variant="subtitle1">₹ 10,00,00,000.00</Typography>
+              </Stack>
+              <Stack pl={3}>
+                <Box sx={{ bgcolor: "#FF5630", p: 1 }}>
+                  <Stack flexDirection={"row"} justifyContent={"space-between"}>
+                    <Typography color={"white"}>Transaction Count</Typography>
+                    <Typography color={"white"}>2100</Typography>
+                  </Stack>
+                </Box>
+              </Stack>
+            </Card>
+          </Stack>
+
+          {/* Second Row */}
+          <Stack
+            direction={isMobile ? "column" : "row"}
+            justifyContent="space-between"
+            alignItems="flex-start"
+            spacing={2}
+            sx={{ mt: 2 }}
+          >
+            {/* Fund Transfer Card */}
+            <Card
+              sx={{
+                width: { xs: "100%", sm: "30%" },
+                height: 100,
+                p: 2,
+                mb: 2,
+              }}
+            >
+              <Stack
+                flexDirection={"row"}
+                justifyContent={"space-between"}
+                p={2}
+              >
+                <Stack>
+                  <Typography variant="body1">Fund Transfer</Typography>
+                  <Typography variant="subtitle1">₹ 20,00,000.00</Typography>
+                </Stack>
+                <Stack>
+                  <img src={Icon4} alt="Icon4" style={{ width: 50 }} />
+                </Stack>
+              </Stack>
+            </Card>
+
+            {/* Total Commission Earned Card */}
+            <Card
+              sx={{
+                width: { xs: "100%", sm: "30%" },
+                height: 100,
+                p: 2,
+                mb: 2,
+              }}
+            >
+              <Stack
+                flexDirection={"row"}
+                justifyContent={"space-between"}
+                p={2}
+              >
+                <Stack>
+                  <Typography variant="body1">
+                    Total Commission Earned
+                  </Typography>
+                  <Typography variant="subtitle1">₹ 20,00,000.00</Typography>
+                </Stack>
+                <Stack>
+                  <img src={Icon5} alt="Icon5" style={{ width: 50 }} />
+                </Stack>
+              </Stack>
+            </Card>
+
+            {/* Charges Incurred Card */}
+            <Card
+              sx={{
+                width: { xs: "100%", sm: "30%" },
+                height: 100,
+                p: 2,
+                mb: 2,
+              }}
+            >
+              <Stack
+                flexDirection={"row"}
+                justifyContent={"space-between"}
+                p={2}
+              >
+                <Stack>
+                  <Typography variant="body1">Charges Incurred</Typography>
+                  <Typography variant="subtitle1">₹ 20,00,000.00</Typography>
+                </Stack>
+                <Stack>
+                  <img src={Icon6} alt="Icon6" style={{ width: 50 }} />
+                </Stack>
+              </Stack>
+            </Card>
+          </Stack>
+        </Card>
+        <Box sx={{ p: 2, bgcolor: "#F2F2F2DD", mt: 3, borderRadius: 2 }}>
+          <Typography variant="h6">Funds</Typography>
+          <Stack
+            flexDirection={{ xs: "column", md: "row" }}
+            justifyContent={"space-between"}
+          >
+            {" "}
+            <Card
+              sx={{
+                height: 170,
+                p: 2,
+                mt: 1,
+                width: { xs: "100%", sm: "30%" },
+                position: "relative",
+              }}
+            >
+              <Typography variant="h6">Distributor (2452)</Typography>
+              <Stack mt={1}>
+                <Typography mt={1}>Fund Total</Typography>
+                <Typography variant="subtitle1" mt={1}>
+                  ₹ 4,200
+                </Typography>
+              </Stack>
+
+              {/* Bottom Pattis */}
+              <Stack
+                flexDirection={"column"}
+                sx={{
+                  position: "absolute",
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  mt: 5,
+                }}
+              >
+                <Box
+                  sx={{
+                    flex: 1,
+                    backgroundColor: "#974EC4",
+                    color: "white",
+                  }}
+                >
+                  <Stack flexDirection={"row"} gap={30} pl={4}>
+                    <Typography color={"white"}>Main</Typography>
+                    <Typography color={"white"}>₹2100</Typography>
+                  </Stack>
+                </Box>
+                <Box
+                  sx={{
+                    flex: 1,
+                    backgroundColor: "#683886",
+                    color: "white",
+                  }}
+                >
+                  <Stack flexDirection={"row"} gap={30} pl={4}>
+                    <Typography color={"white"}>AEPS</Typography>
+                    <Typography color={"white"}>₹2100</Typography>
+                  </Stack>
+                </Box>
+              </Stack>
+            </Card>
+            <Card
+              sx={{
+                height: 170,
+                p: 2,
+                mt: 1,
+                position: "relative",
+                width: { xs: "100%", sm: "30%" },
+              }}
+            >
+              <Typography variant="h6">Agent (45678)</Typography>
+              <Stack mt={1}>
+                <Typography mt={1}>Fund Total</Typography>
+                <Typography variant="subtitle1" mt={1}>
+                  ₹ 4,200
+                </Typography>
+              </Stack>
+
+              {/* Bottom Pattis */}
+              <Stack
+                flexDirection={"column"}
+                sx={{
+                  position: "absolute",
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  mt: 5,
+                }}
+              >
+                <Box
+                  sx={{
+                    flex: 1,
+                    backgroundColor: "#974EC4",
+                    color: "white",
+                  }}
+                >
+                  <Stack flexDirection={"row"} gap={30} pl={4}>
+                    <Typography color={"white"}>Main</Typography>
+                    <Typography color={"white"}>₹2100</Typography>
+                  </Stack>
+                </Box>
+                <Box
+                  sx={{
+                    flex: 1,
+                    backgroundColor: "#683886",
+                    color: "white",
+                  }}
+                >
+                  <Stack flexDirection={"row"} gap={30} pl={4}>
+                    <Typography color={"white"}>AEPS</Typography>
+                    <Typography color={"white"}>₹2100</Typography>
+                  </Stack>
+                </Box>
+              </Stack>
+            </Card>
+            <Card
+              sx={{
+                height: 170,
+                p: 2,
+                mt: 1,
+                position: "relative",
+                bgcolor: "#E5BBFF",
+                width: { xs: "100%", sm: "30%" },
+              }}
+            >
+              <Stack mt={1}>
+                <Typography mt={1} variant="h6">
+                  Fund Total
+                </Typography>
+                <Typography variant="h6" mt={1}>
+                  ₹ 10,00,00,000.00
+                </Typography>
+              </Stack>
+            </Card>
+          </Stack>
+        </Box>
+        <Card sx={{ mt: 4 }}>
+          <TableContainer component={Paper}>
+            <Table
+              sx={{ minWidth: 650 }}
+              aria-label="financial dashboard table"
+            >
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell>Product</StyledTableCell>
+                  <StyledTableCell align="center" colSpan={2}>
+                    Business Volume
+                  </StyledTableCell>
+                  <StyledTableCell align="center" colSpan={2}>
+                    Success
+                  </StyledTableCell>
+                  <StyledTableCell align="center" colSpan={2}>
+                    Pending
+                  </StyledTableCell>
+                  <StyledTableCell align="center" colSpan={2}>
+                    Failed
+                  </StyledTableCell>
+                </TableRow>
+                <TableRow sx={{ bgcolor: "#F5F2FF" }}>
+                  <TableCell />
+                  <TableCell align="right">Volume</TableCell>
+                  <TableCell align="right">Count</TableCell>
+                  <TableCell align="right">Volume</TableCell>
+                  <TableCell align="right">Count</TableCell>
+                  <TableCell align="right">Volume</TableCell>
+                  <TableCell align="right">Count</TableCell>
+                  <TableCell align="right">Volume</TableCell>
+                  <TableCell align="right">Count</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {data.map((row) => (
+                  <TableRow key={row.product}>
+                    <TableCell component="th" scope="row">
+                      <ColorDot color={row.color} />
+                      {row.product}
+                    </TableCell>
+                    <TableCell align="right">₹234</TableCell>
+                    <TableCell align="right">23</TableCell>
+                    <TableCell align="right">₹234</TableCell>
+                    <TableCell align="right">23</TableCell>
+                    <TableCell align="right">₹234</TableCell>
+                    <TableCell align="right">23</TableCell>
+                    <TableCell align="right">₹234</TableCell>
+                    <TableCell align="right">23</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Card>
+        <Card sx={{ mt: 1, p: 1, bgcolor: "#F8FAFC" }}>
+          <Typography variant="h6">Top 5 Distributors</Typography>
+          <Stack
+            flexDirection={{ xs: "column", md: "row" }}
+            mt={3}
+            justifyContent={"space-between"}
+          >
+            <Card
+              sx={{
+                width: { xs: "100%", sm: "18%" },
+                height: 200, // Adjust height for the image
+                p: 2,
+                mb: 2,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                textAlign: "center",
+              }}
+            >
+              <Typography variant="subtitle1">{name}</Typography>
+              <Typography variant="subtitle2">Rank 1</Typography>
+              <Typography variant="subtitle2">Transaction Vol.</Typography>
+              <Typography variant="h6">₹ 10,00,00,000.00</Typography>
+            </Card>
+            <Card
+              sx={{
+                width: { xs: "100%", sm: "18%" },
+                height: 200,
+                p: 2,
+                mb: 2,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                textAlign: "center",
+              }}
+            >
+              <Typography variant="subtitle1">{name}</Typography>
+              <Typography variant="subtitle2">Rank 2</Typography>
+              <Typography variant="subtitle2">Transaction Vol.</Typography>
+              <Typography variant="h6">₹ 10,00,00,000.00</Typography>
+            </Card>
+            <Card
+              sx={{
+                width: { xs: "100%", sm: "18%" },
+                height: 200,
+                p: 2,
+                mb: 2,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                textAlign: "center",
+              }}
+            >
+              <Typography variant="subtitle1">{name}</Typography>
+              <Typography variant="subtitle2">Rank 3</Typography>
+              <Typography variant="subtitle2">Transaction Vol.</Typography>
+              <Typography variant="h6">₹ 10,00,00,000.00</Typography>
+            </Card>
+            <Card
+              sx={{
+                width: { xs: "100%", sm: "18%" },
+                height: 200,
+                p: 2,
+                mb: 2,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                textAlign: "center",
+              }}
+            >
+              <Typography variant="subtitle1">{name}</Typography>
+              <Typography variant="subtitle2">Rank 4</Typography>
+              <Typography variant="subtitle2">Transaction Vol.</Typography>
+              <Typography variant="h6">₹ 10,00,00,000.00</Typography>
+            </Card>
+            <Card
+              sx={{
+                width: { xs: "100%", sm: "18%" },
+                height: 200,
+                p: 2,
+                mb: 2,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                textAlign: "center",
+              }}
+            >
+              <Typography variant="subtitle1">{name}</Typography>
+              <Typography variant="subtitle2">Rank 5</Typography>
+              <Typography variant="subtitle2">Transaction Vol.</Typography>
+              <Typography variant="h6">₹ 10,00,00,000.00</Typography>
+            </Card>
+          </Stack>
+        </Card>
+        <Card sx={{ mt: 1, p: 1, bgcolor: "#F8FAFC" }}>
+          <Typography variant="h6">Top 5 Agents</Typography>
+          <Stack
+            flexDirection={{ xs: "column", md: "row" }}
+            mt={3}
+            justifyContent={"space-between"}
+          >
+            <Card
+              sx={{
+                width: { xs: "100%", sm: "18%" },
+                height: 200,
+                p: 2,
+                mb: 2,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                textAlign: "center",
+              }}
+            >
+              <Typography variant="subtitle1">{name}</Typography>
+              <Typography variant="subtitle2">Rank 1</Typography>
+              <Typography variant="subtitle2">Transaction Vol.</Typography>
+              <Typography variant="h6">₹ 10,00,00,000.00</Typography>
+            </Card>
+            <Card
+              sx={{
+                width: { xs: "100%", sm: "18%" },
+                height: 200,
+                p: 2,
+                mb: 2,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                textAlign: "center",
+              }}
+            >
+              <Typography variant="subtitle1">{name}</Typography>
+              <Typography variant="subtitle2">Rank 2</Typography>
+              <Typography variant="subtitle2">Transaction Vol.</Typography>
+              <Typography variant="h6">₹ 10,00,00,000.00</Typography>
+            </Card>
+            <Card
+              sx={{
+                width: { xs: "100%", sm: "18%" },
+                height: 200,
+                p: 2,
+                mb: 2,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                textAlign: "center",
+              }}
+            >
+              <Typography variant="subtitle1">{name}</Typography>
+              <Typography variant="subtitle2">Rank 3</Typography>
+              <Typography variant="subtitle2">Transaction Vol.</Typography>
+              <Typography variant="h6">₹ 10,00,00,000.00</Typography>
+            </Card>
+            <Card
+              sx={{
+                width: { xs: "100%", sm: "18%" },
+                height: 200,
+                p: 2,
+                mb: 2,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                textAlign: "center",
+              }}
+            >
+              <Typography variant="subtitle1">{name}</Typography>
+              <Typography variant="subtitle2">Rank 4</Typography>
+              <Typography variant="subtitle2">Transaction Vol.</Typography>
+              <Typography variant="h6">₹ 10,00,00,000.00</Typography>
+            </Card>
+            <Card
+              sx={{
+                width: { xs: "100%", sm: "18%" },
+                height: 200, // Adjust height for the image
+                p: 2,
+                mb: 2,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                textAlign: "center",
+              }}
+            >
+              <Typography variant="subtitle1">{name}</Typography>
+              <Typography variant="subtitle2">Rank 5</Typography>
+              <Typography variant="subtitle2">Transaction Vol.</Typography>
+              <Typography variant="h6">₹ 10,00,00,000.00</Typography>
+            </Card>
+          </Stack>
+        </Card>
+        <Box
           sx={{
-            flexWrap: "wrap",
+            bgcolor: "#5C2B78",
+            height: "5vh",
+            position: "fixed",
+            bottom: 2,
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: "100%",
+            zIndex: 1000,
           }}
         >
-          {/* Success Card */}
-          <Card
-            sx={{
-              width: { xs: "100%", sm: "30%" },
-              height: 150,
-              p: 2,
-              mb: 2,
-            }}
-          >
-            <Stack flexDirection={"row"} gap={1}>
-              <img src={Icon1} alt="Icon1" style={{ width: 40 }} />
-              <Typography variant="h4">Success</Typography>
-            </Stack>
-            <Stack mt={1}>
-              <Typography>Transaction Vol.</Typography>
-              <Typography variant="subtitle1">₹ 10,00,00,000.00</Typography>
-            </Stack>
-            <Stack pl={3}>
-              <Box sx={{ bgcolor: "#36B37E", p: 1 }}>
-                <Stack flexDirection={"row"} justifyContent={"space-between"}>
-                  <Typography color={"white"}>Transaction Count</Typography>
-                  <Typography color={"white"}>2100</Typography>
-                </Stack>
-              </Box>
-            </Stack>
-          </Card>
-
-          {/* Pending Card */}
-          <Card
-            sx={{
-              width: { xs: "100%", sm: "30%" },
-              height: 150,
-              p: 2,
-              mb: 2,
-            }}
-          >
-            <Stack flexDirection={"row"} gap={1}>
-              <img src={Icon2} alt="Icon2" style={{ width: 40 }} />
-              <Typography variant="h4">Pending</Typography>
-            </Stack>
-            <Stack mt={1}>
-              <Typography>Transaction Vol.</Typography>
-              <Typography variant="subtitle1">₹ 10,00,00,000.00</Typography>
-            </Stack>
-            <Stack pl={3}>
-              <Box sx={{ bgcolor: "#FFAB00", p: 1 }}>
-                <Stack flexDirection={"row"} justifyContent={"space-between"}>
-                  <Typography color={"white"}>Transaction Count</Typography>
-                  <Typography color={"white"}>2100</Typography>
-                </Stack>
-              </Box>
-            </Stack>
-          </Card>
-
-          {/* Failed Card */}
-          <Card
-            sx={{
-              width: { xs: "100%", sm: "30%" },
-              height: 150,
-              p: 2,
-              mb: 2,
-            }}
-          >
-            <Stack flexDirection={"row"} gap={1}>
-              <img src={Icon3} alt="Icon3" style={{ width: 40 }} />
-              <Typography variant="h4">Failed</Typography>
-            </Stack>
-            <Stack mt={1}>
-              <Typography>Transaction Vol.</Typography>
-              <Typography variant="subtitle1">₹ 10,00,00,000.00</Typography>
-            </Stack>
-            <Stack pl={3}>
-              <Box sx={{ bgcolor: "#FF5630", p: 1 }}>
-                <Stack flexDirection={"row"} justifyContent={"space-between"}>
-                  <Typography color={"white"}>Transaction Count</Typography>
-                  <Typography color={"white"}>2100</Typography>
-                </Stack>
-              </Box>
-            </Stack>
-          </Card>
-        </Stack>
-
-        {/* Second Row */}
-        <Stack
-          direction={isMobile ? "column" : "row"}
-          justifyContent="space-between"
-          alignItems="flex-start"
-          spacing={2}
-          sx={{ mt: 2 }}
-        >
-          {/* Fund Transfer Card */}
-          <Card
-            sx={{
-              width: { xs: "100%", sm: "30%" },
-              height: 100,
-              p: 2,
-              mb: 2,
-            }}
-          >
-            <Stack flexDirection={"row"} justifyContent={"space-between"} p={2}>
-              <Stack>
-                <Typography variant="body1">Fund Transfer</Typography>
-                <Typography variant="subtitle1">₹ 20,00,000.00</Typography>
-              </Stack>
-              <Stack>
-                <img src={Icon4} alt="Icon4" style={{ width: 50 }} />
-              </Stack>
-            </Stack>
-          </Card>
-
-          {/* Total Commission Earned Card */}
-          <Card
-            sx={{
-              width: { xs: "100%", sm: "30%" },
-              height: 100,
-              p: 2,
-              mb: 2,
-            }}
-          >
-            <Stack flexDirection={"row"} justifyContent={"space-between"} p={2}>
-              <Stack>
-                <Typography variant="body1">Total Commission Earned</Typography>
-                <Typography variant="subtitle1">₹ 20,00,000.00</Typography>
-              </Stack>
-              <Stack>
-                <img src={Icon5} alt="Icon5" style={{ width: 50 }} />
-              </Stack>
-            </Stack>
-          </Card>
-
-          {/* Charges Incurred Card */}
-          <Card
-            sx={{
-              width: { xs: "100%", sm: "30%" },
-              height: 100,
-              p: 2,
-              mb: 2,
-            }}
-          >
-            <Stack flexDirection={"row"} justifyContent={"space-between"} p={2}>
-              <Stack>
-                <Typography variant="body1">Charges Incurred</Typography>
-                <Typography variant="subtitle1">₹ 20,00,000.00</Typography>
-              </Stack>
-              <Stack>
-                <img src={Icon6} alt="Icon6" style={{ width: 50 }} />
-              </Stack>
-            </Stack>
-          </Card>
-        </Stack>
-      </Card>
-      <Box sx={{ p: 2, bgcolor: "#F2F2F2DD", mt: 3, borderRadius: 2 }}>
-        <Typography variant="h6">Funds</Typography>
-        <Stack flexDirection={"row"} justifyContent={"space-between"}>
-          {" "}
-          <Card
-            sx={{
-              height: 170,
-              p: 2,
-              mt: 1,
-              width: { xs: "100%", sm: "30%" },
-              position: "relative",
-            }}
-          >
-            <Typography variant="h6">Distributor (2452)</Typography>
-            <Stack mt={1}>
-              <Typography mt={1}>Fund Total</Typography>
-              <Typography variant="subtitle1" mt={1}>
-                ₹ 4,200
+          <Stack justifyContent={"space-between"} flexDirection={"row"} p={1}>
+            <Marquee style={{ width: "100%" }}>
+              <Typography color="white" variant="h6">
+                {message}
               </Typography>
-            </Stack>
-
-            {/* Bottom Pattis */}
-            <Stack
-              flexDirection={"column"}
-              sx={{
-                position: "absolute",
-                bottom: 0,
-                left: 0,
-                right: 0,
-                mt: 5,
-              }}
-            >
-              <Box
-                sx={{
-                  flex: 1,
-                  backgroundColor: "#974EC4",
-                  color: "white",
-                }}
-              >
-                <Stack flexDirection={"row"} gap={30} pl={4}>
-                  <Typography color={"white"}>Main</Typography>
-                  <Typography color={"white"}>₹2100</Typography>
-                </Stack>
-              </Box>
-              <Box
-                sx={{
-                  flex: 1,
-                  backgroundColor: "#683886",
-                  color: "white",
-                }}
-              >
-                <Stack flexDirection={"row"} gap={30} pl={4}>
-                  <Typography color={"white"}>AEPS</Typography>
-                  <Typography color={"white"}>₹2100</Typography>
-                </Stack>
-              </Box>
-            </Stack>
-          </Card>
-          <Card
-            sx={{
-              height: 170,
-              p: 2,
-              mt: 1,
-              position: "relative",
-              width: { xs: "100%", sm: "30%" },
-            }}
-          >
-            <Typography variant="h6">Agent (45678)</Typography>
-            <Stack mt={1}>
-              <Typography mt={1}>Fund Total</Typography>
-              <Typography variant="subtitle1" mt={1}>
-                ₹ 4,200
-              </Typography>
-            </Stack>
-
-            {/* Bottom Pattis */}
-            <Stack
-              flexDirection={"column"}
-              sx={{
-                position: "absolute",
-                bottom: 0,
-                left: 0,
-                right: 0,
-                mt: 5,
-              }}
-            >
-              <Box
-                sx={{
-                  flex: 1,
-                  backgroundColor: "#974EC4",
-                  color: "white",
-                }}
-              >
-                <Stack flexDirection={"row"} gap={30} pl={4}>
-                  <Typography color={"white"}>Main</Typography>
-                  <Typography color={"white"}>₹2100</Typography>
-                </Stack>
-              </Box>
-              <Box
-                sx={{
-                  flex: 1,
-                  backgroundColor: "#683886",
-                  color: "white",
-                }}
-              >
-                <Stack flexDirection={"row"} gap={30} pl={4}>
-                  <Typography color={"white"}>AEPS</Typography>
-                  <Typography color={"white"}>₹2100</Typography>
-                </Stack>
-              </Box>
-            </Stack>
-          </Card>
-          <Card
-            sx={{
-              height: 170,
-              p: 2,
-              mt: 1,
-              position: "relative",
-              bgcolor: "#E5BBFF",
-              width: { xs: "100%", sm: "30%" },
-            }}
-          >
-            <Stack mt={1}>
-              <Typography mt={1} variant="h6">
-                Fund Total
-              </Typography>
-              <Typography variant="h6" mt={1}>
-                ₹ 10,00,00,000.00
-              </Typography>
-            </Stack>
-          </Card>
-        </Stack>
-      </Box>
-      <Card sx={{ mt: 4 }}>
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="financial dashboard table">
-            <TableHead>
-              <TableRow>
-                <StyledTableCell>Product</StyledTableCell>
-                <StyledTableCell align="center" colSpan={2}>
-                  Business Volume
-                </StyledTableCell>
-                <StyledTableCell align="center" colSpan={2}>
-                  Success
-                </StyledTableCell>
-                <StyledTableCell align="center" colSpan={2}>
-                  Pending
-                </StyledTableCell>
-                <StyledTableCell align="center" colSpan={2}>
-                  Failed
-                </StyledTableCell>
-              </TableRow>
-              <TableRow sx={{ bgcolor: "#F5F2FF" }}>
-                <TableCell />
-                <TableCell align="right">Volume</TableCell>
-                <TableCell align="right">Count</TableCell>
-                <TableCell align="right">Volume</TableCell>
-                <TableCell align="right">Count</TableCell>
-                <TableCell align="right">Volume</TableCell>
-                <TableCell align="right">Count</TableCell>
-                <TableCell align="right">Volume</TableCell>
-                <TableCell align="right">Count</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data.map((row) => (
-                <TableRow key={row.product}>
-                  <TableCell component="th" scope="row">
-                    <ColorDot color={row.color} />
-                    {row.product}
-                  </TableCell>
-                  <TableCell align="right">₹234</TableCell>
-                  <TableCell align="right">23</TableCell>
-                  <TableCell align="right">₹234</TableCell>
-                  <TableCell align="right">23</TableCell>
-                  <TableCell align="right">₹234</TableCell>
-                  <TableCell align="right">23</TableCell>
-                  <TableCell align="right">₹234</TableCell>
-                  <TableCell align="right">23</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Card>
-      <Card sx={{ mt: 1, p: 1, bgcolor: "#F8FAFC" }}>
-        <Typography variant="h6">Top 5 Distributors</Typography>
-        <Stack flexDirection={"row"} mt={3} justifyContent={"space-between"}>
-          <Card
-            sx={{
-              width: { xs: "100%", sm: "18%" },
-              height: 200, // Adjust height for the image
-              p: 2,
-              mb: 2,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              textAlign: "center",
-            }}
-          >
-            <Typography variant="subtitle1">{name}</Typography>
-            <Typography variant="subtitle2">Rank 1</Typography>
-            <Typography variant="subtitle2">Transaction Vol.</Typography>
-            <Typography variant="h6">₹ 10,00,00,000.00</Typography>
-          </Card>
-          <Card
-            sx={{
-              width: { xs: "100%", sm: "18%" },
-              height: 200,
-              p: 2,
-              mb: 2,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              textAlign: "center",
-            }}
-          >
-            <Typography variant="subtitle1">{name}</Typography>
-            <Typography variant="subtitle2">Rank 2</Typography>
-            <Typography variant="subtitle2">Transaction Vol.</Typography>
-            <Typography variant="h6">₹ 10,00,00,000.00</Typography>
-          </Card>
-          <Card
-            sx={{
-              width: { xs: "100%", sm: "18%" },
-              height: 200,
-              p: 2,
-              mb: 2,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              textAlign: "center",
-            }}
-          >
-            <Typography variant="subtitle1">{name}</Typography>
-            <Typography variant="subtitle2">Rank 3</Typography>
-            <Typography variant="subtitle2">Transaction Vol.</Typography>
-            <Typography variant="h6">₹ 10,00,00,000.00</Typography>
-          </Card>
-          <Card
-            sx={{
-              width: { xs: "100%", sm: "18%" },
-              height: 200,
-              p: 2,
-              mb: 2,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              textAlign: "center",
-            }}
-          >
-            <Typography variant="subtitle1">{name}</Typography>
-            <Typography variant="subtitle2">Rank 4</Typography>
-            <Typography variant="subtitle2">Transaction Vol.</Typography>
-            <Typography variant="h6">₹ 10,00,00,000.00</Typography>
-          </Card>
-          <Card
-            sx={{
-              width: { xs: "100%", sm: "18%" },
-              height: 200,
-              p: 2,
-              mb: 2,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              textAlign: "center",
-            }}
-          >
-            <Typography variant="subtitle1">{name}</Typography>
-            <Typography variant="subtitle2">Rank 5</Typography>
-            <Typography variant="subtitle2">Transaction Vol.</Typography>
-            <Typography variant="h6">₹ 10,00,00,000.00</Typography>
-          </Card>
-        </Stack>
-      </Card>
-      <Card sx={{ mt: 1, p: 1, bgcolor: "#F8FAFC" }}>
-        <Typography variant="h6">Top 5 Agents</Typography>
-        <Stack flexDirection={"row"} mt={3} justifyContent={"space-between"}>
-          <Card
-            sx={{
-              width: { xs: "100%", sm: "18%" },
-              height: 200,
-              p: 2,
-              mb: 2,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              textAlign: "center",
-            }}
-          >
-            <Typography variant="subtitle1">{name}</Typography>
-            <Typography variant="subtitle2">Rank 1</Typography>
-            <Typography variant="subtitle2">Transaction Vol.</Typography>
-            <Typography variant="h6">₹ 10,00,00,000.00</Typography>
-          </Card>
-          <Card
-            sx={{
-              width: { xs: "100%", sm: "18%" },
-              height: 200,
-              p: 2,
-              mb: 2,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              textAlign: "center",
-            }}
-          >
-            <Typography variant="subtitle1">{name}</Typography>
-            <Typography variant="subtitle2">Rank 2</Typography>
-            <Typography variant="subtitle2">Transaction Vol.</Typography>
-            <Typography variant="h6">₹ 10,00,00,000.00</Typography>
-          </Card>
-          <Card
-            sx={{
-              width: { xs: "100%", sm: "18%" },
-              height: 200,
-              p: 2,
-              mb: 2,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              textAlign: "center",
-            }}
-          >
-            <Typography variant="subtitle1">{name}</Typography>
-            <Typography variant="subtitle2">Rank 3</Typography>
-            <Typography variant="subtitle2">Transaction Vol.</Typography>
-            <Typography variant="h6">₹ 10,00,00,000.00</Typography>
-          </Card>
-          <Card
-            sx={{
-              width: { xs: "100%", sm: "18%" },
-              height: 200,
-              p: 2,
-              mb: 2,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              textAlign: "center",
-            }}
-          >
-            <Typography variant="subtitle1">{name}</Typography>
-            <Typography variant="subtitle2">Rank 4</Typography>
-            <Typography variant="subtitle2">Transaction Vol.</Typography>
-            <Typography variant="h6">₹ 10,00,00,000.00</Typography>
-          </Card>
-          <Card
-            sx={{
-              width: { xs: "100%", sm: "18%" },
-              height: 200, // Adjust height for the image
-              p: 2,
-              mb: 2,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              textAlign: "center",
-            }}
-          >
-            <Typography variant="subtitle1">{name}</Typography>
-            <Typography variant="subtitle2">Rank 5</Typography>
-            <Typography variant="subtitle2">Transaction Vol.</Typography>
-            <Typography variant="h6">₹ 10,00,00,000.00</Typography>
-          </Card>
-        </Stack>
-      </Card>
-      <Box
-        sx={{
-          bgcolor: "#5C2B78",
-          height: "5vh",
-          position: "fixed",
-          bottom: 2,
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: "100%",
-          zIndex: 1000,
-        }}
-      >
-        <Stack justifyContent={"space-between"} flexDirection={"row"} p={1}>
-          <Marquee style={{ width: "100%" }}>
-            <Typography color="white" variant="h6">
-              {message}
-            </Typography>
-          </Marquee>
-        </Stack>
-      </Box>
-      {/* </Box> */}
+            </Marquee>
+          </Stack>
+        </Box>
+        {/* </Box> */}
+      </Scrollbar>
     </>
   );
 }
