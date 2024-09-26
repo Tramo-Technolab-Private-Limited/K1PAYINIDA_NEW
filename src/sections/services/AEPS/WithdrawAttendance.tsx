@@ -162,7 +162,7 @@ export default function WithdrawAttendance(props: any) {
         >
           <Typography variant="h4">
             {" "}
-            Plaese mark the attendance to use{" "}
+            Please mark the attendance to use{" "}
             {props.attendance == "AEPS" ? "AEPS" : "Aadhar Pay"}{" "}
           </Typography>
           <RHFSelect
