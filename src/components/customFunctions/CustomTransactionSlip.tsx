@@ -262,9 +262,10 @@ function CustomTransactionSlip({ newRow, handleCloseRecipt }: any) {
                       <Typography variant="body2" sx={{ lineHeight: 1.2 }}>
                         CA Number :{" "}
                         <span style={{ fontWeight: 500 }}>
-                          {newRow?.categoryName?.toLowerCase() == "bill payment"
-                            ? newRow?.bbpsBillFetchData?.billNumber
-                            : newRow?.operator?.key2}
+                          {" "}
+                          {newRow[0]?.categoryName?.toLowerCase() == "bill payment"
+                            ? newRow[0]?.bbpsBillFetchData?.billNumber
+                            : newRow[0]?.operator?.key2}
                         </span>
                       </Typography>
                     </React.Fragment>
