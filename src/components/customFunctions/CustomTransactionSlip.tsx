@@ -262,7 +262,7 @@ function CustomTransactionSlip({ newRow, handleCloseRecipt }: any) {
                       <Typography variant="body2" sx={{ lineHeight: 1.2 }}>
                         CA Number :{" "}
                         <span style={{ fontWeight: 500 }}>
-                          {newRow?.categoryName === "BILL PAYMENT"
+                          {newRow?.categoryName?.toLowerCase() == "bill payment"
                             ? newRow?.bbpsBillFetchData?.billNumber
                             : newRow?.operator?.key2}
                         </span>
