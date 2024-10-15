@@ -180,7 +180,7 @@ function TransactionDeatails() {
             <Button variant="contained" sx={{ bgcolor: "#5C2B78" }}>
               Today
             </Button>
-            {/* <Tab value="daily" label="Today" /> */}
+            <Tab value="daily" label="Today" />
             {/* <Tab value="weekly" label="Weekly" />
               <Tab value="monthly" label="Monthly" /> */}
             {/* </Tabs> */}
