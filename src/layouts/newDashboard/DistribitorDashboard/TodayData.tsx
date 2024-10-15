@@ -227,7 +227,8 @@ export default function TodayData() {
                     <Typography variant="body1">Fund Transfer</Typography>
                     <Typography variant="subtitle1">₹ 20,00,000.00</Typography>
                   </Stack>
-                  <Stack>
+                  <Stack> 
+                    
                     <img src={Icon4} alt="Icon4" style={{ width: 50 }} />
                   </Stack>
                 </Stack>
