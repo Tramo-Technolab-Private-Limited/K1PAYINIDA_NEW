@@ -14,24 +14,24 @@ function AgentDashboard() {
   const { enqueueSnackbar } = useSnackbar();
   const [message, setMessage] = useState([]);
 
-  useEffect(() => {
-    GetMessage();
-  }, []);
+  // useEffect(() => {
+  //   GetMessage();
+  // }, []);
 
-  const GetMessage = () => {
-    let token = localStorage.getItem("token");
-    Api(`admin/flash_news?role=${"agent"}`, "GET", "", token).then(
-      (Response: any) => {
-        if (Response.status == 200) {
-          if (Response.data.code == 200) {
-            setMessage(Response.data.data);
-          } else {
-            enqueueSnackbar(Response.data.message, { variant: "error" });
-          }
-        }
-      }
-    );
-  };
+  // const GetMessage = () => {
+  //   let token = localStorage.getItem("token");
+  //   Api(`admin/flash_news?role=${"agent"}`, "GET", "", token).then(
+  //     (Response: any) => {
+  //       if (Response.status == 200) {
+  //         if (Response.data.code == 200) {
+  //           setMessage(Response.data.data);
+  //         } else {
+  //           enqueueSnackbar(Response.data.message, { variant: "error" });
+  //         }
+  //       }
+  //     }
+  //   );
+  // };
 
   return (
     <Scrollbar>
