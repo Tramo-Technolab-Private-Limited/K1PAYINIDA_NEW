@@ -60,7 +60,7 @@ function TransactionDeatails() {
     getTotalCharges();
     getTotalRefund();
     getTotalComission();
-  }, [value]);
+  }, []);
 
   const getTransactionList = () => {
     setIsLoading(true);
@@ -69,8 +69,15 @@ function TransactionDeatails() {
       (Response: any) => {
         if (Response.status == 200) {
           if (Response.data.code == 200) {
-            setTransactions(Response?.data?.totalTransactions);
-            settotalvolume(Response?.data?.volume);
+            const totalTransactions = Array.isArray(
+              Response.data.totalTransactions
+            )
+              ? Response.data.totalTransactions
+              : [];
+            const totalVolume = Response.data.volume || 0;
+
+            setTransactions(totalTransactions);
+            settotalvolume(totalVolume);
             console.log("totalTransactions=-=======", Response);
             setIsLoading(false);
           }
@@ -206,10 +213,10 @@ function TransactionDeatails() {
                         sx={{ height: "150px" }}
                         amountType="Total Transactions"
                         Amount={
-                          typeof transaction === "object"
-                            ? JSON.stringify(transaction)
+                          Array.isArray(transaction)
+                            ? transaction.length
                             : transaction
-                        } 
+                        }
                       />
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
