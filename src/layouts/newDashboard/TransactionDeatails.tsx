@@ -24,18 +24,18 @@ import DonutView from "./Charts/DonutView";
 function TransactionDeatails() {
   const { user, logout, Api, UploadFileApi } = useAuthContext();
   const [value, setValue] = useState("daily");
-  const [transaction, setTransactions] = useState<any>([]);
-  const [refund, settotalRefund] = useState<any>([]);
+  const [transaction, setTransactions] = useState<any>(0);
+  const [refund, settotalRefund] = useState<any>(0);
   const [Commission, settotalComission] = useState<any>(0);
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const [volume, settotalvolume] = useState([]);
-  const [totalSuccess, setTotalSuccess] = useState<any>([]);
-  const [totalFail, setTotalFail] = useState<any>([]);
-  const [totalpending, settotalPending] = useState<any>([]);
-  const [totalCharge, settotalCharges] = useState<any>([]);
+  const [volume, settotalvolume] = useState(0);
+  const [totalSuccess, setTotalSuccess] = useState<any>(0);
+  const [totalFail, setTotalFail] = useState<any>(0);
+  const [totalpending, settotalPending] = useState<any>(0);
+  const [totalCharge, settotalCharges] = useState<any>(0);
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
@@ -70,9 +70,7 @@ function TransactionDeatails() {
       (Response: any) => {
         if (Response.status == 200) {
           if (Response.data.code == 200) {
-          
-
-            setTransactions(Response.data.data);
+            setTransactions(Response.data.totalTransactions);
             settotalvolume(Response.data.volume);
             console.log("totalTransactions=-=======", Response);
             setIsLoading(false);
@@ -89,7 +87,7 @@ function TransactionDeatails() {
       (Response: any) => {
         if (Response.status == 200) {
           if (Response.data.code == 200) {
-            setTotalSuccess(Response?.data?.data);
+            setTotalSuccess(Response?.data?.totalTransactions);
           }
         }
       }
@@ -101,7 +99,7 @@ function TransactionDeatails() {
       (Response: any) => {
         if (Response.status == 200) {
           if (Response.data.code == 200) {
-            setTotalFail(Response?.data?.data);
+            setTotalFail(Response?.data?.totalTransactions);
           }
         }
       }
@@ -114,7 +112,7 @@ function TransactionDeatails() {
       (Response: any) => {
         if (Response.status == 200) {
           if (Response.data.code == 200) {
-            settotalPending(Response?.data?.data);
+            settotalPending(Response?.data?.totalTransactions);
           }
         }
       }
@@ -127,7 +125,7 @@ function TransactionDeatails() {
       (Response: any) => {
         if (Response.status == 200) {
           if (Response.data.code == 200) {
-            settotalCharges(Response?.data?.data);
+            settotalCharges(Response?.data?.totalTransactions);
           }
         }
       }
@@ -140,7 +138,7 @@ function TransactionDeatails() {
       (Response: any) => {
         if (Response.status == 200) {
           if (Response.data.code == 200) {
-            settotalRefund(Response?.data?.data);
+            settotalRefund(Response?.data?.totalTransactions);
           }
         }
       }
@@ -208,11 +206,7 @@ function TransactionDeatails() {
                       <AmountCustomCard
                         sx={{ height: "150px" }}
                         amountType="Total Transactions"
-                        Amount={
-                          Array.isArray(transaction)
-                            ? transaction.length
-                            : transaction
-                        }
+                        Amount={transaction || 0}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
