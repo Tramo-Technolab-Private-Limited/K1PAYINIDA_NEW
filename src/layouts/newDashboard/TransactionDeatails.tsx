@@ -52,15 +52,16 @@ function TransactionDeatails() {
     p: 4,
     overflow: "auto",
   };
-  useEffect(() => {
-    getTransactionList();
-    getTotalSuccess();
-    getTotalFail();
-    getTotalPending();
-    getTotalCharges();
-    getTotalRefund();
-    getTotalComission();
-  }, [value]);
+  
+  // useEffect(() => {
+  //   getTransactionList();
+  //   getTotalSuccess();
+  //   getTotalFail();
+  //   getTotalPending();
+  //   getTotalCharges();
+  //   getTotalRefund();
+  //   getTotalComission();
+  // }, [value]);
 
   const getTransactionList = () => {
     setIsLoading(true);
@@ -155,10 +156,6 @@ function TransactionDeatails() {
         }
       }
     );
-  };
-
-  const handleClickB = () => {
-    console.log("Clicked in Component B");
   };
 
   return (
