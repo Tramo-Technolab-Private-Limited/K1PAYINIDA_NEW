@@ -20,12 +20,13 @@ import AmountCustomCard from "./AmountCustomCard";
 import ApiDataLoading from "src/components/customFunctions/ApiDataLoading";
 import { useAuthContext } from "src/auth/useAuthContext";
 import DonutView from "./Charts/DonutView";
+
 function TransactionDeatails() {
   const { user, logout, Api, UploadFileApi } = useAuthContext();
   const [value, setValue] = useState("daily");
   const [transaction, setTransactions] = useState<any>([]);
   const [refund, settotalRefund] = useState<any>([]);
-  const [Commission, settotalComission] = useState<any>([]);
+  const [Commission, settotalComission] = useState<any>(0);
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -69,15 +70,10 @@ function TransactionDeatails() {
       (Response: any) => {
         if (Response.status == 200) {
           if (Response.data.code == 200) {
-            const totalTransactions = Array.isArray(
-              Response.data.totalTransactions
-            )
-              ? Response.data.totalTransactions
-              : [];
-            const totalVolume = Response.data.volume || 0;
+          
 
-            setTransactions(totalTransactions);
-            settotalvolume(totalVolume);
+            setTransactions(Response.data.data);
+            settotalvolume(Response.data.volume);
             console.log("totalTransactions=-=======", Response);
             setIsLoading(false);
           }
@@ -93,7 +89,7 @@ function TransactionDeatails() {
       (Response: any) => {
         if (Response.status == 200) {
           if (Response.data.code == 200) {
-            setTotalSuccess(Response?.data?.totalTransactions);
+            setTotalSuccess(Response?.data?.data);
           }
         }
       }
@@ -105,7 +101,7 @@ function TransactionDeatails() {
       (Response: any) => {
         if (Response.status == 200) {
           if (Response.data.code == 200) {
-            setTotalFail(Response?.data?.totalTransactions);
+            setTotalFail(Response?.data?.data);
           }
         }
       }
@@ -118,7 +114,7 @@ function TransactionDeatails() {
       (Response: any) => {
         if (Response.status == 200) {
           if (Response.data.code == 200) {
-            settotalPending(Response?.data?.totalTransactions);
+            settotalPending(Response?.data?.data);
           }
         }
       }
@@ -131,7 +127,7 @@ function TransactionDeatails() {
       (Response: any) => {
         if (Response.status == 200) {
           if (Response.data.code == 200) {
-            settotalCharges(Response?.data?.totalTransactions);
+            settotalCharges(Response?.data?.data);
           }
         }
       }
@@ -144,7 +140,7 @@ function TransactionDeatails() {
       (Response: any) => {
         if (Response.status == 200) {
           if (Response.data.code == 200) {
-            settotalRefund(Response?.data?.totalTransactions);
+            settotalRefund(Response?.data?.data);
           }
         }
       }
