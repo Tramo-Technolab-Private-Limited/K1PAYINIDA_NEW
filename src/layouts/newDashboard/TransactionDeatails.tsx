@@ -52,16 +52,15 @@ function TransactionDeatails() {
     p: 4,
     overflow: "auto",
   };
-  
-  // useEffect(() => {
-  //   getTransactionList();
-  //   getTotalSuccess();
-  //   getTotalFail();
-  //   getTotalPending();
-  //   getTotalCharges();
-  //   getTotalRefund();
-  //   getTotalComission();
-  // }, [value]);
+  useEffect(() => {
+    getTransactionList();
+    getTotalSuccess();
+    getTotalFail();
+    getTotalPending();
+    getTotalCharges();
+    getTotalRefund();
+    getTotalComission();
+  }, [value]);
 
   const getTransactionList = () => {
     setIsLoading(true);
@@ -201,49 +200,33 @@ function TransactionDeatails() {
 
               <Grid sx={{ width: { xs: "100%", md: "70%" }, mt: 5 }}>
                 <Stack mt={10}>
-                  {/* <Grid container spacing={3}>
-                    {transaction.map((item: any) => (
-                      <Grid item xs={12} sm={6} md={4}>
-                        <span onClick={handleClickB}>
-                          <CustomCard
-                            sx={{ height: "150px" }}
-                            color="FFFFFF"
-                            Status={item?.status}
-                            amount={item?.count}
-                            noOfTransaction={item?.totalAmount}
-                          />
-                        </span>
-                      </Grid>
-                    ))}
-                  </Grid> */}
-
                   <Grid container spacing={3}>
                     <Grid item xs={12} sm={6} md={3}>
                       <AmountCustomCard
                         sx={{ height: "150px" }}
                         amountType="Total Transactions"
-                        Amount={transaction}
+                        Amount={transaction || 0}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
                       <AmountCustomCard
                         sx={{ height: "150px" }}
                         amountType="Total Amount"
-                        Amount={volume}
+                        Amount={volume || 0}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
                       <AmountCustomCard
                         sx={{ height: "150px" }}
                         amountType="Total Refunded Transactions"
-                        Amount={refund}
+                        Amount={refund || 0}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
                       <AmountCustomCard
                         sx={{ height: "150px" }}
                         amountType="Total Commission"
-                        Amount={Commission}
+                        Amount={Commission || 0}
                       />
                     </Grid>
                   </Grid>
@@ -253,28 +236,28 @@ function TransactionDeatails() {
                       <AmountCustomCard
                         sx={{ height: "150px" }}
                         amountType="Total Success Transactions"
-                        Amount={totalSuccess}
+                        Amount={totalSuccess || 0}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
                       <AmountCustomCard
                         sx={{ height: "150px" }}
                         amountType="Total Pending Transactions"
-                        Amount={totalpending}
+                        Amount={totalpending || 0}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
                       <AmountCustomCard
                         sx={{ height: "150px" }}
                         amountType="Total Failed Transactions"
-                        Amount={totalFail}
+                        Amount={totalFail || 0}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
                       <AmountCustomCard
                         sx={{ height: "150px" }}
                         amountType="Total Charges"
-                        Amount={totalCharge}
+                        Amount={totalCharge || 0}
                       />
                     </Grid>
                   </Grid>
