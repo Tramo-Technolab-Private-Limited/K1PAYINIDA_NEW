@@ -205,7 +205,11 @@ function TransactionDeatails() {
                       <AmountCustomCard
                         sx={{ height: "150px" }}
                         amountType="Total Transactions"
-                        Amount={transaction || 0}
+                        Amount={
+                          typeof transaction === "object"
+                            ? JSON.stringify(transaction)
+                            : transaction
+                        } 
                       />
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
